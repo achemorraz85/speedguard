@@ -146,7 +146,7 @@
             try {
                 // Detectar país para ajustar unidades (USA, UK, Liberia, Myanmar usan Millas)
                 const revQuery = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-                const revRes = await fetch(revQuery);
+                const revRes = await fetch(revQuery, { headers: { 'User-Agent': 'SpeedGuardPro/1.0' } });
                 const revData = await revRes.json();
                 const countryCode = revData.address.country_code;
 
@@ -171,7 +171,11 @@
                     }
                 }
                 lastCoords = {lat, lon};
-            } catch (e) { console.error("Error de datos:", e); }
+            } catch (e) { 
+                console.error("Error de datos:", e);
+                // Si falla Nominatim, mantener unidad actual y reintentar en próximo movimiento
+                lastCoords = null;
+            }
         }
 
         function manageAlertSound(severity) {
