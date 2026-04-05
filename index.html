@@ -229,6 +229,11 @@
                 btn.textContent = "DETENER RASTREO"; btn.classList.add('stop');
                 watchId = navigator.geolocation.watchPosition((pos) => {
                     document.getElementById('gpsAcc').textContent = Math.round(pos.coords.accuracy) + "m";
+                    if (document.getElementById('alertT').textContent === 'ESPERANDO SEÑAL') {
+                        document.getElementById('alertT').textContent = 'GPS ACTIVO';
+                        document.getElementById('alertS').textContent = 'Detectando límite de velocidad...';
+                        document.getElementById('alertIcon').textContent = '📡';
+                    }
                     updateUI(pos.coords.speed || 0);
                     updateLocationData(pos.coords.latitude, pos.coords.longitude);
                 }, (err) => console.error(err), { enableHighAccuracy: true });
