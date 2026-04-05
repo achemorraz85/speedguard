@@ -49,13 +49,30 @@
         @keyframes pulse-danger { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
 
         .limit-display { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px; }
-        .sign { 
-            width: 80px; height: 80px; background: #fff; border: 6px solid #c00; border-radius: 50%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+        .sign {
+            width: 80px; height: 100px;
+            background: #fff;
+            border: 3px solid #000;
+            border-radius: 6px;
+            outline: 6px solid #fff;
+            box-shadow: 0 0 0 8px #000, 0 6px 20px rgba(0,0,0,0.7);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 6px 4px 8px;
+            gap: 0;
         }
-        .sign-num { font-family:'Bebas Neue',sans-serif; font-size:36px; color: #000; line-height: 1; }
-        .sign-label { font-size: 8px; font-weight: 900; color: #000; margin-bottom: -3px; }
+        .sign-label {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 9px; font-weight: 900;
+            color: #000; letter-spacing: 0.5px;
+            text-align: center; line-height: 1.15;
+            text-transform: uppercase;
+        }
+        .sign-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 46px; color: #000; line-height: 1;
+            margin-top: 2px;
+        }
 
         .btn-main {
             width: 100%; padding: 18px; border-radius: 15px; border: none;
@@ -97,7 +114,7 @@
 
         <div class="limit-display">
             <div class="sign">
-                <div class="sign-label">LIMIT</div>
+                <div class="sign-label">SPEED<br>LIMIT</div>
                 <div class="sign-num" id="signNum">--</div>
             </div>
             <div style="text-align: left;">
@@ -229,4 +246,5 @@
     </script>
 </body>
 </html>
+
 
