@@ -230,6 +230,7 @@
             const btn = document.getElementById('btnMain');
             if (running) {
                 try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e){}
+                try { if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen(); } catch(e){}
                 btn.textContent = "DETENER RASTREO"; btn.classList.add('stop');
                 watchId = navigator.geolocation.watchPosition((pos) => {
                     document.getElementById('gpsAcc').textContent = Math.round(pos.coords.accuracy) + "m";
@@ -244,6 +245,7 @@
             } else {
                 if (watchId) navigator.geolocation.clearWatch(watchId);
                 if (wakeLock) wakeLock.release();
+                try { if (document.exitFullscreen && document.fullscreenElement) document.exitFullscreen(); } catch(e){}
                 manageAlertSound('none');
                 btn.textContent = "INICIAR RASTREO"; btn.classList.remove('stop');
                 document.getElementById('spdNum').textContent = "0";
