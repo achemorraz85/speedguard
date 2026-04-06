@@ -246,30 +246,55 @@
             }, rate);
         }
 
+        function getBestVoice() {
+            const voices = window.speechSynthesis.getVoices();
+            // Buscar voz en español preferiblemente latinoamericana
+            const preferred = ['es-MX', 'es-US', 'es-ES', 'es'];
+            for (const lang of preferred) {
+                const match = voices.find(v => v.lang.startsWith(lang));
+                if (match) return match;
+            }
+            return null;
+        }
+
         function speakAlert(currentVal, limitVal, isCritical) {
             if (!window.speechSynthesis) return;
-            window.speechSynthesis.cancel(); // Cancelar cualquier voz activa
+            window.speechSynthesis.cancel();
 
-            const unitWord = (unit === 'mph') ? 'millas por hora' : 'kilómetros por hora';
+            const unitWord = 'kilómetros por hora';
+            // Convertir números a palabras para forzar pronunciación en español
+            const speedText = currentVal.toString();
+            const limitText = limitVal.toString();
+
             let msg;
             if (isCritical) {
-                msg = `Te recuerdo que vas a ${currentVal} ${unitWord}, sobre el límite de velocidad que es ${limitVal}. Puedes ganarte una multa por exceso de velocidad.`;
+                msg = `Te recuerdo que vas a ${speedText} ${unitWord}, sobre el límite de velocidad que es ${limitText}. Puedes ganarte una multa por exceso de velocidad.`;
             } else {
-                msg = `Solo te aviso que vas a ${currentVal} ${unitWord}, sobre el límite de velocidad que es ${limitVal}.`;
+                msg = `Solo te aviso que vas a ${speedText} ${unitWord}, sobre el límite de velocidad que es ${limitText}.`;
             }
 
             const utter = new SpeechSynthesisUtterance(msg);
-            utter.lang = (unit === 'mph') ? 'en-US' : 'es-MX';
-            utter.rate = 1.0;
+            utter.lang = 'es-MX';
+            utter.rate = 0.95;
             utter.volume = 1.0;
 
-            // Pausar sonido continuo mientras habla, reanudarlo al terminar
+            // Esperar que las voces carguen y asignar la mejor disponible
+            const assignVoice = () => {
+                const voice = getBestVoice();
+                if (voice) utter.voice = voice;
+            };
+
+            if (window.speechSynthesis.getVoices().length > 0) {
+                assignVoice();
+            } else {
+                window.speechSynthesis.onvoiceschanged = assignVoice;
+            }
+
             utter.onstart = () => { clearInterval(alertInterval); };
             utter.onend   = () => {
                 voicePending = false;
-                // Reactivar sonido continuo después del mensaje
                 const sev = curSeverity;
-                curSeverity = 'none'; // forzar re-trigger
+                curSeverity = 'none';
                 manageAlertSound(sev);
             };
 
