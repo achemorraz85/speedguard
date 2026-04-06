@@ -90,7 +90,20 @@
 
         <div class="status-bar">
             <div class="status-item">GPS: <span id="gpsAcc">Buscando...</span></div>
-            <div class="status-item">UNIDAD: <span id="unitStatus">KM/H</span></div>
+            <div class="status-item" style="display:flex; align-items:center; gap:8px;">
+                <span id="unitStatus" style="min-width:36px; text-align:right;">KM/H</span>
+                <div onclick="toggleUnit()" style="
+                    width:46px; height:24px; border-radius:12px; background:var(--border);
+                    position:relative; cursor:pointer; transition:background .3s; flex-shrink:0;
+                " id="unitSwitch">
+                    <div id="unitThumb" style="
+                        position:absolute; top:3px; left:3px;
+                        width:18px; height:18px; border-radius:50%;
+                        background:var(--accent); transition:left .3s;
+                    "></div>
+                </div>
+                <span style="min-width:28px;">MPH</span>
+            </div>
         </div>
 
         <div class="ring-box">
@@ -134,47 +147,83 @@
         let running = false, limit = null, watchId = null, wakeLock = null;
         let audioCtx = null, alertInterval = null, curSeverity = 'none', lastCoords = null;
         let unit = 'kmh'; // Por defecto KMH
+        let voiceTimer = null, lastSpokenSpeed = null, voicePending = false;
 
         const arc = document.getElementById('arc'), CIRCUM = 2 * Math.PI * 100;
         arc.style.strokeDasharray = CIRCUM;
 
         function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
 
+        // Fallback por tipo de vía cuando no hay maxspeed en OpenStreetMap
+        const ROAD_DEFAULTS_KMH = {
+            motorway: 110, motorway_link: 80,
+            trunk: 90,     trunk_link: 70,
+            primary: 80,   primary_link: 60,
+            secondary: 60, secondary_link: 50,
+            tertiary: 50,  tertiary_link: 40,
+            residential: 30, living_street: 20,
+            service: 20,   unclassified: 50, road: 50
+        };
+
+        function applyLimit(kmhVal) {
+            limit = kmhVal;
+            const displayVal = (unit === 'mph') ? Math.round(kmhVal * 0.621371) : kmhVal;
+            document.getElementById('signNum').textContent = displayVal;
+        }
+
         async function updateLocationData(lat, lon) {
-            if (lastCoords && Math.hypot(lat - lastCoords.lat, lon - lastCoords.lon) < 0.0003) return;
-            
+            // Solo saltar si ya tenemos coords recientes Y ya tenemos límite detectado
+            if (lastCoords && limit && Math.hypot(lat - lastCoords.lat, lon - lastCoords.lon) < 0.0003) return;
+
             try {
-                // Detectar país para ajustar unidades (USA, UK, Liberia, Myanmar usan Millas)
-                const revQuery = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-                const revRes = await fetch(revQuery, { headers: { 'User-Agent': 'SpeedGuardPro/1.0' } });
+                // Detectar país para ajustar unidades
+                const revRes = await fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
+                    { headers: { 'User-Agent': 'SpeedGuardPro/1.0' } }
+                );
                 const revData = await revRes.json();
                 const countryCode = revData.address.country_code;
-
                 const imperialCountries = ['us', 'gb', 'lr', 'mm'];
                 unit = imperialCountries.includes(countryCode) ? 'mph' : 'kmh';
-                
                 document.getElementById('unitStatus').textContent = unit.toUpperCase();
                 document.getElementById('unitLabel').textContent = unit.toUpperCase();
+            } catch(e) { console.warn("Nominatim falló, manteniendo unidad actual"); }
 
-                // Obtener velocidad máxima
-                const query = `[out:json];way(around:30,${lat},${lon})[highway];out tags;`;
+            try {
+                // Consultar Overpass con radio más amplio (50m) para mejor detección
+                const query = `[out:json][timeout:10];way(around:50,${lat},${lon})[highway];out tags;`;
                 const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
                 const data = await response.json();
-                
+
                 if (data.elements.length > 0) {
                     const tags = data.elements[0].tags;
+
                     if (tags.maxspeed) {
-                        // Limpiar texto como "60 mph" o "100 km/h"
-                        let rawLimit = parseInt(tags.maxspeed);
-                        limit = rawLimit;
-                        document.getElementById('signNum').textContent = limit;
+                        // Tiene maxspeed explícito
+                        let raw = tags.maxspeed;
+                        let kmh;
+                        if (/mph/i.test(raw)) {
+                            kmh = Math.round(parseFloat(raw) * 1.60934);
+                        } else {
+                            const m = raw.match(/\d+/);
+                            kmh = m ? parseInt(m[0]) : null;
+                        }
+                        if (kmh) { applyLimit(kmh); lastCoords = {lat, lon}; return; }
+                    }
+
+                    // No tiene maxspeed — usar fallback por tipo de vía
+                    const hw = tags.highway;
+                    const fallback = ROAD_DEFAULTS_KMH[hw];
+                    if (fallback) {
+                        applyLimit(fallback);
+                        document.getElementById('signNum').textContent =
+                            (unit === 'mph') ? Math.round(fallback * 0.621371) + '*' : fallback + '*';
                     }
                 }
                 lastCoords = {lat, lon};
-            } catch (e) { 
-                console.error("Error de datos:", e);
-                // Si falla Nominatim, mantener unidad actual y reintentar en próximo movimiento
-                lastCoords = null;
+            } catch(e) {
+                console.error("Overpass error:", e);
+                lastCoords = null; // Reintentar en próximo movimiento
             }
         }
 
@@ -197,6 +246,58 @@
             }, rate);
         }
 
+        function speakAlert(currentVal, limitVal, isCritical) {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel(); // Cancelar cualquier voz activa
+
+            const unitWord = (unit === 'mph') ? 'millas por hora' : 'kilómetros por hora';
+            let msg;
+            if (isCritical) {
+                msg = `Te recuerdo que vas a ${currentVal} ${unitWord}, sobre el límite de velocidad que es ${limitVal}. Puedes ganarte una multa por exceso de velocidad.`;
+            } else {
+                msg = `Solo te aviso que vas a ${currentVal} ${unitWord}, sobre el límite de velocidad que es ${limitVal}.`;
+            }
+
+            const utter = new SpeechSynthesisUtterance(msg);
+            utter.lang = (unit === 'mph') ? 'en-US' : 'es-MX';
+            utter.rate = 1.0;
+            utter.volume = 1.0;
+
+            // Pausar sonido continuo mientras habla, reanudarlo al terminar
+            utter.onstart = () => { clearInterval(alertInterval); };
+            utter.onend   = () => {
+                voicePending = false;
+                // Reactivar sonido continuo después del mensaje
+                const sev = curSeverity;
+                curSeverity = 'none'; // forzar re-trigger
+                manageAlertSound(sev);
+            };
+
+            voicePending = true;
+            window.speechSynthesis.speak(utter);
+        }
+
+        function scheduleVoice(currentVal, limitVal, isCritical) {
+            // Si ya hay un timer corriendo para la misma velocidad, no reiniciar
+            if (voiceTimer && lastSpokenSpeed === currentVal) return;
+            clearTimeout(voiceTimer);
+            lastSpokenSpeed = currentVal;
+            // Primera vez: hablar de inmediato
+            if (!voicePending) speakAlert(currentVal, limitVal, isCritical);
+            // Luego cada 2 minutos mientras siga en exceso
+            voiceTimer = setInterval(() => {
+                if (!voicePending) speakAlert(currentVal, limitVal, isCritical);
+            }, 120000); // 2 minutos
+        }
+
+        function stopVoice() {
+            clearInterval(voiceTimer);
+            voiceTimer = null;
+            lastSpokenSpeed = null;
+            voicePending = false;
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+        }
+
         function updateUI(speedMs) {
             // Conversión según unidad detectada
             let speed = (unit === 'mph') ? speedMs * 2.23694 : speedMs * 3.6;
@@ -207,21 +308,48 @@
 
             if (!limit) return;
 
-            const diff = currentVal - limit;
+            // Límite en la misma unidad de display
+            const limitDisplay = (unit === 'mph') ? Math.round(limit * 0.621371) : limit;
+            const diff = currentVal - limitDisplay;
             const diffEl = document.getElementById('diffVal'), box = document.getElementById('alertBox');
 
-            if (diff > 0) {
+            if (diff > 5) {
+                // CRÍTICO: más de 5 unidades sobre el límite
                 diffEl.textContent = `+${diff} EXCESO`; diffEl.style.color = 'var(--danger)';
-                box.classList.add('danger'); document.getElementById('alertT').textContent = "REDUCE VELOCIDAD";
+                box.classList.add('danger');
+                document.getElementById('alertT').textContent = "REDUCE VELOCIDAD";
                 document.getElementById('alertIcon').textContent = "⚠️";
                 let sev = diff > 15 ? 'high' : (diff > 5 ? 'med' : 'low');
                 manageAlertSound(sev); arc.style.stroke = 'var(--danger)';
+                scheduleVoice(currentVal, limitDisplay, true);
+
+            } else if (diff > 0) {
+                // TOLERANCIA: 1-5 unidades sobre el límite — aviso de voz cada 2 min, sin sonido continuo
+                diffEl.textContent = `+${diff} AVISO`; diffEl.style.color = 'var(--danger)';
+                box.classList.add('danger');
+                document.getElementById('alertT').textContent = "VELOCIDAD LÍMITE";
+                document.getElementById('alertIcon').textContent = "⚠️";
+                manageAlertSound('none'); arc.style.stroke = 'var(--danger)';
+                scheduleVoice(currentVal, limitDisplay, false);
+
             } else {
+                // LEGAL
                 diffEl.textContent = "VELOCIDAD LEGAL"; diffEl.style.color = 'var(--ok)';
-                box.classList.remove('danger'); document.getElementById('alertT').textContent = "CONDUCCIÓN SEGURA";
+                box.classList.remove('danger');
+                document.getElementById('alertT').textContent = "CONDUCCIÓN SEGURA";
                 document.getElementById('alertIcon').textContent = "✅";
                 manageAlertSound('none'); arc.style.stroke = 'var(--ok)';
+                stopVoice();
             }
+        }
+
+        function toggleUnit() {
+            unit = (unit === 'kmh') ? 'mph' : 'kmh';
+            document.getElementById('unitStatus').textContent = unit.toUpperCase();
+            document.getElementById('unitLabel').textContent = unit.toUpperCase();
+            // Move thumb
+            document.getElementById('unitThumb').style.left = (unit === 'mph') ? '25px' : '3px';
+            document.getElementById('unitSwitch').style.background = (unit === 'mph') ? 'var(--accent)' : 'var(--border)';
         }
 
         async function toggleSystem() {
@@ -247,6 +375,7 @@
                 if (wakeLock) wakeLock.release();
                 try { if (document.exitFullscreen && document.fullscreenElement) document.exitFullscreen(); } catch(e){}
                 manageAlertSound('none');
+                stopVoice();
                 btn.textContent = "INICIAR RASTREO"; btn.classList.remove('stop');
                 document.getElementById('spdNum').textContent = "0";
                 document.getElementById('signNum').textContent = "--";
