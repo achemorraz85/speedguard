@@ -1,415 +1,549 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>SpeedGuard Real-Time</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0a0c10">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #0a0c10; --surface: #111318; --border: #1e2230;
-            --text: #e8eaf0; --muted: #4a5068;
-            --ok: #00e676; --danger: #ff1744; --accent: #00e5ff;
-        }
-        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            background:var(--bg); color:var(--text);
-            font-family:'DM Sans',sans-serif; height: 100dvh;
-            display:flex; flex-direction:column; align-items:center;
-            overflow:hidden; padding: 15px;
-        }
-        .app { 
-            width:100%; max-width:400px; height: 100%; 
-            display: flex; flex-direction: column; 
-            justify-content: space-between; text-align: center; 
-        }
-        .logo { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:4px; color:var(--accent); opacity: 0.8; margin-bottom: 5px; }
-        .status-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 10px; font-size: 10px; display: flex; justify-content: space-between; color: var(--muted); }
-        .status-item span { color: var(--text); font-weight: bold; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>LightningGuard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap');
 
-        .ring-box { position:relative; width:210px; height:210px; margin: 0 auto 10px; }
-        .ring-svg { width:100%; height:100%; transform:rotate(-90deg); }
-        .ring-track { fill:none; stroke:var(--border); stroke-width:8; }
-        .ring-arc { 
-            fill:none; stroke:var(--ok); stroke-width:12; stroke-linecap:round; 
-            stroke-dasharray:628; stroke-dashoffset:628; transition: stroke-dashoffset 0.6s ease-out, stroke 0.3s;
-        }
-        .ring-inner { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-        .spd-num { font-family:'Bebas Neue',sans-serif; font-size:90px; line-height:0.9; color:var(--text); }
-        .spd-unit { font-size:12px; font-weight:700; color:var(--muted); letter-spacing:3px; }
+  :root {
+    --bg: #0a0a0f;
+    --panel: #12121f;
+    --border: #1e1e35;
+    --accent: #f0c040;
+    --danger: #ff3c3c;
+    --warn: #ff8c00;
+    --safe: #00e676;
+    --text: #d0d0e0;
+    --mono: 'Share Tech Mono', monospace;
+    --head: 'Barlow Condensed', sans-serif;
+  }
 
-        .alert-box { 
-            background: var(--surface); border: 1px solid var(--border); 
-            border-radius: 15px; padding: 12px; margin-bottom: 10px; 
-            transition: 0.3s; min-height: 70px; display: flex; align-items: center; justify-content: center; gap: 12px;
-        }
-        .alert-box.danger { border-color: var(--danger); background: rgba(255,23,68,0.15); animation: pulse-danger 1s infinite; }
-        @keyframes pulse-danger { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        .limit-display { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px; }
-        .sign {
-            width: 80px; height: 100px;
-            background: #fff;
-            border: 3px solid #000;
-            border-radius: 6px;
-            outline: 6px solid #fff;
-            box-shadow: 0 0 0 8px #000, 0 6px 20px rgba(0,0,0,0.7);
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            padding: 6px 4px 8px;
-            gap: 0;
-        }
-        .sign-label {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 9px; font-weight: 900;
-            color: #000; letter-spacing: 0.5px;
-            text-align: center; line-height: 1.15;
-            text-transform: uppercase;
-        }
-        .sign-num {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 46px; color: #000; line-height: 1;
-            margin-top: 2px;
-        }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--head);
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
 
-        .btn-main {
-            width: 100%; padding: 18px; border-radius: 15px; border: none;
-            font-family: 'Bebas Neue'; font-size: 22px; letter-spacing: 3px;
-            background: var(--accent); color: #000; cursor: pointer; 
-            margin-top: auto; box-shadow: 0 5px 15px rgba(0,229,255,0.3);
-        }
-        .btn-main.stop { background: var(--surface); color: var(--danger); border: 1px solid var(--danger); }
-    </style>
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(240,192,64,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(240,192,64,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo { display: flex; align-items: center; gap: 10px; }
+
+  .bolt-icon {
+    font-size: 28px;
+    animation: pulse-icon 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-icon {
+    0%,100% { filter: drop-shadow(0 0 6px var(--accent)); }
+    50%      { filter: drop-shadow(0 0 16px var(--accent)); }
+  }
+
+  .logo-text { font-size: 22px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: #fff; }
+  .logo-text span { color: var(--accent); }
+
+  .refresh-btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 5px 12px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: #555;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .refresh-btn:active { color: var(--accent); border-color: var(--accent); }
+  .refresh-btn.spinning { color: var(--accent); border-color: var(--accent); animation: rot 1s linear infinite; }
+  @keyframes rot { to { transform: rotate(360deg); } }
+
+  .status-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.5s;
+  }
+  .status-panel::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--sc);
+    transition: background 0.5s;
+  }
+
+  .status-indicator {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; flex-shrink: 0;
+    border: 2px solid var(--sc);
+    box-shadow: 0 0 20px var(--sc);
+    transition: all 0.5s;
+  }
+
+  .status-info { flex: 1; }
+  .status-label { font-family: var(--mono); font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+  .status-text { font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; transition: color 0.5s; line-height: 1; margin-top: 2px; }
+  .status-sub { font-size: 12px; font-family: var(--mono); color: #555; margin-top: 4px; }
+
+  .radar-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+  }
+  .radar-label { font-family: var(--mono); font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+  #radarCanvas { width: 100%; border-radius: 2px; display: block; }
+
+  .data-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .data-card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 12px; }
+  .data-card-label { font-family: var(--mono); font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .data-card-val { font-family: var(--mono); font-size: 20px; color: var(--accent); }
+  .data-card-unit { font-size: 11px; color: #555; margin-left: 3px; }
+
+  .config-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 14px; }
+  .config-title { font-family: var(--mono); font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+  .radius-control { display: flex; align-items: center; gap: 12px; }
+  .radius-control input[type=range] { flex: 1; -webkit-appearance: none; height: 3px; background: var(--border); border-radius: 2px; outline: none; }
+  .radius-control input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 0 8px var(--accent); }
+  .radius-val { font-family: var(--mono); font-size: 18px; color: var(--accent); min-width: 60px; text-align: right; }
+
+  .log-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 12px; }
+  .log-title { font-family: var(--mono); font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+  .log-list { list-style: none; display: flex; flex-direction: column; gap: 4px; max-height: 160px; overflow-y: auto; }
+  .log-list::-webkit-scrollbar { width: 3px; }
+  .log-list::-webkit-scrollbar-thumb { background: var(--border); }
+  .log-item { font-family: var(--mono); font-size: 11px; padding: 5px 8px; border-left: 2px solid; background: rgba(255,255,255,0.02); display: flex; align-items: baseline; gap: 8px; animation: log-in 0.3s ease; }
+  @keyframes log-in { from { opacity: 0; transform: translateX(-8px); } }
+  .log-item.danger { border-color: var(--danger); color: #ff8888; }
+  .log-item.warn   { border-color: var(--warn); color: #ffb060; }
+  .log-item.info   { border-color: #333; color: #555; }
+  .log-item .log-time { color: #444; font-size: 10px; flex-shrink: 0; }
+
+  .controls { display: flex; gap: 8px; }
+  .btn { flex: 1; padding: 12px; font-family: var(--head); font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid; border-radius: 3px; cursor: pointer; background: transparent; transition: all 0.2s; }
+  .btn-primary { color: var(--accent); border-color: var(--accent); }
+  .btn-primary:active { background: rgba(240,192,64,0.1); }
+  .btn-mute { color: #666; border-color: #333; }
+
+  .flash-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 100; opacity: 0; }
+  .flash-overlay.active { animation: flash-alert 0.8s ease-out; }
+  @keyframes flash-alert { 0% { opacity: 0.7; background: rgba(255,60,60,0.35); } 100% { opacity: 0; } }
+
+  .loc-bar { font-family: var(--mono); font-size: 10px; color: #333; text-align: center; padding: 4px 0; }
+  .update-bar { font-family: var(--mono); font-size: 10px; color: #333; text-align: center; padding: 2px 0; }
+</style>
 </head>
 <body>
 
-    <div class="app">
-        <div class="logo">SPEEDGUARD PRO</div>
+<div class="flash-overlay" id="flashOverlay"></div>
 
-        <div class="status-bar">
-            <div class="status-item">GPS: <span id="gpsAcc">Buscando...</span></div>
-            <div class="status-item" style="display:flex; align-items:center; gap:8px;">
-                <span id="unitStatus" style="min-width:36px; text-align:right;">KM/H</span>
-                <div onclick="toggleUnit()" style="
-                    width:46px; height:24px; border-radius:12px; background:var(--border);
-                    position:relative; cursor:pointer; transition:background .3s; flex-shrink:0;
-                " id="unitSwitch">
-                    <div id="unitThumb" style="
-                        position:absolute; top:3px; left:3px;
-                        width:18px; height:18px; border-radius:50%;
-                        background:var(--accent); transition:left .3s;
-                    "></div>
-                </div>
-                <span style="min-width:28px;">MPH</span>
-            </div>
-        </div>
-
-        <div class="ring-box">
-            <svg class="ring-svg" viewBox="0 0 210 210">
-                <circle class="ring-track" cx="105" cy="105" r="100"/>
-                <circle id="arc" class="ring-arc" cx="105" cy="105" r="100"/>
-            </svg>
-            <div class="ring-inner">
-                <div class="spd-num" id="spdNum">0</div>
-                <div class="spd-unit" id="unitLabel">KM/H</div>
-            </div>
-        </div>
-
-        <div class="alert-box" id="alertBox">
-            <span id="alertIcon" style="font-size: 24px;">📡</span>
-            <div style="text-align: left;">
-                <div id="alertT" style="font-weight: bold; font-size: 14px;">ESPERANDO SEÑAL</div>
-                <div id="alertS" style="font-size: 11px; color: var(--muted);">Presiona iniciar para detectar vía</div>
-            </div>
-        </div>
-
-        <div class="limit-display">
-            <div class="sign">
-                <div class="sign-label">SPEED<br>LIMIT</div>
-                <div class="sign-num" id="signNum">--</div>
-            </div>
-            <div style="text-align: left;">
-                <div id="limitLabel" style="font-size: 9px; color: var(--muted); font-weight: bold;">LÍMITE VÍA</div>
-                <div id="diffVal" style="font-family: 'Bebas Neue'; font-size: 24px; color:var(--muted)">DETECTANDO...</div>
-            </div>
-        </div>
-
-        <button class="btn-main" id="btnMain" onclick="toggleSystem()">INICIAR RASTREO</button>
+<div class="app">
+  <header>
+    <div class="logo">
+      <span class="bolt-icon">⚡</span>
+      <span class="logo-text">Lightning<span>Guard</span></span>
     </div>
+    <button class="refresh-btn" id="refreshBtn" onclick="fetchWeather()">↻ ACTUALIZAR</button>
+  </header>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
-        }
+  <div class="status-panel" id="statusPanel" style="--sc: var(--safe)">
+    <div class="status-indicator" id="statusIcon">🟢</div>
+    <div class="status-info">
+      <div class="status-label">Estado de alerta</div>
+      <div class="status-text" id="statusText" style="color: var(--safe)">CARGANDO</div>
+      <div class="status-sub" id="statusSub">Obteniendo datos...</div>
+    </div>
+  </div>
 
-        let running = false, limit = null, watchId = null, wakeLock = null;
-        let audioCtx = null, alertInterval = null, curSeverity = 'none', lastCoords = null;
-        let unit = 'kmh'; // Por defecto KMH
-        let voiceTimer = null, lastSpokenSpeed = null, voicePending = false;
+  <div class="radar-wrap">
+    <div class="radar-label">Radar · <span id="radarKm">10</span> km radio</div>
+    <canvas id="radarCanvas" height="240"></canvas>
+  </div>
 
-        const arc = document.getElementById('arc'), CIRCUM = 2 * Math.PI * 100;
-        arc.style.strokeDasharray = CIRCUM;
+  <div class="data-grid">
+    <div class="data-card">
+      <div class="data-card-label">Prob. tormenta</div>
+      <div class="data-card-val" id="valThunder">—<span class="data-card-unit">%</span></div>
+    </div>
+    <div class="data-card">
+      <div class="data-card-label">Prob. precipitación</div>
+      <div class="data-card-val" id="valPrecip">—<span class="data-card-unit">%</span></div>
+    </div>
+    <div class="data-card">
+      <div class="data-card-label">Visibilidad</div>
+      <div class="data-card-val" id="valVis">—<span class="data-card-unit">km</span></div>
+    </div>
+    <div class="data-card">
+      <div class="data-card-label">Viento</div>
+      <div class="data-card-val" id="valWind">—<span class="data-card-unit">km/h</span></div>
+    </div>
+  </div>
 
-        function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+  <div class="config-panel">
+    <div class="config-title">Radio de alerta</div>
+    <div class="radius-control">
+      <input type="range" id="radiusSlider" min="5" max="100" value="10" step="5">
+      <span class="radius-val"><span id="radiusDisplay">10</span> km</span>
+    </div>
+  </div>
 
-        // Fallback por tipo de vía cuando no hay maxspeed en OpenStreetMap
-        const ROAD_DEFAULTS_KMH = {
-            motorway: 110, motorway_link: 80,
-            trunk: 90,     trunk_link: 70,
-            primary: 80,   primary_link: 60,
-            secondary: 60, secondary_link: 50,
-            tertiary: 50,  tertiary_link: 40,
-            residential: 30, living_street: 20,
-            service: 20,   unclassified: 50, road: 50
-        };
+  <div class="log-panel">
+    <div class="log-title">Registro de eventos</div>
+    <ul class="log-list" id="logList">
+      <li class="log-item info"><span class="log-time">--:--</span> Iniciando sistema...</li>
+    </ul>
+  </div>
 
-        function applyLimit(kmhVal) {
-            limit = kmhVal;
-            const displayVal = (unit === 'mph') ? Math.round(kmhVal * 0.621371) : kmhVal;
-            document.getElementById('signNum').textContent = displayVal;
-        }
+  <div class="controls">
+    <button class="btn btn-primary" onclick="testAlert()">TEST ALERTA</button>
+    <button class="btn btn-mute" id="btnMute" onclick="toggleMute()">🔇 SILENCIAR</button>
+  </div>
 
-        async function updateLocationData(lat, lon) {
-            // Solo saltar si ya tenemos coords recientes Y ya tenemos límite detectado
-            if (lastCoords && limit && Math.hypot(lat - lastCoords.lat, lon - lastCoords.lon) < 0.0003) return;
+  <div class="loc-bar" id="locBar">Obteniendo ubicación GPS...</div>
+  <div class="update-bar" id="updateBar">—</div>
+</div>
 
-            try {
-                // Detectar país para ajustar unidades
-                const revRes = await fetch(
-                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
-                    { headers: { 'User-Agent': 'SpeedGuardPro/1.0' } }
-                );
-                const revData = await revRes.json();
-                const countryCode = revData.address.country_code;
-                const imperialCountries = ['us', 'gb', 'lr', 'mm'];
-                unit = imperialCountries.includes(countryCode) ? 'mph' : 'kmh';
-                document.getElementById('unitStatus').textContent = unit.toUpperCase();
-                document.getElementById('unitLabel').textContent = unit.toUpperCase();
-            } catch(e) { console.warn("Nominatim falló, manteniendo unidad actual"); }
+<script>
+const API_KEY = 'nRB4piKi5I6UZYfqaYpwhFsWYFMtotH3';
+let ALERT_RADIUS_KM = 10;
+let muted = false;
+let audioCtx = null;
+let userLat = null;
+let userLon = null;
+let currentThunderPct = 0;
 
-            try {
-                // Consultar Overpass con radio más amplio (50m) para mejor detección
-                const query = `[out:json][timeout:10];way(around:50,${lat},${lon})[highway];out tags;`;
-                const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
-                const data = await response.json();
+const canvas  = document.getElementById('radarCanvas');
+const ctx2d   = canvas.getContext('2d');
 
-                if (data.elements.length > 0) {
-                    const tags = data.elements[0].tags;
+// ── GEOLOCATION ──────────────────────────────────────────
+function initLocation() {
+  if (!navigator.geolocation) { addLog('GPS no disponible', 'warn'); return; }
+  navigator.geolocation.getCurrentPosition(pos => {
+    userLat = pos.coords.latitude;
+    userLon = pos.coords.longitude;
+    document.getElementById('locBar').textContent = `GPS: ${userLat.toFixed(4)}, ${userLon.toFixed(4)}`;
+    addLog('Ubicación GPS obtenida', 'info');
+    fetchWeather();
+    setInterval(fetchWeather, 5 * 60 * 1000); // cada 5 min
+  }, () => {
+    addLog('GPS denegado — activa el permiso', 'danger');
+    document.getElementById('locBar').textContent = 'GPS denegado';
+  }, { enableHighAccuracy: true, timeout: 15000 });
+}
 
-                    if (tags.maxspeed) {
-                        // Tiene maxspeed explícito
-                        let raw = tags.maxspeed;
-                        let kmh;
-                        if (/mph/i.test(raw)) {
-                            kmh = Math.round(parseFloat(raw) * 1.60934);
-                        } else {
-                            const m = raw.match(/\d+/);
-                            kmh = m ? parseInt(m[0]) : null;
-                        }
-                        if (kmh) { applyLimit(kmh); lastCoords = {lat, lon}; return; }
-                    }
+// ── TOMORROW.IO ───────────────────────────────────────────
+async function fetchWeather() {
+  if (userLat === null) { addLog('Sin GPS aún', 'warn'); return; }
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  addLog('Consultando Tomorrow.io...', 'info');
 
-                    // No tiene maxspeed — usar fallback por tipo de vía
-                    const hw = tags.highway;
-                    const fallback = ROAD_DEFAULTS_KMH[hw];
-                    if (fallback) {
-                        applyLimit(fallback);
-                        document.getElementById('signNum').textContent =
-                            (unit === 'mph') ? Math.round(fallback * 0.621371) + '*' : fallback + '*';
-                    }
-                }
-                lastCoords = {lat, lon};
-            } catch(e) {
-                console.error("Overpass error:", e);
-                lastCoords = null; // Reintentar en próximo movimiento
-            }
-        }
+  const fields = 'thunderstormProbability,precipitationProbability,windSpeed,visibility';
+  const url = `https://api.tomorrow.io/v4/weather/realtime?location=${userLat},${userLon}&fields=${fields}&units=metric&apikey=${API_KEY}`;
 
-        function manageAlertSound(severity) {
-            if (curSeverity === severity) return;
-            curSeverity = severity;
-            clearInterval(alertInterval);
-            if (severity === 'none') return;
-            let freq, rate, type;
-            if (severity === 'low') { freq = 440; rate = 1000; type = 'sine'; }
-            else if (severity === 'med') { freq = 800; rate = 450; type = 'square'; }
-            else { freq = 1200; rate = 180; type = 'sawtooth'; }
-            alertInterval = setInterval(() => {
-                const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-                o.connect(g); g.connect(audioCtx.destination);
-                o.frequency.value = freq; o.type = type;
-                g.gain.setValueAtTime(0.4, audioCtx.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
-                o.start(); o.stop(audioCtx.currentTime + 0.2);
-            }, rate);
-        }
+  try {
+    const res  = await fetch(url);
+    const data = await res.json();
 
-        function getBestVoice() {
-            const voices = window.speechSynthesis.getVoices();
-            // Buscar voz en español preferiblemente latinoamericana
-            const preferred = ['es-MX', 'es-US', 'es-ES', 'es'];
-            for (const lang of preferred) {
-                const match = voices.find(v => v.lang.startsWith(lang));
-                if (match) return match;
-            }
-            return null;
-        }
+    if (!res.ok) {
+      addLog(`API Error: ${data?.message || res.status}`, 'danger');
+      btn.classList.remove('spinning');
+      return;
+    }
 
-        function speakAlert(currentVal, limitVal, isCritical) {
-            if (!window.speechSynthesis) return;
-            window.speechSynthesis.cancel();
+    const v = data.data.values;
+    processData(v);
+    document.getElementById('updateBar').textContent = `Actualizado: ${formatTime(Date.now())}`;
+    addLog('Datos reales recibidos ✓', 'info');
+  } catch(e) {
+    addLog(`Error de red: ${e.message}`, 'danger');
+  }
+  btn.classList.remove('spinning');
+}
 
-            const unitWord = 'kilómetros por hora';
-            // Convertir números a palabras para forzar pronunciación en español
-            const speedText = currentVal.toString();
-            const limitText = limitVal.toString();
+function processData(v) {
+  const thunder = v.thunderstormProbability   ?? 0;
+  const precip  = v.precipitationProbability  ?? 0;
+  const windMs  = v.windSpeed                 ?? 0;
+  const vis     = v.visibility                ?? 0;
+  const windKmh = (windMs * 3.6).toFixed(1);
 
-            let msg;
-            if (isCritical) {
-                msg = `Te recuerdo que vas a ${speedText} ${unitWord}, sobre el límite de velocidad que es ${limitText}. Puedes ganarte una multa por exceso de velocidad.`;
-            } else {
-                msg = `Solo te aviso que vas a ${speedText} ${unitWord}, sobre el límite de velocidad que es ${limitText}.`;
-            }
+  currentThunderPct = thunder;
 
-            const utter = new SpeechSynthesisUtterance(msg);
-            utter.lang = 'es-MX';
-            utter.rate = 0.95;
-            utter.volume = 1.0;
+  document.getElementById('valThunder').innerHTML = `${thunder.toFixed(0)}<span class="data-card-unit">%</span>`;
+  document.getElementById('valPrecip').innerHTML  = `${precip.toFixed(0)}<span class="data-card-unit">%</span>`;
+  document.getElementById('valVis').innerHTML     = `${vis.toFixed(1)}<span class="data-card-unit">km</span>`;
+  document.getElementById('valWind').innerHTML    = `${windKmh}<span class="data-card-unit">km/h</span>`;
 
-            // Esperar que las voces carguen y asignar la mejor disponible
-            const assignVoice = () => {
-                const voice = getBestVoice();
-                if (voice) utter.voice = voice;
-            };
+  updateStatus(thunder);
 
-            if (window.speechSynthesis.getVoices().length > 0) {
-                assignVoice();
-            } else {
-                window.speechSynthesis.onvoiceschanged = assignVoice;
-            }
+  if (thunder >= 30) triggerAlert(thunder);
+}
 
-            utter.onstart = () => { clearInterval(alertInterval); };
-            utter.onend   = () => {
-                voicePending = false;
-                const sev = curSeverity;
-                curSeverity = 'none';
-                manageAlertSound(sev);
-            };
+// ── STATUS ────────────────────────────────────────────────
+function updateStatus(thunder) {
+  let icon, text, sub, color;
+  if (thunder >= 60) {
+    icon = '⚠️'; text = 'PELIGRO'; color = 'var(--danger)';
+    sub = `Tormenta eléctrica probable — ${thunder.toFixed(0)}%`;
+  } else if (thunder >= 25) {
+    icon = '🟡'; text = 'PRECAUCIÓN'; color = 'var(--warn)';
+    sub = `Actividad eléctrica posible — ${thunder.toFixed(0)}%`;
+  } else {
+    icon = '🟢'; text = 'SEGURO'; color = 'var(--safe)';
+    sub = `Sin riesgo eléctrico detectado`;
+  }
+  const panel = document.getElementById('statusPanel');
+  panel.style.setProperty('--sc', color);
+  document.getElementById('statusIcon').textContent = icon;
+  document.getElementById('statusIcon').style.borderColor = color;
+  document.getElementById('statusIcon').style.boxShadow = `0 0 20px ${color}`;
+  document.getElementById('statusText').textContent = text;
+  document.getElementById('statusText').style.color = color;
+  document.getElementById('statusSub').textContent  = sub;
+}
 
-            voicePending = true;
-            window.speechSynthesis.speak(utter);
-        }
+// ── RADAR ─────────────────────────────────────────────────
+function resizeCanvas() {
+  canvas.width  = canvas.parentElement.clientWidth - 24;
+  canvas.height = 240;
+}
 
-        function scheduleVoice(currentVal, limitVal, isCritical) {
-            // Si ya hay un timer corriendo para la misma velocidad, no reiniciar
-            if (voiceTimer && lastSpokenSpeed === currentVal) return;
-            clearTimeout(voiceTimer);
-            lastSpokenSpeed = currentVal;
-            // Primera vez: hablar de inmediato
-            if (!voicePending) speakAlert(currentVal, limitVal, isCritical);
-            // Luego cada 2 minutos mientras siga en exceso
-            voiceTimer = setInterval(() => {
-                if (!voicePending) speakAlert(currentVal, limitVal, isCritical);
-            }, 120000); // 2 minutos
-        }
+function mulberry32(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
 
-        function stopVoice() {
-            clearInterval(voiceTimer);
-            voiceTimer = null;
-            lastSpokenSpeed = null;
-            voicePending = false;
-            if (window.speechSynthesis) window.speechSynthesis.cancel();
-        }
+function drawRadar() {
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2;
+  const maxR = Math.min(W,H) * 0.44;
+  const thunder = currentThunderPct;
 
-        function updateUI(speedMs) {
-            // Conversión según unidad detectada
-            let speed = (unit === 'mph') ? speedMs * 2.23694 : speedMs * 3.6;
-            const currentVal = Math.round(speed);
-            
-            document.getElementById('spdNum').textContent = currentVal;
-            arc.style.strokeDashoffset = CIRCUM - (Math.min(currentVal, 140) / 140) * CIRCUM;
+  ctx2d.clearRect(0,0,W,H);
+  ctx2d.fillStyle = '#080810';
+  ctx2d.fillRect(0,0,W,H);
 
-            if (!limit) return;
+  // Rings
+  [0.33,0.66,1].forEach(f => {
+    ctx2d.beginPath();
+    ctx2d.arc(cx,cy,maxR*f,0,Math.PI*2);
+    ctx2d.strokeStyle = '#1a1a2e';
+    ctx2d.lineWidth = 1;
+    ctx2d.stroke();
+    ctx2d.fillStyle = '#2a2a4a';
+    ctx2d.font = '9px Share Tech Mono, monospace';
+    ctx2d.fillText(`${(ALERT_RADIUS_KM*f).toFixed(0)}km`, cx+maxR*f+3, cy-3);
+  });
 
-            // Límite en la misma unidad de display
-            const limitDisplay = (unit === 'mph') ? Math.round(limit * 0.621371) : limit;
-            const diff = currentVal - limitDisplay;
-            const diffEl = document.getElementById('diffVal'), box = document.getElementById('alertBox');
+  // Cross
+  ctx2d.strokeStyle = '#1a1a2e'; ctx2d.lineWidth = 1;
+  ctx2d.beginPath(); ctx2d.moveTo(cx,cy-maxR); ctx2d.lineTo(cx,cy+maxR); ctx2d.stroke();
+  ctx2d.beginPath(); ctx2d.moveTo(cx-maxR,cy); ctx2d.lineTo(cx+maxR,cy); ctx2d.stroke();
 
-            if (diff > 5) {
-                // CRÍTICO: más de 5 unidades sobre el límite
-                diffEl.textContent = `+${diff} EXCESO`; diffEl.style.color = 'var(--danger)';
-                box.classList.add('danger');
-                document.getElementById('alertT').textContent = "REDUCE VELOCIDAD";
-                document.getElementById('alertIcon').textContent = "⚠️";
-                let sev = diff > 15 ? 'high' : (diff > 5 ? 'med' : 'low');
-                manageAlertSound(sev); arc.style.stroke = 'var(--danger)';
-                scheduleVoice(currentVal, limitDisplay, true);
+  // Alert ring
+  ctx2d.beginPath();
+  ctx2d.arc(cx,cy,maxR,0,Math.PI*2);
+  ctx2d.strokeStyle = thunder>=60 ? 'rgba(255,60,60,0.5)' : thunder>=25 ? 'rgba(255,140,0,0.4)' : 'rgba(0,230,118,0.2)';
+  ctx2d.lineWidth = 1.5;
+  ctx2d.setLineDash([4,4]);
+  ctx2d.stroke();
+  ctx2d.setLineDash([]);
 
-            } else if (diff > 0) {
-                // TOLERANCIA: 1-5 unidades sobre el límite — aviso de voz cada 2 min, sin sonido continuo
-                diffEl.textContent = `+${diff} AVISO`; diffEl.style.color = 'var(--danger)';
-                box.classList.add('danger');
-                document.getElementById('alertT').textContent = "VELOCIDAD LÍMITE";
-                document.getElementById('alertIcon').textContent = "⚠️";
-                manageAlertSound('none'); arc.style.stroke = 'var(--danger)';
-                scheduleVoice(currentVal, limitDisplay, false);
+  // Sweep
+  const angle = ((Date.now()/3000)%1)*Math.PI*2;
+  ctx2d.save();
+  ctx2d.translate(cx,cy);
+  ctx2d.rotate(angle);
+  const sc = thunder>=60 ? 'rgba(255,60,60,0.3)' : thunder>=25 ? 'rgba(255,140,0,0.25)' : 'rgba(0,230,118,0.2)';
+  const grad = ctx2d.createLinearGradient(0,0,maxR,0);
+  grad.addColorStop(0, sc); grad.addColorStop(1,'transparent');
+  ctx2d.beginPath(); ctx2d.moveTo(0,0); ctx2d.arc(0,0,maxR,-0.5,0.5); ctx2d.closePath();
+  ctx2d.fillStyle = grad; ctx2d.fill();
+  ctx2d.restore();
 
-            } else {
-                // LEGAL
-                diffEl.textContent = "VELOCIDAD LEGAL"; diffEl.style.color = 'var(--ok)';
-                box.classList.remove('danger');
-                document.getElementById('alertT').textContent = "CONDUCCIÓN SEGURA";
-                document.getElementById('alertIcon').textContent = "✅";
-                manageAlertSound('none'); arc.style.stroke = 'var(--ok)';
-                stopVoice();
-            }
-        }
+  // Activity blobs proportional to thunder %
+  if (thunder > 0) {
+    const count = Math.round(thunder / 10);
+    const rng = mulberry32(Math.floor(Date.now()/8000));
+    const c = thunder>=60 ? '255,60,60' : thunder>=25 ? '255,140,0' : '240,192,64';
+    for (let i=0; i<count; i++) {
+      const a  = rng()*Math.PI*2;
+      const r  = rng()*maxR*0.9;
+      const px = cx + r*Math.cos(a);
+      const py = cy + r*Math.sin(a);
+      const g  = ctx2d.createRadialGradient(px,py,0,px,py,14);
+      g.addColorStop(0,`rgba(${c},0.4)`); g.addColorStop(1,'transparent');
+      ctx2d.fillStyle = g;
+      ctx2d.beginPath(); ctx2d.arc(px,py,14,0,Math.PI*2); ctx2d.fill();
+      ctx2d.beginPath(); ctx2d.arc(px,py,3,0,Math.PI*2);
+      ctx2d.fillStyle = `rgba(${c},0.9)`; ctx2d.fill();
+    }
+  }
 
-        function toggleUnit() {
-            unit = (unit === 'kmh') ? 'mph' : 'kmh';
-            document.getElementById('unitStatus').textContent = unit.toUpperCase();
-            document.getElementById('unitLabel').textContent = unit.toUpperCase();
-            // Move thumb
-            document.getElementById('unitThumb').style.left = (unit === 'mph') ? '25px' : '3px';
-            document.getElementById('unitSwitch').style.background = (unit === 'mph') ? 'var(--accent)' : 'var(--border)';
-        }
+  // User dot
+  ctx2d.beginPath(); ctx2d.arc(cx,cy,6,0,Math.PI*2); ctx2d.fillStyle='#00e676'; ctx2d.fill();
+  ctx2d.beginPath(); ctx2d.arc(cx,cy,3,0,Math.PI*2); ctx2d.fillStyle='#fff'; ctx2d.fill();
 
-        async function toggleSystem() {
-            initAudio();
-            running = !running;
-            const btn = document.getElementById('btnMain');
-            if (running) {
-                try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e){}
-                try { if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen(); } catch(e){}
-                btn.textContent = "DETENER RASTREO"; btn.classList.add('stop');
-                watchId = navigator.geolocation.watchPosition((pos) => {
-                    document.getElementById('gpsAcc').textContent = Math.round(pos.coords.accuracy) + "m";
-                    if (document.getElementById('alertT').textContent === 'ESPERANDO SEÑAL') {
-                        document.getElementById('alertT').textContent = 'GPS ACTIVO';
-                        document.getElementById('alertS').textContent = 'Detectando límite de velocidad...';
-                        document.getElementById('alertIcon').textContent = '📡';
-                    }
-                    updateUI(pos.coords.speed || 0);
-                    updateLocationData(pos.coords.latitude, pos.coords.longitude);
-                }, (err) => console.error(err), { enableHighAccuracy: true });
-            } else {
-                if (watchId) navigator.geolocation.clearWatch(watchId);
-                if (wakeLock) wakeLock.release();
-                try { if (document.exitFullscreen && document.fullscreenElement) document.exitFullscreen(); } catch(e){}
-                manageAlertSound('none');
-                stopVoice();
-                btn.textContent = "INICIAR RASTREO"; btn.classList.remove('stop');
-                document.getElementById('spdNum').textContent = "0";
-                document.getElementById('signNum').textContent = "--";
-                document.getElementById('diffVal').textContent = "DETECTANDO...";
-                arc.style.strokeDashoffset = CIRCUM;
-            }
-        }
-    </script>
+  // Compass
+  ['N','E','S','O'].forEach((d,i) => {
+    const a = i*Math.PI/2 - Math.PI/2;
+    const r = maxR+14;
+    ctx2d.fillStyle = d==='N' ? '#f0c040' : '#333';
+    ctx2d.font = 'bold 11px Barlow Condensed, sans-serif';
+    ctx2d.textAlign = 'center'; ctx2d.textBaseline = 'middle';
+    ctx2d.fillText(d, cx+r*Math.cos(a), cy+r*Math.sin(a));
+  });
+  ctx2d.textAlign='left'; ctx2d.textBaseline='alphabetic';
+}
+
+function radarLoop() { drawRadar(); requestAnimationFrame(radarLoop); }
+radarLoop();
+
+// ── ALERT ─────────────────────────────────────────────────
+let lastAlertTime = 0;
+
+function triggerAlert(thunder) {
+  const now = Date.now();
+  if (now - lastAlertTime < 60000) return;
+  lastAlertTime = now;
+
+  const extreme = thunder >= 60;
+  const label   = extreme ? 'PELIGRO' : 'PRECAUCIÓN';
+  addLog(`⚡ ${label} — Tormenta ${thunder.toFixed(0)}%`, extreme ? 'danger' : 'warn');
+
+  const f = document.getElementById('flashOverlay');
+  f.className = ''; void f.offsetWidth; f.className = 'flash-overlay active';
+
+  if (navigator.vibrate) navigator.vibrate([300,100,300,100,600]);
+  if (!muted) playAlertSound(extreme);
+
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(`⚡ LightningGuard — ${label}`, {
+      body: `Probabilidad de tormenta eléctrica: ${thunder.toFixed(0)}%`,
+      tag: 'lightning', requireInteraction: true
+    });
+  }
+}
+
+function testAlert() {
+  getAudioCtx();
+  lastAlertTime = 0;
+  triggerAlert(85);
+  addLog('— Test ejecutado —', 'warn');
+}
+
+// ── AUDIO ─────────────────────────────────────────────────
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playAlertSound(extreme=false) {
+  try {
+    const ac = getAudioCtx();
+    const seq = extreme ? [880,440,880,440,880] : [660,440,660];
+    let t = ac.currentTime;
+    seq.forEach(freq => {
+      const osc=ac.createOscillator(), gain=ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type='square'; osc.frequency.setValueAtTime(freq,t);
+      gain.gain.setValueAtTime(0.3,t);
+      gain.gain.exponentialRampToValueAtTime(0.001,t+0.22);
+      osc.start(t); osc.stop(t+0.22); t+=0.25;
+    });
+  } catch(e){}
+}
+
+function toggleMute() {
+  muted = !muted;
+  document.getElementById('btnMute').textContent = muted ? '🔊 ACTIVAR' : '🔇 SILENCIAR';
+  addLog(muted ? 'Audio silenciado' : 'Audio activado', 'info');
+}
+
+// ── LOG ───────────────────────────────────────────────────
+function addLog(msg, type='info') {
+  const li = document.createElement('li');
+  li.className = `log-item ${type}`;
+  li.innerHTML = `<span class="log-time">${formatTime(Date.now())}</span> ${msg}`;
+  const list = document.getElementById('logList');
+  list.insertBefore(li, list.firstChild);
+  if (list.children.length > 60) list.removeChild(list.lastChild);
+}
+
+function formatTime(ts) {
+  return new Date(ts).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+// ── RADIUS ────────────────────────────────────────────────
+document.getElementById('radiusSlider').addEventListener('input', function() {
+  ALERT_RADIUS_KM = parseInt(this.value);
+  document.getElementById('radiusDisplay').textContent = ALERT_RADIUS_KM;
+  document.getElementById('radarKm').textContent = ALERT_RADIUS_KM;
+});
+
+// ── RESIZE ────────────────────────────────────────────────
+window.addEventListener('resize', () => { resizeCanvas(); });
+resizeCanvas();
+
+// ── INIT ──────────────────────────────────────────────────
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+initLocation();
+addLog('LightningGuard v2.0 — datos reales Tomorrow.io', 'info');
+</script>
 </body>
 </html>
-
 
