@@ -2,548 +2,672 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#0a0a0f">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>LightningGuard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FinBot 💰</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap');
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-  :root {
-    --bg: #0a0a0f;
-    --panel: #12121f;
-    --border: #1e1e35;
-    --accent: #f0c040;
-    --danger: #ff3c3c;
-    --warn: #ff8c00;
-    --safe: #00e676;
-    --text: #d0d0e0;
-    --mono: 'Share Tech Mono', monospace;
-    --head: 'Barlow Condensed', sans-serif;
-  }
+:root {
+  --wa-bg:     #0b141a;
+  --wa-chat:   #111b21;
+  --wa-header: #202c33;
+  --wa-input:  #202c33;
+  --wa-mine:   #005c4b;
+  --wa-theirs: #202c33;
+  --wa-accent: #00a884;
+  --wa-text:   #e9edef;
+  --wa-sub:    #8696a0;
+  --wa-border: rgba(134,150,160,0.15);
+  --income:    #25d366;
+  --expense:   #ff6b6b;
+  --ant:       #ffb347;
+  --rat:       #c084fc;
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+html,body { height:100%; background:var(--wa-bg); color:var(--wa-text); font-family:'Nunito',sans-serif; overflow:hidden; }
+body { display:flex; flex-direction:column; height:100dvh; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--head);
-    min-height: 100dvh;
-    overflow-x: hidden;
-  }
+/* ── HEADER ── */
+header {
+  background:var(--wa-header);
+  padding:10px 16px;
+  display:flex; align-items:center; gap:12px;
+  border-bottom:1px solid var(--wa-border);
+  flex-shrink:0; z-index:10;
+}
+.bot-avatar {
+  width:40px; height:40px; border-radius:50%;
+  background:linear-gradient(135deg,#00a884,#005c4b);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; flex-shrink:0;
+}
+.bot-info { flex:1; }
+.bot-name { font-size:15px; font-weight:700; }
+.bot-status { font-size:12px; color:var(--wa-accent); }
+.header-btns { display:flex; gap:4px; }
+.hbtn {
+  width:36px; height:36px; border-radius:50%; border:none;
+  background:transparent; color:var(--wa-sub); font-size:18px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:background .15s;
+}
+.hbtn:active { background:rgba(255,255,255,.08); }
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(240,192,64,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(240,192,64,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+/* ── SUMMARY STRIP ── */
+#summary {
+  background:var(--wa-header);
+  border-bottom:1px solid var(--wa-border);
+  padding:8px 16px;
+  display:flex; gap:8px; overflow-x:auto;
+  flex-shrink:0; scrollbar-width:none;
+}
+#summary::-webkit-scrollbar { display:none; }
+.sum-chip {
+  flex-shrink:0; padding:5px 12px; border-radius:12px;
+  font-size:11px; font-weight:700; background:rgba(255,255,255,.05);
+  border:1px solid var(--wa-border); white-space:nowrap;
+  display:flex; gap:5px; align-items:center;
+}
+.sum-chip .val { font-size:13px; }
+.sum-chip.inc  { border-color:rgba(37,211,102,.3); color:var(--income); }
+.sum-chip.exp  { border-color:rgba(255,107,107,.3); color:var(--expense); }
+.sum-chip.bal  { border-color:rgba(0,168,132,.3);   color:var(--wa-accent); }
+.sum-chip.ant  { border-color:rgba(255,179,71,.3);  color:var(--ant); }
 
-  .app {
-    position: relative;
-    z-index: 1;
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 16px;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+/* ── CHAT AREA ── */
+#chat {
+  flex:1; overflow-y:auto; padding:12px 12px 8px;
+  scrollbar-width:thin; scrollbar-color:var(--wa-header) transparent;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(0,168,132,.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(0,92,75,.04) 0%, transparent 50%);
+}
 
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 0 8px;
-    border-bottom: 1px solid var(--border);
-  }
+/* Date separator */
+.date-sep {
+  text-align:center; margin:10px 0;
+  font-size:11px; color:var(--wa-sub);
+}
+.date-sep span {
+  background:rgba(11,20,26,.8); backdrop-filter:blur(4px);
+  padding:4px 12px; border-radius:8px;
+  border:1px solid var(--wa-border);
+}
 
-  .logo { display: flex; align-items: center; gap: 10px; }
+/* Bubble base */
+.bubble-wrap { display:flex; margin-bottom:4px; }
+.bubble-wrap.mine { justify-content:flex-end; }
+.bubble-wrap.theirs { justify-content:flex-start; }
 
-  .bolt-icon {
-    font-size: 28px;
-    animation: pulse-icon 2s ease-in-out infinite;
-  }
+.bubble {
+  max-width:82%; padding:8px 10px 6px;
+  border-radius:8px; font-size:14px; line-height:1.5;
+  position:relative; word-wrap:break-word;
+}
+.bubble-wrap.mine .bubble {
+  background:var(--wa-mine);
+  border-top-right-radius:2px;
+}
+.bubble-wrap.theirs .bubble {
+  background:var(--wa-theirs);
+  border-top-left-radius:2px;
+}
 
-  @keyframes pulse-icon {
-    0%,100% { filter: drop-shadow(0 0 6px var(--accent)); }
-    50%      { filter: drop-shadow(0 0 16px var(--accent)); }
-  }
+.bubble .time {
+  font-size:10px; color:rgba(134,150,160,.8);
+  float:right; margin-top:2px; margin-left:8px;
+}
 
-  .logo-text { font-size: 22px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: #fff; }
-  .logo-text span { color: var(--accent); }
+/* Bubble variants */
+.bubble.income-card  { border-left:3px solid var(--income); }
+.bubble.expense-card { border-left:3px solid var(--expense); }
+.bubble.ant-card     { border-left:3px solid var(--ant); background:rgba(255,179,71,.08); }
+.bubble.rat-card     { border-left:3px solid var(--rat); background:rgba(192,132,252,.08); }
+.bubble.alert-card   { border-left:3px solid var(--expense); background:rgba(255,107,107,.08); }
+.bubble.summary-card { border-left:3px solid var(--wa-accent); }
 
-  .refresh-btn {
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 5px 12px;
-    border-radius: 2px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: #555;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.2s;
-  }
-  .refresh-btn:active { color: var(--accent); border-color: var(--accent); }
-  .refresh-btn.spinning { color: var(--accent); border-color: var(--accent); animation: rot 1s linear infinite; }
-  @keyframes rot { to { transform: rotate(360deg); } }
+/* Card internals */
+.card-title { font-size:12px; font-weight:800; letter-spacing:.5px; margin-bottom:6px; opacity:.7; text-transform:uppercase; }
+.card-amount { font-size:22px; font-weight:800; }
+.card-desc { font-size:13px; opacity:.8; margin-top:2px; }
+.card-tag { display:inline-block; font-size:10px; padding:2px 8px; border-radius:10px; background:rgba(255,255,255,.08); margin-top:6px; }
 
-  .status-panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.5s;
-  }
-  .status-panel::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: var(--sc);
-    transition: background 0.5s;
-  }
+/* Summary table in bubble */
+.sum-table { width:100%; border-collapse:collapse; font-size:13px; margin-top:6px; }
+.sum-table td { padding:4px 6px; }
+.sum-table tr:nth-child(even) td { background:rgba(255,255,255,.04); }
+.sum-table .lbl { color:var(--wa-sub); }
+.sum-table .val-inc { color:var(--income); font-weight:700; }
+.sum-table .val-exp { color:var(--expense); font-weight:700; }
+.sum-table .val-bal { color:var(--wa-accent); font-weight:800; font-size:14px; }
+.sum-table .val-ant { color:var(--ant); font-weight:700; }
+.sum-table .val-rat { color:var(--rat); font-weight:700; }
 
-  .status-indicator {
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px; flex-shrink: 0;
-    border: 2px solid var(--sc);
-    box-shadow: 0 0 20px var(--sc);
-    transition: all 0.5s;
-  }
+/* Ant list */
+.ant-list { margin-top:6px; }
+.ant-item {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:5px 8px; border-radius:6px; margin-bottom:4px;
+  background:rgba(255,179,71,.08); font-size:12px;
+}
+.ant-item .ai-cat { color:var(--ant); font-weight:700; }
+.ant-item .ai-amt { color:var(--expense); font-weight:700; }
 
-  .status-info { flex: 1; }
-  .status-label { font-family: var(--mono); font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
-  .status-text { font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; transition: color 0.5s; line-height: 1; margin-top: 2px; }
-  .status-sub { font-size: 12px; font-family: var(--mono); color: #555; margin-top: 4px; }
+/* Typing indicator */
+#typing {
+  display:none; padding:4px 12px 10px;
+}
+#typing.show { display:flex; }
+.typing-bubble {
+  background:var(--wa-theirs); border-radius:8px;
+  border-top-left-radius:2px;
+  padding:10px 14px; display:flex; gap:4px; align-items:center;
+}
+.td { width:7px; height:7px; border-radius:50%; background:var(--wa-sub); animation:td .9s infinite ease-in-out; }
+.td:nth-child(2){animation-delay:.2s} .td:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-4px);opacity:1}}
 
-  .radar-wrap {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 12px;
-  }
-  .radar-label { font-family: var(--mono); font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
-  #radarCanvas { width: 100%; border-radius: 2px; display: block; }
+/* ── INPUT ── */
+#input-area {
+  background:var(--wa-bg); padding:8px 12px 18px;
+  display:flex; align-items:flex-end; gap:8px; flex-shrink:0;
+  border-top:1px solid var(--wa-border);
+}
+#msg-inp {
+  flex:1; background:var(--wa-input); border:none; border-radius:24px;
+  color:var(--wa-text); font-family:inherit; font-size:14px;
+  padding:10px 16px; outline:none; resize:none; max-height:120px;
+  scrollbar-width:none; line-height:1.4;
+}
+#msg-inp::placeholder { color:var(--wa-sub); }
+#msg-inp::-webkit-scrollbar { display:none; }
+#send-btn {
+  width:44px; height:44px; border-radius:50%;
+  background:var(--wa-accent); border:none; color:#fff;
+  font-size:20px; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:all .15s; flex-shrink:0;
+}
+#send-btn:active { transform:scale(.92); background:#008f71; }
 
-  .data-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .data-card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 12px; }
-  .data-card-label { font-family: var(--mono); font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-  .data-card-val { font-family: var(--mono); font-size: 20px; color: var(--accent); }
-  .data-card-unit { font-size: 11px; color: #555; margin-left: 3px; }
-
-  .config-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 14px; }
-  .config-title { font-family: var(--mono); font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
-  .radius-control { display: flex; align-items: center; gap: 12px; }
-  .radius-control input[type=range] { flex: 1; -webkit-appearance: none; height: 3px; background: var(--border); border-radius: 2px; outline: none; }
-  .radius-control input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 0 8px var(--accent); }
-  .radius-val { font-family: var(--mono); font-size: 18px; color: var(--accent); min-width: 60px; text-align: right; }
-
-  .log-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 12px; }
-  .log-title { font-family: var(--mono); font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
-  .log-list { list-style: none; display: flex; flex-direction: column; gap: 4px; max-height: 160px; overflow-y: auto; }
-  .log-list::-webkit-scrollbar { width: 3px; }
-  .log-list::-webkit-scrollbar-thumb { background: var(--border); }
-  .log-item { font-family: var(--mono); font-size: 11px; padding: 5px 8px; border-left: 2px solid; background: rgba(255,255,255,0.02); display: flex; align-items: baseline; gap: 8px; animation: log-in 0.3s ease; }
-  @keyframes log-in { from { opacity: 0; transform: translateX(-8px); } }
-  .log-item.danger { border-color: var(--danger); color: #ff8888; }
-  .log-item.warn   { border-color: var(--warn); color: #ffb060; }
-  .log-item.info   { border-color: #333; color: #555; }
-  .log-item .log-time { color: #444; font-size: 10px; flex-shrink: 0; }
-
-  .controls { display: flex; gap: 8px; }
-  .btn { flex: 1; padding: 12px; font-family: var(--head); font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid; border-radius: 3px; cursor: pointer; background: transparent; transition: all 0.2s; }
-  .btn-primary { color: var(--accent); border-color: var(--accent); }
-  .btn-primary:active { background: rgba(240,192,64,0.1); }
-  .btn-mute { color: #666; border-color: #333; }
-
-  .flash-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 100; opacity: 0; }
-  .flash-overlay.active { animation: flash-alert 0.8s ease-out; }
-  @keyframes flash-alert { 0% { opacity: 0.7; background: rgba(255,60,60,0.35); } 100% { opacity: 0; } }
-
-  .loc-bar { font-family: var(--mono); font-size: 10px; color: #333; text-align: center; padding: 4px 0; }
-  .update-bar { font-family: var(--mono); font-size: 10px; color: #333; text-align: center; padding: 2px 0; }
+/* ── MODAL (reset confirm) ── */
+#modal-bg {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.7); backdrop-filter:blur(4px);
+  z-index:100; align-items:center; justify-content:center;
+}
+#modal-bg.show { display:flex; }
+#modal {
+  background:var(--wa-header); border-radius:16px;
+  padding:24px 20px; margin:20px; max-width:360px; width:100%;
+  border:1px solid var(--wa-border);
+}
+#modal h3 { font-size:17px; font-weight:800; margin-bottom:8px; }
+#modal p  { font-size:13px; color:var(--wa-sub); line-height:1.5; margin-bottom:20px; }
+.modal-btns { display:flex; gap:10px; }
+.mbtn {
+  flex:1; padding:12px; border-radius:10px; border:none;
+  font-family:inherit; font-size:14px; font-weight:700;
+  cursor:pointer; transition:all .15s;
+}
+.mbtn.cancel { background:rgba(255,255,255,.07); color:var(--wa-text); }
+.mbtn.confirm { background:#ef4444; color:#fff; }
+.mbtn:active { transform:scale(.97); }
 </style>
 </head>
 <body>
 
-<div class="flash-overlay" id="flashOverlay"></div>
+<header>
+  <div class="bot-avatar">🤖</div>
+  <div class="bot-info">
+    <div class="bot-name">FinBot 💰</div>
+    <div class="bot-status" id="bot-status">En línea</div>
+  </div>
+  <div class="header-btns">
+    <button class="hbtn" title="Resumen" onclick="showSummary()">📊</button>
+    <button class="hbtn" title="Reset" onclick="confirmReset()">🔄</button>
+  </div>
+</header>
 
-<div class="app">
-  <header>
-    <div class="logo">
-      <span class="bolt-icon">⚡</span>
-      <span class="logo-text">Lightning<span>Guard</span></span>
-    </div>
-    <button class="refresh-btn" id="refreshBtn" onclick="fetchWeather()">↻ ACTUALIZAR</button>
-  </header>
+<div id="summary">
+  <div class="sum-chip inc">💚 Ingresos <span class="val" id="s-inc">$0</span></div>
+  <div class="sum-chip exp">❤️ Gastos <span class="val" id="s-exp">$0</span></div>
+  <div class="sum-chip bal">💎 Balance <span class="val" id="s-bal">$0</span></div>
+  <div class="sum-chip ant">🐜 Hormigas <span class="val" id="s-ant">$0</span></div>
+</div>
 
-  <div class="status-panel" id="statusPanel" style="--sc: var(--safe)">
-    <div class="status-indicator" id="statusIcon">🟢</div>
-    <div class="status-info">
-      <div class="status-label">Estado de alerta</div>
-      <div class="status-text" id="statusText" style="color: var(--safe)">CARGANDO</div>
-      <div class="status-sub" id="statusSub">Obteniendo datos...</div>
+<div id="chat"></div>
+<div id="typing">
+  <div class="typing-bubble">
+    <div class="td"></div><div class="td"></div><div class="td"></div>
+  </div>
+</div>
+
+<div id="input-area">
+  <textarea id="msg-inp" placeholder="Escribe tu gasto o ingreso..." rows="1"
+    oninput="autoResize(this)"
+    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"
+  ></textarea>
+  <button id="send-btn" onclick="sendMsg()">➤</button>
+</div>
+
+<!-- Reset Modal -->
+<div id="modal-bg">
+  <div id="modal">
+    <h3>⚠️ Reiniciar sistema</h3>
+    <p>Esto borrará <strong>todos los registros activos</strong> pero guardará el historial en memoria para análisis futuro.<br><br>¿Estás seguro?</p>
+    <div class="modal-btns">
+      <button class="mbtn cancel" onclick="closeModal()">Cancelar</button>
+      <button class="mbtn confirm" onclick="doReset()">Sí, reiniciar</button>
     </div>
   </div>
-
-  <div class="radar-wrap">
-    <div class="radar-label">Radar · <span id="radarKm">10</span> km radio</div>
-    <canvas id="radarCanvas" height="240"></canvas>
-  </div>
-
-  <div class="data-grid">
-    <div class="data-card">
-      <div class="data-card-label">Prob. tormenta</div>
-      <div class="data-card-val" id="valThunder">—<span class="data-card-unit">%</span></div>
-    </div>
-    <div class="data-card">
-      <div class="data-card-label">Prob. precipitación</div>
-      <div class="data-card-val" id="valPrecip">—<span class="data-card-unit">%</span></div>
-    </div>
-    <div class="data-card">
-      <div class="data-card-label">Visibilidad</div>
-      <div class="data-card-val" id="valVis">—<span class="data-card-unit">km</span></div>
-    </div>
-    <div class="data-card">
-      <div class="data-card-label">Viento</div>
-      <div class="data-card-val" id="valWind">—<span class="data-card-unit">km/h</span></div>
-    </div>
-  </div>
-
-  <div class="config-panel">
-    <div class="config-title">Radio de alerta</div>
-    <div class="radius-control">
-      <input type="range" id="radiusSlider" min="5" max="100" value="10" step="5">
-      <span class="radius-val"><span id="radiusDisplay">10</span> km</span>
-    </div>
-  </div>
-
-  <div class="log-panel">
-    <div class="log-title">Registro de eventos</div>
-    <ul class="log-list" id="logList">
-      <li class="log-item info"><span class="log-time">--:--</span> Iniciando sistema...</li>
-    </ul>
-  </div>
-
-  <div class="controls">
-    <button class="btn btn-primary" onclick="testAlert()">TEST ALERTA</button>
-    <button class="btn btn-mute" id="btnMute" onclick="toggleMute()">🔇 SILENCIAR</button>
-  </div>
-
-  <div class="loc-bar" id="locBar">Obteniendo ubicación GPS...</div>
-  <div class="update-bar" id="updateBar">—</div>
 </div>
 
 <script>
-const API_KEY = 'nRB4piKi5I6UZYfqaYpwhFsWYFMtotH3';
-let ALERT_RADIUS_KM = 10;
-let muted = false;
-let audioCtx = null;
-let userLat = null;
-let userLon = null;
-let currentThunderPct = 0;
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+const ANT_CATEGORIES = ['café','coffee','snack','dulce','candy','refresco','soda','gaseosa','chicle','gum','chuco','antojito','colación','galleta','cookie','cheto','frituras','cigarro','cigarette','cerveza','beer','jugo','juice','agua','water','helado','ice cream','chocolate'];
+const ANT_THRESHOLD  = 5; // gastos < $5 se marcan como posibles hormigas
 
-const canvas  = document.getElementById('radarCanvas');
-const ctx2d   = canvas.getContext('2d');
+let state = {
+  transactions: [],   // {id, type, amount, desc, category, isAnt, ts}
+  resetHistory: [],   // snapshots de resets anteriores
+  chatHistory:  [],   // mensajes para la IA (últimos N)
+  totalIncome:  0,
+  totalExpense: 0,
+  antTotal:     0,
+  messageCount: 0
+};
 
-// ── GEOLOCATION ──────────────────────────────────────────
-function initLocation() {
-  if (!navigator.geolocation) { addLog('GPS no disponible', 'warn'); return; }
-  navigator.geolocation.getCurrentPosition(pos => {
-    userLat = pos.coords.latitude;
-    userLon = pos.coords.longitude;
-    document.getElementById('locBar').textContent = `GPS: ${userLat.toFixed(4)}, ${userLon.toFixed(4)}`;
-    addLog('Ubicación GPS obtenida', 'info');
-    fetchWeather();
-    setInterval(fetchWeather, 5 * 60 * 1000); // cada 5 min
-  }, () => {
-    addLog('GPS denegado — activa el permiso', 'danger');
-    document.getElementById('locBar').textContent = 'GPS denegado';
-  }, { enableHighAccuracy: true, timeout: 15000 });
-}
-
-// ── TOMORROW.IO ───────────────────────────────────────────
-async function fetchWeather() {
-  if (userLat === null) { addLog('Sin GPS aún', 'warn'); return; }
-  const btn = document.getElementById('refreshBtn');
-  btn.classList.add('spinning');
-  addLog('Consultando Tomorrow.io...', 'info');
-
-  const fields = 'thunderstormProbability,precipitationProbability,windSpeed,visibility';
-  const url = `https://api.tomorrow.io/v4/weather/realtime?location=${userLat},${userLon}&fields=${fields}&units=metric&apikey=${API_KEY}`;
-
+// ═══════════════════════════════════════
+//  STORAGE (usa window.storage si existe, si no localStorage)
+// ═══════════════════════════════════════
+async function saveState() {
   try {
-    const res  = await fetch(url);
-    const data = await res.json();
-
-    if (!res.ok) {
-      addLog(`API Error: ${data?.message || res.status}`, 'danger');
-      btn.classList.remove('spinning');
-      return;
+    if (window.storage) {
+      await window.storage.set('finbot-state', JSON.stringify(state));
+    } else {
+      localStorage.setItem('finbot-state', JSON.stringify(state));
     }
-
-    const v = data.data.values;
-    processData(v);
-    document.getElementById('updateBar').textContent = `Actualizado: ${formatTime(Date.now())}`;
-    addLog('Datos reales recibidos ✓', 'info');
-  } catch(e) {
-    addLog(`Error de red: ${e.message}`, 'danger');
-  }
-  btn.classList.remove('spinning');
+  } catch(e) {}
 }
 
-function processData(v) {
-  const thunder = v.thunderstormProbability   ?? 0;
-  const precip  = v.precipitationProbability  ?? 0;
-  const windMs  = v.windSpeed                 ?? 0;
-  const vis     = v.visibility                ?? 0;
-  const windKmh = (windMs * 3.6).toFixed(1);
-
-  currentThunderPct = thunder;
-
-  document.getElementById('valThunder').innerHTML = `${thunder.toFixed(0)}<span class="data-card-unit">%</span>`;
-  document.getElementById('valPrecip').innerHTML  = `${precip.toFixed(0)}<span class="data-card-unit">%</span>`;
-  document.getElementById('valVis').innerHTML     = `${vis.toFixed(1)}<span class="data-card-unit">km</span>`;
-  document.getElementById('valWind').innerHTML    = `${windKmh}<span class="data-card-unit">km/h</span>`;
-
-  updateStatus(thunder);
-
-  if (thunder >= 30) triggerAlert(thunder);
+async function loadState() {
+  try {
+    let raw = null;
+    if (window.storage) {
+      const r = await window.storage.get('finbot-state');
+      raw = r ? r.value : null;
+    } else {
+      raw = localStorage.getItem('finbot-state');
+    }
+    if (raw) {
+      const saved = JSON.parse(raw);
+      Object.assign(state, saved);
+    }
+  } catch(e) {}
 }
 
-// ── STATUS ────────────────────────────────────────────────
-function updateStatus(thunder) {
-  let icon, text, sub, color;
-  if (thunder >= 60) {
-    icon = '⚠️'; text = 'PELIGRO'; color = 'var(--danger)';
-    sub = `Tormenta eléctrica probable — ${thunder.toFixed(0)}%`;
-  } else if (thunder >= 25) {
-    icon = '🟡'; text = 'PRECAUCIÓN'; color = 'var(--warn)';
-    sub = `Actividad eléctrica posible — ${thunder.toFixed(0)}%`;
+// ═══════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════
+function now() {
+  return new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+}
+function fmt(n) {
+  return '$' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+}
+function isAntExpense(amount, desc) {
+  if (amount > ANT_THRESHOLD) return false;
+  const d = (desc||'').toLowerCase();
+  return ANT_CATEGORIES.some(c => d.includes(c)) || amount <= 2;
+}
+function scrollBottom() {
+  const c = document.getElementById('chat');
+  setTimeout(() => c.scrollTop = c.scrollHeight, 50);
+}
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+function updateStrip() {
+  const bal = state.totalIncome - state.totalExpense;
+  document.getElementById('s-inc').textContent = fmt(state.totalIncome);
+  document.getElementById('s-exp').textContent = fmt(state.totalExpense);
+  document.getElementById('s-bal').textContent = fmt(bal);
+  document.getElementById('s-ant').textContent = fmt(state.antTotal);
+}
+
+// ═══════════════════════════════════════
+//  CHAT RENDER
+// ═══════════════════════════════════════
+function appendBubble(html, side='theirs', extraClass='') {
+  const chat = document.getElementById('chat');
+  const wrap = document.createElement('div');
+  wrap.className = `bubble-wrap ${side}`;
+  wrap.innerHTML = `<div class="bubble ${extraClass}">${html}<span class="time">${now()}</span></div>`;
+  chat.appendChild(wrap);
+  scrollBottom();
+}
+
+function appendUserBubble(text) {
+  appendBubble(`<span>${escHtml(text)}</span>`, 'mine');
+}
+
+function setTyping(on) {
+  document.getElementById('typing').classList.toggle('show', on);
+  document.getElementById('bot-status').textContent = on ? 'escribiendo...' : 'En línea';
+  if (on) scrollBottom();
+}
+
+// ═══════════════════════════════════════
+//  PARSE TRANSACTION (local, rápido)
+// ═══════════════════════════════════════
+function parseTransaction(text) {
+  const t = text.toLowerCase().trim();
+
+  // Income keywords
+  const incomeKW = ['cobré','cobr','gané','gané','recibi','recibí','ingres','depósito','deposito','pago','me pagaron','salario','sueldo','venta','vendí'];
+  // Expense keywords
+  const expenseKW = ['gasté','gaste','pagué','pague','compr','gasto','cost','cobrar','salió','salio','perdí'];
+
+  let type = null;
+  if (incomeKW.some(k => t.includes(k))) type = 'income';
+  else if (expenseKW.some(k => t.includes(k))) type = 'expense';
+
+  // Extract amount — support $200, 200 pesos, 200.50, etc.
+  const amtMatch = t.match(/[\$C]?\s*(\d{1,6}(?:[.,]\d{1,2})?)/);
+  const amount = amtMatch ? parseFloat(amtMatch[1].replace(',','.')) : null;
+
+  return { type, amount };
+}
+
+// ═══════════════════════════════════════
+//  AI CALL
+// ═══════════════════════════════════════
+async function askAI(userMsg) {
+  // Build context summary
+  const bal = state.totalIncome - state.totalExpense;
+  const antPct = state.totalExpense > 0 ? ((state.antTotal / state.totalExpense) * 100).toFixed(0) : 0;
+
+  const systemPrompt = `Eres FinBot, un asistente contable financiero personal inteligente con personalidad cálida, directa y motivadora. Hablas en español informal (tuteo). Tu misión principal es:
+
+1. DETECTAR y registrar ingresos/gastos del mensaje del usuario
+2. DETECTAR gastos hormiga (pequeños gastos frecuentes que acumulan deuda sin que el usuario se dé cuenta)
+3. Ayudar al usuario a SALIR DEL CÍRCULO DE LA RATA (trabajar solo para pagar gastos, sin libertad financiera)
+4. Dar consejos prácticos basados en la filosofía de Padre Rico/Cashflow: activos vs pasivos, flujo de caja, inversión
+
+ESTADO ACTUAL DE CUENTAS:
+- Total ingresos: ${fmt(state.totalIncome)}
+- Total gastos: ${fmt(state.totalExpense)}
+- Balance actual: ${fmt(bal)}
+- Gastos hormiga acumulados: ${fmt(state.antTotal)} (${antPct}% del total de gastos)
+- Número de transacciones: ${state.transactions.length}
+
+REGLAS DE RESPUESTA:
+- Si el usuario registra un INGRESO: confirma con emoji 💚, felicítalo brevemente, da un consejo de cómo invertir o ahorrar ese dinero
+- Si el usuario registra un GASTO: confirma con emoji ❤️, analiza si es hormiga 🐜, comenta si está afectando su libertad financiera
+- Si detectas GASTO HORMIGA (< $5 o categorías como café, snacks, refresco, cigarros): alerta con 🐜 y explica el impacto acumulado mensual
+- Si el balance es NEGATIVO: activa modo alerta roja 🚨, analiza qué está pasando
+- Si el usuario pide RESUMEN o ANÁLISIS: da reporte completo con insights
+- Si el usuario escribe /reset: confirma que borraste los datos y motivar a empezar de nuevo
+- Si el usuario hace preguntas financieras generales: responde con sabiduría práctica del círculo de la rata, activos, pasivos, etc.
+
+FORMATO DE RESPUESTA: Máximo 3-4 líneas. Directo, humano, sin tecnicismos innecesarios. Usa emojis moderadamente. Si das una cifra o dato importante, ponla en negritas con **cifra**.
+
+NO respondas con listas largas. Sé conversacional como un amigo que sabe de finanzas.`;
+
+  // Keep last 12 messages for context
+  if (state.chatHistory.length > 12) state.chatHistory = state.chatHistory.slice(-12);
+  state.chatHistory.push({ role:'user', content: userMsg });
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: state.chatHistory
+    })
+  });
+
+  const data = await res.json();
+  const reply = data.content?.[0]?.text || 'No pude procesar eso 😅';
+
+  state.chatHistory.push({ role:'assistant', content: reply });
+  await saveState();
+
+  return reply;
+}
+
+// ═══════════════════════════════════════
+//  RENDER TRANSACTION BUBBLE
+// ═══════════════════════════════════════
+function renderTransactionBubble(tx) {
+  if (tx.type === 'income') {
+    appendBubble(`
+      <div class="card-title">💚 Ingreso registrado</div>
+      <div class="card-amount" style="color:var(--income)">${fmt(tx.amount)}</div>
+      <div class="card-desc">${escHtml(tx.desc)}</div>
+    `, 'theirs', 'income-card');
   } else {
-    icon = '🟢'; text = 'SEGURO'; color = 'var(--safe)';
-    sub = `Sin riesgo eléctrico detectado`;
+    const isAnt = tx.isAnt;
+    appendBubble(`
+      <div class="card-title">${isAnt ? '🐜 Gasto Hormiga detectado' : '❤️ Gasto registrado'}</div>
+      <div class="card-amount" style="color:${isAnt ? 'var(--ant)' : 'var(--expense)'}">${fmt(tx.amount)}</div>
+      <div class="card-desc">${escHtml(tx.desc)}</div>
+      ${isAnt ? `<span class="card-tag" style="color:var(--ant)">⚠️ Acumulado hormiga: ${fmt(state.antTotal)}</span>` : ''}
+    `, 'theirs', isAnt ? 'ant-card' : 'expense-card');
   }
-  const panel = document.getElementById('statusPanel');
-  panel.style.setProperty('--sc', color);
-  document.getElementById('statusIcon').textContent = icon;
-  document.getElementById('statusIcon').style.borderColor = color;
-  document.getElementById('statusIcon').style.boxShadow = `0 0 20px ${color}`;
-  document.getElementById('statusText').textContent = text;
-  document.getElementById('statusText').style.color = color;
-  document.getElementById('statusSub').textContent  = sub;
 }
 
-// ── RADAR ─────────────────────────────────────────────────
-function resizeCanvas() {
-  canvas.width  = canvas.parentElement.clientWidth - 24;
-  canvas.height = 240;
+// ═══════════════════════════════════════
+//  MAIN SEND
+// ═══════════════════════════════════════
+async function sendMsg() {
+  const inp = document.getElementById('msg-inp');
+  const text = inp.value.trim();
+  if (!text) return;
+
+  inp.value = '';
+  inp.style.height = 'auto';
+  appendUserBubble(text);
+
+  // Handle /reset command
+  if (text.toLowerCase().startsWith('/reset') || text.toLowerCase().includes('reset') || text.toLowerCase().includes('reiniciar')) {
+    confirmReset();
+    return;
+  }
+
+  // Handle /resumen or summary requests
+  if (text.toLowerCase().match(/\/(resumen|balance|reporte|summary)|^(resumen|balance|reporte|mi situaci)/)) {
+    showSummary();
+  }
+
+  // Parse local transaction
+  const parsed = parseTransaction(text);
+  if (parsed.type && parsed.amount) {
+    const tx = {
+      id:     Date.now(),
+      type:   parsed.type,
+      amount: parsed.amount,
+      desc:   text,
+      isAnt:  parsed.type === 'expense' && isAntExpense(parsed.amount, text),
+      ts:     new Date().toISOString()
+    };
+    state.transactions.push(tx);
+    if (parsed.type === 'income') {
+      state.totalIncome += parsed.amount;
+    } else {
+      state.totalExpense += parsed.amount;
+      if (tx.isAnt) state.antTotal += parsed.amount;
+    }
+    updateStrip();
+    renderTransactionBubble(tx);
+  }
+
+  // Send to AI
+  setTyping(true);
+  try {
+    const reply = await askAI(text);
+    setTyping(false);
+
+    // Render AI response — detect if it's a rat-race advice
+    const isRat = reply.toLowerCase().includes('círculo') || reply.toLowerCase().includes('rata') || reply.toLowerCase().includes('activo') || reply.toLowerCase().includes('pasivo');
+    const extraClass = isRat ? 'rat-card' : '';
+    // Convert **bold** markdown
+    const formatted = reply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+    appendBubble(formatted, 'theirs', extraClass);
+  } catch(e) {
+    setTyping(false);
+    appendBubble('⚠️ Sin conexión con IA. Revisa tu internet.', 'theirs', 'alert-card');
+  }
 }
 
-function mulberry32(seed) {
-  return function() {
-    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
-    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
-  };
+// ═══════════════════════════════════════
+//  SUMMARY
+// ═══════════════════════════════════════
+function showSummary() {
+  const bal = state.totalIncome - state.totalExpense;
+  const antPct = state.totalExpense > 0 ? ((state.antTotal / state.totalExpense) * 100).toFixed(0) : 0;
+  const txCount = state.transactions.length;
+  const incCount = state.transactions.filter(t=>t.type==='income').length;
+  const expCount = state.transactions.filter(t=>t.type==='expense').length;
+  const antCount = state.transactions.filter(t=>t.isAnt).length;
+  const statusColor = bal >= 0 ? 'var(--income)' : 'var(--expense)';
+  const statusIcon  = bal >= 0 ? '✅' : '🚨';
+
+  // Top ant categories
+  const antTxs = state.transactions.filter(t=>t.isAnt);
+  const antList = antTxs.slice(-5).reverse().map(t =>
+    `<div class="ant-item"><span class="ai-cat">🐜 ${escHtml(t.desc.substring(0,30))}</span><span class="ai-amt">${fmt(t.amount)}</span></div>`
+  ).join('');
+
+  appendBubble(`
+    <div class="card-title">📊 Resumen financiero</div>
+    <table class="sum-table">
+      <tr><td class="lbl">💚 Ingresos</td><td class="val-inc">${fmt(state.totalIncome)}</td></tr>
+      <tr><td class="lbl">❤️ Gastos</td><td class="val-exp">${fmt(state.totalExpense)}</td></tr>
+      <tr><td class="lbl">${statusIcon} Balance</td><td class="val-bal" style="color:${statusColor}">${fmt(bal)}</td></tr>
+      <tr><td class="lbl">🐜 Hormigas</td><td class="val-ant">${fmt(state.antTotal)} (${antPct}%)</td></tr>
+      <tr><td class="lbl">📋 Registros</td><td>${txCount} (${incCount} ingresos, ${expCount} gastos)</td></tr>
+    </table>
+    ${antCount > 0 ? `<div style="margin-top:8px;font-size:11px;color:var(--wa-sub);margin-bottom:4px;">ÚLTIMOS GASTOS HORMIGA</div>${antList}` : ''}
+    <div style="margin-top:8px;font-size:11px;color:var(--wa-sub)">Resets anteriores: ${state.resetHistory.length}</div>
+  `, 'theirs', 'summary-card');
 }
 
-function drawRadar() {
-  const W = canvas.width, H = canvas.height;
-  const cx = W/2, cy = H/2;
-  const maxR = Math.min(W,H) * 0.44;
-  const thunder = currentThunderPct;
+// ═══════════════════════════════════════
+//  RESET
+// ═══════════════════════════════════════
+function confirmReset() {
+  document.getElementById('modal-bg').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('modal-bg').classList.remove('show');
+}
+async function doReset() {
+  closeModal();
 
-  ctx2d.clearRect(0,0,W,H);
-  ctx2d.fillStyle = '#080810';
-  ctx2d.fillRect(0,0,W,H);
-
-  // Rings
-  [0.33,0.66,1].forEach(f => {
-    ctx2d.beginPath();
-    ctx2d.arc(cx,cy,maxR*f,0,Math.PI*2);
-    ctx2d.strokeStyle = '#1a1a2e';
-    ctx2d.lineWidth = 1;
-    ctx2d.stroke();
-    ctx2d.fillStyle = '#2a2a4a';
-    ctx2d.font = '9px Share Tech Mono, monospace';
-    ctx2d.fillText(`${(ALERT_RADIUS_KM*f).toFixed(0)}km`, cx+maxR*f+3, cy-3);
+  // Save snapshot to history
+  state.resetHistory.push({
+    ts:           new Date().toISOString(),
+    totalIncome:  state.totalIncome,
+    totalExpense: state.totalExpense,
+    antTotal:     state.antTotal,
+    txCount:      state.transactions.length
   });
 
-  // Cross
-  ctx2d.strokeStyle = '#1a1a2e'; ctx2d.lineWidth = 1;
-  ctx2d.beginPath(); ctx2d.moveTo(cx,cy-maxR); ctx2d.lineTo(cx,cy+maxR); ctx2d.stroke();
-  ctx2d.beginPath(); ctx2d.moveTo(cx-maxR,cy); ctx2d.lineTo(cx+maxR,cy); ctx2d.stroke();
+  // Clear active data
+  const prev = { inc: state.totalIncome, exp: state.totalExpense, ant: state.antTotal };
+  state.transactions  = [];
+  state.chatHistory   = [];
+  state.totalIncome   = 0;
+  state.totalExpense  = 0;
+  state.antTotal      = 0;
 
-  // Alert ring
-  ctx2d.beginPath();
-  ctx2d.arc(cx,cy,maxR,0,Math.PI*2);
-  ctx2d.strokeStyle = thunder>=60 ? 'rgba(255,60,60,0.5)' : thunder>=25 ? 'rgba(255,140,0,0.4)' : 'rgba(0,230,118,0.2)';
-  ctx2d.lineWidth = 1.5;
-  ctx2d.setLineDash([4,4]);
-  ctx2d.stroke();
-  ctx2d.setLineDash([]);
+  updateStrip();
+  await saveState();
 
-  // Sweep
-  const angle = ((Date.now()/3000)%1)*Math.PI*2;
-  ctx2d.save();
-  ctx2d.translate(cx,cy);
-  ctx2d.rotate(angle);
-  const sc = thunder>=60 ? 'rgba(255,60,60,0.3)' : thunder>=25 ? 'rgba(255,140,0,0.25)' : 'rgba(0,230,118,0.2)';
-  const grad = ctx2d.createLinearGradient(0,0,maxR,0);
-  grad.addColorStop(0, sc); grad.addColorStop(1,'transparent');
-  ctx2d.beginPath(); ctx2d.moveTo(0,0); ctx2d.arc(0,0,maxR,-0.5,0.5); ctx2d.closePath();
-  ctx2d.fillStyle = grad; ctx2d.fill();
-  ctx2d.restore();
+  // Show reset message
+  appendBubble(`
+    <div class="card-title">🔄 Sistema reiniciado</div>
+    <div class="card-desc" style="margin-bottom:8px">Los datos activos fueron borrados. El historial quedó guardado en memoria.</div>
+    <table class="sum-table">
+      <tr><td class="lbl">Período anterior</td><td></td></tr>
+      <tr><td class="lbl">💚 Ingresos</td><td class="val-inc">${fmt(prev.inc)}</td></tr>
+      <tr><td class="lbl">❤️ Gastos</td><td class="val-exp">${fmt(prev.exp)}</td></tr>
+      <tr><td class="lbl">🐜 Hormigas</td><td class="val-ant">${fmt(prev.ant)}</td></tr>
+      <tr><td class="lbl">📚 Resets totales</td><td>${state.resetHistory.length}</td></tr>
+    </table>
+  `, 'theirs', 'summary-card');
 
-  // Activity blobs proportional to thunder %
-  if (thunder > 0) {
-    const count = Math.round(thunder / 10);
-    const rng = mulberry32(Math.floor(Date.now()/8000));
-    const c = thunder>=60 ? '255,60,60' : thunder>=25 ? '255,140,0' : '240,192,64';
-    for (let i=0; i<count; i++) {
-      const a  = rng()*Math.PI*2;
-      const r  = rng()*maxR*0.9;
-      const px = cx + r*Math.cos(a);
-      const py = cy + r*Math.sin(a);
-      const g  = ctx2d.createRadialGradient(px,py,0,px,py,14);
-      g.addColorStop(0,`rgba(${c},0.4)`); g.addColorStop(1,'transparent');
-      ctx2d.fillStyle = g;
-      ctx2d.beginPath(); ctx2d.arc(px,py,14,0,Math.PI*2); ctx2d.fill();
-      ctx2d.beginPath(); ctx2d.arc(px,py,3,0,Math.PI*2);
-      ctx2d.fillStyle = `rgba(${c},0.9)`; ctx2d.fill();
+  // AI motivational message
+  setTyping(true);
+  try {
+    const msg = `El usuario acaba de hacer un reset del sistema. Sus datos anteriores fueron: ingresos ${fmt(prev.inc)}, gastos ${fmt(prev.exp)}, gastos hormiga ${fmt(prev.ant)}. Dale un mensaje motivacional corto para empezar de nuevo, menciona algo específico de sus números anteriores y un consejo concreto para este nuevo periodo.`;
+    const reply = await askAI(msg);
+    setTyping(false);
+    const formatted = reply.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+    appendBubble(formatted, 'theirs', 'rat-card');
+  } catch {
+    setTyping(false);
+  }
+}
+
+// ═══════════════════════════════════════
+//  WELCOME
+// ═══════════════════════════════════════
+async function welcome() {
+  await loadState();
+  updateStrip();
+
+  const isReturning = state.transactions.length > 0 || state.resetHistory.length > 0;
+
+  if (isReturning) {
+    const bal = state.totalIncome - state.totalExpense;
+    appendBubble(`
+      <div class="card-title">👋 Bienvenido de vuelta</div>
+      <div class="card-desc">Aquí está tu situación actual:</div>
+      <table class="sum-table" style="margin-top:6px">
+        <tr><td class="lbl">💚 Ingresos</td><td class="val-inc">${fmt(state.totalIncome)}</td></tr>
+        <tr><td class="lbl">❤️ Gastos</td><td class="val-exp">${fmt(state.totalExpense)}</td></tr>
+        <tr><td class="lbl">💎 Balance</td><td class="val-bal">${fmt(bal)}</td></tr>
+        <tr><td class="lbl">🐜 Hormigas</td><td class="val-ant">${fmt(state.antTotal)}</td></tr>
+      </table>
+    `, 'theirs', 'summary-card');
+  } else {
+    appendBubble(`
+      ¡Hola! 👋 Soy <strong>FinBot</strong>, tu asistente financiero personal.<br><br>
+      Puedo ayudarte a:<br>
+      💚 Registrar ingresos — <em>"Cobré $500"</em><br>
+      ❤️ Registrar gastos — <em>"Gasté $3 en café"</em><br>
+      🐜 Detectar <strong>gastos hormiga</strong><br>
+      📊 Analizar tu situación — escribe <em>"resumen"</em><br>
+      🔄 Reiniciar — botón 🔄 o escribe <em>"reset"</em>
+    `, 'theirs');
+
+    // First-time AI greeting
+    setTyping(true);
+    try {
+      const reply = await askAI('Hola, acabo de iniciar la app. Soy nuevo usuario. Preséntate brevemente y dame el consejo más importante para empezar a controlar mis finanzas hoy mismo.');
+      setTyping(false);
+      const formatted = reply.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+      appendBubble(formatted, 'theirs', 'rat-card');
+    } catch {
+      setTyping(false);
     }
   }
-
-  // User dot
-  ctx2d.beginPath(); ctx2d.arc(cx,cy,6,0,Math.PI*2); ctx2d.fillStyle='#00e676'; ctx2d.fill();
-  ctx2d.beginPath(); ctx2d.arc(cx,cy,3,0,Math.PI*2); ctx2d.fillStyle='#fff'; ctx2d.fill();
-
-  // Compass
-  ['N','E','S','O'].forEach((d,i) => {
-    const a = i*Math.PI/2 - Math.PI/2;
-    const r = maxR+14;
-    ctx2d.fillStyle = d==='N' ? '#f0c040' : '#333';
-    ctx2d.font = 'bold 11px Barlow Condensed, sans-serif';
-    ctx2d.textAlign = 'center'; ctx2d.textBaseline = 'middle';
-    ctx2d.fillText(d, cx+r*Math.cos(a), cy+r*Math.sin(a));
-  });
-  ctx2d.textAlign='left'; ctx2d.textBaseline='alphabetic';
 }
 
-function radarLoop() { drawRadar(); requestAnimationFrame(radarLoop); }
-radarLoop();
-
-// ── ALERT ─────────────────────────────────────────────────
-let lastAlertTime = 0;
-
-function triggerAlert(thunder) {
-  const now = Date.now();
-  if (now - lastAlertTime < 60000) return;
-  lastAlertTime = now;
-
-  const extreme = thunder >= 60;
-  const label   = extreme ? 'PELIGRO' : 'PRECAUCIÓN';
-  addLog(`⚡ ${label} — Tormenta ${thunder.toFixed(0)}%`, extreme ? 'danger' : 'warn');
-
-  const f = document.getElementById('flashOverlay');
-  f.className = ''; void f.offsetWidth; f.className = 'flash-overlay active';
-
-  if (navigator.vibrate) navigator.vibrate([300,100,300,100,600]);
-  if (!muted) playAlertSound(extreme);
-
-  if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification(`⚡ LightningGuard — ${label}`, {
-      body: `Probabilidad de tormenta eléctrica: ${thunder.toFixed(0)}%`,
-      tag: 'lightning', requireInteraction: true
-    });
-  }
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function testAlert() {
-  getAudioCtx();
-  lastAlertTime = 0;
-  triggerAlert(85);
-  addLog('— Test ejecutado —', 'warn');
-}
-
-// ── AUDIO ─────────────────────────────────────────────────
-function getAudioCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  return audioCtx;
-}
-
-function playAlertSound(extreme=false) {
-  try {
-    const ac = getAudioCtx();
-    const seq = extreme ? [880,440,880,440,880] : [660,440,660];
-    let t = ac.currentTime;
-    seq.forEach(freq => {
-      const osc=ac.createOscillator(), gain=ac.createGain();
-      osc.connect(gain); gain.connect(ac.destination);
-      osc.type='square'; osc.frequency.setValueAtTime(freq,t);
-      gain.gain.setValueAtTime(0.3,t);
-      gain.gain.exponentialRampToValueAtTime(0.001,t+0.22);
-      osc.start(t); osc.stop(t+0.22); t+=0.25;
-    });
-  } catch(e){}
-}
-
-function toggleMute() {
-  muted = !muted;
-  document.getElementById('btnMute').textContent = muted ? '🔊 ACTIVAR' : '🔇 SILENCIAR';
-  addLog(muted ? 'Audio silenciado' : 'Audio activado', 'info');
-}
-
-// ── LOG ───────────────────────────────────────────────────
-function addLog(msg, type='info') {
-  const li = document.createElement('li');
-  li.className = `log-item ${type}`;
-  li.innerHTML = `<span class="log-time">${formatTime(Date.now())}</span> ${msg}`;
-  const list = document.getElementById('logList');
-  list.insertBefore(li, list.firstChild);
-  if (list.children.length > 60) list.removeChild(list.lastChild);
-}
-
-function formatTime(ts) {
-  return new Date(ts).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-}
-
-// ── RADIUS ────────────────────────────────────────────────
-document.getElementById('radiusSlider').addEventListener('input', function() {
-  ALERT_RADIUS_KM = parseInt(this.value);
-  document.getElementById('radiusDisplay').textContent = ALERT_RADIUS_KM;
-  document.getElementById('radarKm').textContent = ALERT_RADIUS_KM;
-});
-
-// ── RESIZE ────────────────────────────────────────────────
-window.addEventListener('resize', () => { resizeCanvas(); });
-resizeCanvas();
-
-// ── INIT ──────────────────────────────────────────────────
-if ('Notification' in window && Notification.permission === 'default') {
-  Notification.requestPermission();
-}
-initLocation();
-addLog('LightningGuard v2.0 — datos reales Tomorrow.io', 'info');
+// ── INIT ──
+welcome();
 </script>
 </body>
 </html>
-
