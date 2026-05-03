@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
 :root {
   --wa-bg:     #0b141a;
   --wa-chat:   #111b21;
@@ -24,112 +23,51 @@
   --ant:       #ffb347;
   --rat:       #c084fc;
 }
-
 html,body { height:100%; background:var(--wa-bg); color:var(--wa-text); font-family:'Nunito',sans-serif; overflow:hidden; }
 body { display:flex; flex-direction:column; height:100dvh; }
 
-/* ── HEADER ── */
-header {
-  background:var(--wa-header);
-  padding:10px 16px;
-  display:flex; align-items:center; gap:12px;
-  border-bottom:1px solid var(--wa-border);
-  flex-shrink:0; z-index:10;
-}
-.bot-avatar {
-  width:40px; height:40px; border-radius:50%;
-  background:linear-gradient(135deg,#00a884,#005c4b);
-  display:flex; align-items:center; justify-content:center;
-  font-size:20px; flex-shrink:0;
-}
+/* HEADER */
+header { background:var(--wa-header); padding:10px 16px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--wa-border); flex-shrink:0; z-index:10; }
+.bot-avatar { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,#00a884,#005c4b); display:flex; align-items:center; justify-content:center; font-size:20px; }
 .bot-info { flex:1; }
 .bot-name { font-size:15px; font-weight:700; }
 .bot-status { font-size:12px; color:var(--wa-accent); }
 .header-btns { display:flex; gap:4px; }
-.hbtn {
-  width:36px; height:36px; border-radius:50%; border:none;
-  background:transparent; color:var(--wa-sub); font-size:18px;
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; transition:background .15s;
-}
-.hbtn:active { background:rgba(255,255,255,.08); }
+.hbtn { width:36px; height:36px; border-radius:50%; border:none; background:transparent; color:var(--wa-sub); font-size:18px; cursor:pointer; }
 
-/* ── SUMMARY STRIP ── */
-#summary {
-  background:var(--wa-header);
-  border-bottom:1px solid var(--wa-border);
-  padding:8px 16px;
-  display:flex; gap:8px; overflow-x:auto;
-  flex-shrink:0; scrollbar-width:none;
-}
-#summary::-webkit-scrollbar { display:none; }
-.sum-chip {
-  flex-shrink:0; padding:5px 12px; border-radius:12px;
-  font-size:11px; font-weight:700; background:rgba(255,255,255,.05);
-  border:1px solid var(--wa-border); white-space:nowrap;
-  display:flex; gap:5px; align-items:center;
-}
+/* SUMMARY */
+#summary { background:var(--wa-header); border-bottom:1px solid var(--wa-border); padding:8px 16px; display:flex; gap:8px; overflow-x:auto; flex-shrink:0; scrollbar-width:none; }
+.sum-chip { flex-shrink:0; padding:5px 12px; border-radius:12px; font-size:11px; font-weight:700; background:rgba(255,255,255,.05); border:1px solid var(--wa-border); white-space:nowrap; }
 .sum-chip .val { font-size:13px; }
-.sum-chip.inc  { border-color:rgba(37,211,102,.3); color:var(--income); }
-.sum-chip.exp  { border-color:rgba(255,107,107,.3); color:var(--expense); }
-.sum-chip.bal  { border-color:rgba(0,168,132,.3);   color:var(--wa-accent); }
-.sum-chip.ant  { border-color:rgba(255,179,71,.3);  color:var(--ant); }
+.sum-chip.inc { border-color:rgba(37,211,102,.3); color:var(--income); }
+.sum-chip.exp { border-color:rgba(255,107,107,.3); color:var(--expense); }
+.sum-chip.bal { border-color:rgba(0,168,132,.3); color:var(--wa-accent); }
 
-/* ── CHAT AREA ── */
-#chat {
-  flex:1; overflow-y:auto; padding:12px 12px 8px;
-  scrollbar-width:thin; scrollbar-color:var(--wa-header) transparent;
-  background-image:
-    radial-gradient(circle at 20% 30%, rgba(0,168,132,.03) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(0,92,75,.04) 0%, transparent 50%);
-}
-
-.bubble-wrap { display:flex; margin-bottom:4px; }
+/* CHAT */
+#chat { flex:1; overflow-y:auto; padding:12px; background-image: radial-gradient(circle at 20% 30%, rgba(0,168,132,.03) 0%, transparent 50%); }
+.bubble-wrap { display:flex; margin-bottom:8px; }
 .bubble-wrap.mine { justify-content:flex-end; }
 .bubble-wrap.theirs { justify-content:flex-start; }
-
-.bubble {
-  max-width:82%; padding:8px 10px 6px;
-  border-radius:8px; font-size:14px; line-height:1.5;
-  position:relative; word-wrap:break-word;
-}
+.bubble { max-width:85%; padding:8px 12px; border-radius:8px; font-size:14px; line-height:1.5; position:relative; }
 .bubble-wrap.mine .bubble { background:var(--wa-mine); border-top-right-radius:2px; }
 .bubble-wrap.theirs .bubble { background:var(--wa-theirs); border-top-left-radius:2px; }
+.time { font-size:10px; color:rgba(134,150,160,.8); float:right; margin-top:4px; margin-left:8px; }
 
-.bubble .time { font-size:10px; color:rgba(134,150,160,.8); float:right; margin-top:2px; margin-left:8px; }
+/* CARDS */
+.income-card { border-left:4px solid var(--income); }
+.expense-card { border-left:4px solid var(--expense); }
+.ant-card { border-left:4px solid var(--ant); background:rgba(255,179,71,0.1) !important; }
 
-/* Cards */
-.bubble.income-card  { border-left:3px solid var(--income); }
-.bubble.expense-card { border-left:3px solid var(--expense); }
-.bubble.ant-card     { border-left:3px solid var(--ant); background:rgba(255,179,71,.08); }
-.bubble.rat-card     { border-left:3px solid var(--rat); background:rgba(192,132,252,.08); }
-.bubble.summary-card { border-left:3px solid var(--wa-accent); }
+/* INPUT */
+#input-area { background:var(--wa-bg); padding:10px 12px 25px; display:flex; gap:8px; border-top:1px solid var(--wa-border); }
+#msg-inp { flex:1; background:var(--wa-input); border:none; border-radius:24px; color:white; padding:12px 16px; outline:none; resize:none; font-family:inherit; }
+#send-btn { width:48px; height:48px; border-radius:50%; background:var(--wa-accent); border:none; color:white; cursor:pointer; font-size:20px; }
 
-.card-title { font-size:11px; font-weight:800; letter-spacing:.5px; margin-bottom:4px; opacity:.7; text-transform:uppercase; }
-.card-amount { font-size:20px; font-weight:800; }
-.card-desc { font-size:13px; opacity:.8; }
-
-/* Typing indicator */
-#typing { display:none; padding:4px 12px 10px; }
+/* TYPING */
+#typing { display:none; padding:8px 16px; }
 #typing.show { display:flex; }
-.typing-bubble { background:var(--wa-theirs); border-radius:8px; border-top-left-radius:2px; padding:10px 14px; display:flex; gap:4px; }
-.td { width:7px; height:7px; border-radius:50%; background:var(--wa-sub); animation:td .9s infinite ease-in-out; }
-.td:nth-child(2){animation-delay:.2s} .td:nth-child(3){animation-delay:.4s}
-@keyframes td{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-4px);opacity:1}}
-
-/* ── INPUT ── */
-#input-area { background:var(--wa-bg); padding:8px 12px 18px; display:flex; align-items:flex-end; gap:8px; border-top:1px solid var(--wa-border); }
-#msg-inp { flex:1; background:var(--wa-input); border:none; border-radius:24px; color:var(--wa-text); font-size:14px; padding:10px 16px; outline:none; resize:none; max-height:120px; line-height:1.4; }
-#send-btn { width:44px; height:44px; border-radius:50%; background:var(--wa-accent); border:none; color:#fff; font-size:20px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
-
-/* Modal */
-#modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); z-index:100; align-items:center; justify-content:center; }
-#modal-bg.show { display:flex; }
-#modal { background:var(--wa-header); border-radius:16px; padding:24px 20px; margin:20px; width:100%; max-width:360px; border:1px solid var(--wa-border); }
-.modal-btns { display:flex; gap:10px; margin-top:20px; }
-.mbtn { flex:1; padding:12px; border-radius:10px; border:none; font-weight:700; cursor:pointer; }
-.mbtn.cancel { background:rgba(255,255,255,.07); color:var(--wa-text); }
-.mbtn.confirm { background:#ef4444; color:#fff; }
+.td { width:6px; height:6px; background:var(--wa-sub); border-radius:50%; margin:0 2px; animation: bounce 1s infinite; }
+@keyframes bounce { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
 </style>
 </head>
 <body>
@@ -142,185 +80,124 @@ header {
   </div>
   <div class="header-btns">
     <button class="hbtn" onclick="showSummary()">📊</button>
-    <button class="hbtn" onclick="confirmReset()">🔄</button>
+    <button class="hbtn" onclick="doReset()">🔄</button>
   </div>
 </header>
 
 <div id="summary">
-  <div class="sum-chip inc">💚 Ingresos <span class="val" id="s-inc">$0</span></div>
-  <div class="sum-chip exp">❤️ Gastos <span class="val" id="s-exp">$0</span></div>
-  <div class="sum-chip bal">💎 Balance <span class="val" id="s-bal">$0</span></div>
-  <div class="sum-chip ant">🐜 Hormigas <span class="val" id="s-ant">$0</span></div>
+  <div class="sum-chip inc">💚 Ingresos <span class="val" id="s-inc">$0.00</span></div>
+  <div class="sum-chip exp">❤️ Gastos <span class="val" id="s-exp">$0.00</span></div>
+  <div class="sum-chip bal">💎 Balance <span class="val" id="s-bal">$0.00</span></div>
 </div>
 
 <div id="chat"></div>
-<div id="typing">
-  <div class="typing-bubble">
-    <div class="td"></div><div class="td"></div><div class="td"></div>
-  </div>
-</div>
+<div id="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div>
 
 <div id="input-area">
-  <textarea id="msg-inp" placeholder="Escribe tu gasto o ingreso..." rows="1" oninput="autoResize(this)"></textarea>
+  <textarea id="msg-inp" placeholder="Escribe aquí..." rows="1"></textarea>
   <button id="send-btn" onclick="sendMsg()">➤</button>
 </div>
 
-<div id="modal-bg">
-  <div id="modal">
-    <h3>⚠️ Reiniciar sistema</h3>
-    <p>¿Estás seguro de que deseas borrar los registros actuales?</p>
-    <div class="modal-btns">
-      <button class="mbtn cancel" onclick="closeModal()">Cancelar</button>
-      <button class="mbtn confirm" onclick="doReset()">Sí, reiniciar</button>
-    </div>
-  </div>
-</div>
-
 <script>
-// CONFIGURACIÓN GLOBAL
-const GEMINI_API_KEY = "AIzaSyAvZvbHMISeBjHsnzcM6mJzkC6FFBVbZlQ";
-const ANT_CATEGORIES = ['café','coffee','snack','dulce','soda','gaseosa','chicle','galleta','cigarro','cerveza','helado'];
-const ANT_THRESHOLD  = 5;
+const KEY = "AIzaSyAvZvbHMISeBjHsnzcM6mJzkC6FFBVbZlQ";
+const ANT_CATEGORIES = ['café','soda','chicle','snack','cigarro','cerveza','dulce'];
 
-let state = {
-  transactions: [],
-  chatHistory:  [],
-  totalIncome:  0,
-  totalExpense: 0,
-  antTotal:     0
+let state = JSON.parse(localStorage.getItem('fin_state')) || {
+  inc: 0, exp: 0, ant: 0, history: []
 };
 
-// STORAGE
-async function saveState() {
-  localStorage.setItem('finbot-state-v2', JSON.stringify(state));
-}
-function loadState() {
-  const raw = localStorage.getItem('finbot-state-v2');
-  if (raw) Object.assign(state, JSON.parse(raw));
+function save() { localStorage.setItem('fin_state', JSON.stringify(state)); }
+
+function updateUI() {
+  document.getElementById('s-inc').textContent = '$' + state.inc.toFixed(2);
+  document.getElementById('s-exp').textContent = '$' + state.exp.toFixed(2);
+  document.getElementById('s-bal').textContent = '$' + (state.inc - state.exp).toFixed(2);
 }
 
-// HELPERS
-function now() { return new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}); }
-function fmt(n) { return '$' + Number(n).toFixed(2); }
-function scrollBottom() { const c = document.getElementById('chat'); c.scrollTop = c.scrollHeight; }
-function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
-function updateStrip() {
-  document.getElementById('s-inc').textContent = fmt(state.totalIncome);
-  document.getElementById('s-exp').textContent = fmt(state.totalExpense);
-  document.getElementById('s-bal').textContent = fmt(state.totalIncome - state.totalExpense);
-  document.getElementById('s-ant').textContent = fmt(state.antTotal);
-}
-
-// RENDER
-function appendBubble(html, side='theirs', extraClass='') {
+function append(text, side, type = '') {
   const chat = document.getElementById('chat');
-  const wrap = document.createElement('div');
-  wrap.className = `bubble-wrap ${side}`;
-  const formatted = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-  wrap.innerHTML = `<div class="bubble ${extraClass}">${formatted}<span class="time">${now()}</span></div>`;
-  chat.appendChild(wrap);
-  scrollBottom();
+  const div = document.createElement('div');
+  div.className = `bubble-wrap ${side}`;
+  const t = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  // Formatear negritas de la IA
+  const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  div.innerHTML = `<div class="bubble ${type}">${formattedText}<span class="time">${t}</span></div>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-// AI ENGINE (GEMINI)
-async function askAI(userMsg) {
-  const bal = state.totalIncome - state.totalExpense;
-  const context = `Eres FinBot, un experto financiero motivador. 
-  Cuentas actualizadas: Balance ${fmt(bal)}, Gastos Hormiga ${fmt(state.antTotal)}.
-  Instrucciones: Responde en español informal, sé muy breve (máx 3 líneas), usa emojis.
-  Si el usuario registra un gasto, analiza si es un "pasivo" o "gasto hormiga".`;
-
-  const history = state.chatHistory.slice(-6).map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }]
-  }));
-
+async function askAI(prompt) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${KEY}`;
+  const context = `Eres FinBot. Balance: $${(state.inc - state.exp)}. Responde corto (2 líneas) en español. Si es gasto, motiva a ahorrar.`;
+  
   try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [
-          { role: 'user', parts: [{ text: "Instrucciones de sistema: " + context }] },
-          ...history,
-          { role: 'user', parts: [{ text: userMsg }] }
-        ]
+        contents: [{ parts: [{ text: context + "\nUsuario: " + prompt }] }]
       })
     });
-
     const data = await res.json();
-    const reply = data.candidates[0].content.parts[0].text;
-    state.chatHistory.push({ role: 'user', content: userMsg }, { role: 'assistant', content: reply });
-    saveState();
-    return reply;
+    return data.candidates[0].content.parts[0].text;
   } catch (e) {
-    return "¡Ups! No pude conectarme con mis servidores. Revisa tu internet.";
+    return "Error de conexión. Intenta de nuevo.";
   }
 }
 
-// TRANSACTION LOGIC
-function parseLocal(text) {
-  const t = text.toLowerCase();
-  const incKW = ['cobré','gané','recibí','depósito','sueldo','pago'];
-  const expKW = ['gasté','pagué','compré','gasto','costó','salio'];
-  const amtMatch = t.match(/[\$]?\s*(\d+(?:[.,]\d{1,2})?)/);
-  const amount = amtMatch ? parseFloat(amtMatch[1].replace(',','.')) : null;
-  let type = null;
-  if (incKW.some(k => t.includes(k))) type = 'income';
-  else if (expKW.some(k => t.includes(k))) type = 'expense';
-  return { type, amount };
+function parseText(text) {
+  const low = text.toLowerCase();
+  const amtMatch = text.match(/\d+(\.\d+)?/);
+  if (!amtMatch) return;
+  const val = parseFloat(amtMatch[0]);
+
+  if (['cobré','gané','recibí','pago','sueldo','ingreso'].some(k => low.includes(k))) {
+    state.inc += val;
+    append(`✅ Registrado ingreso de **$${val}**`, 'theirs', 'income-card');
+  } else if (['gasté','pagué','compré','costó','gasto'].some(k => low.includes(k))) {
+    state.exp += val;
+    const isAnt = val < 5 || ANT_CATEGORIES.some(k => low.includes(k));
+    if (isAnt) state.ant += val;
+    append(`❤️ Registrado gasto de **$${val}**${isAnt?' 🐜':''}`, 'theirs', isAnt ? 'ant-card' : 'expense-card');
+  }
+  save();
+  updateUI();
 }
 
 async function sendMsg() {
   const inp = document.getElementById('msg-inp');
-  const text = inp.value.trim();
-  if (!text) return;
-  inp.value = ''; autoResize(inp);
+  const txt = inp.value.trim();
+  if (!txt) return;
 
-  appendBubble(text, 'mine');
+  inp.value = '';
+  append(txt, 'mine');
+  parseText(txt);
 
-  const parsed = parseLocal(text);
-  if (parsed.type && parsed.amount) {
-    const isAnt = parsed.type === 'expense' && (parsed.amount < ANT_THRESHOLD || ANT_CATEGORIES.some(c => text.toLowerCase().includes(c)));
-    state.transactions.push({ type: parsed.type, amount: parsed.amount, desc: text, isAnt });
-    
-    if (parsed.type === 'income') state.totalIncome += parsed.amount;
-    else { state.totalExpense += parsed.amount; if (isAnt) state.antTotal += parsed.amount; }
-    
-    updateStrip();
-    appendBubble(`**${parsed.type === 'income' ? '💚 Ingreso' : (isAnt ? '🐜 Gasto Hormiga' : '❤️ Gasto')}** de **${fmt(parsed.amount)}** registrado.`, 'theirs', isAnt ? 'ant-card' : (parsed.type==='income'?'income-card':'expense-card'));
-  }
-
-  document.getElementById('typing').classList.add('show');
-  const reply = await askAI(text);
-  document.getElementById('typing').classList.remove('show');
-  appendBubble(reply, 'theirs', reply.includes('rata') ? 'rat-card' : '');
+  document.getElementById('typing').style.display = 'flex';
+  const reply = await askAI(txt);
+  document.getElementById('typing').style.display = 'none';
+  append(reply, 'theirs');
 }
 
-// UI ACTIONS
 function showSummary() {
-  const bal = state.totalIncome - state.totalExpense;
-  appendBubble(`📊 **Resumen Actual**\nIngresos: **${fmt(state.totalIncome)}**\nGastos: **${fmt(state.totalExpense)}**\nBalance: **${fmt(bal)}**\nHormigas: **${fmt(state.antTotal)}**`, 'theirs', 'summary-card');
-}
-function confirmReset() { document.getElementById('modal-bg').classList.add('show'); }
-function closeModal() { document.getElementById('modal-bg').classList.remove('show'); }
-function doReset() {
-  state = { transactions: [], chatHistory: [], totalIncome: 0, totalExpense: 0, antTotal: 0 };
-  updateStrip(); saveState(); closeModal();
-  appendBubble("🔄 Sistema reiniciado. ¡Cero deudas, nueva vida!", "theirs");
+  append(`📊 **Resumen:**\nIngresos: $${state.inc}\nGastos: $${state.exp}\nHormiga: $${state.ant}`, 'theirs');
 }
 
-// INIT
+function doReset() {
+  if(confirm("¿Reiniciar todo?")) {
+    state = { inc: 0, exp: 0, ant: 0, history: [] };
+    save(); updateUI();
+    document.getElementById('chat').innerHTML = '';
+    append("Sistema reiniciado. ¡Hola!", "theirs");
+  }
+}
+
 window.onload = () => {
-  loadState();
-  updateStrip();
-  appendBubble("¡Hola! Soy **FinBot**. Cuéntame qué has ganado o gastado hoy para empezar.", "theirs");
+  updateUI();
+  append("¡Hola! Soy **FinBot**. ¿Qué registramos hoy?", "theirs");
 };
 
-// Enter key to send
-document.getElementById('msg-inp').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
-});
+document.getElementById('msg-inp').onkeydown = (e) => { if(e.key === 'Enter') sendMsg(); };
 </script>
 </body>
 </html>
