@@ -251,28 +251,6 @@ header {
   <button id="send-btn" onclick="sendMsg()">➤</button>
 </div>
 
-<!-- API Key Modal -->
-<div id="apikey-bg" style="display:flex;position:fixed;inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(6px);z-index:200;align-items:center;justify-content:center;">
-  <div style="background:#202c33;border-radius:16px;padding:26px 20px;margin:16px;max-width:380px;width:100%;border:1px solid rgba(134,150,160,0.2);">
-    <div style="font-size:34px;text-align:center;margin-bottom:10px">🔑</div>
-    <h3 style="font-size:17px;font-weight:800;margin-bottom:10px;text-align:center">Conectar con Gemini IA</h3>
-
-    <!-- Steps -->
-    <div style="background:#0b141a;border-radius:10px;padding:14px;margin-bottom:14px;font-size:12px;line-height:2;color:#e9edef;">
-      <div>1️⃣ Abre <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#00a884;font-weight:700;">aistudio.google.com/apikey</a></div>
-      <div>2️⃣ Inicia sesión con tu cuenta Google</div>
-      <div>3️⃣ Clic en <strong>"Create API Key"</strong></div>
-      <div>4️⃣ Copia la key y pégala aquí 👇</div>
-    </div>
-
-    <input id="apikey-inp" type="password"
-      placeholder="AIzaSy..."
-      style="width:100%;background:#0b141a;border:1px solid rgba(134,150,160,0.3);border-radius:10px;color:#e9edef;font-family:monospace;font-size:13px;padding:12px 14px;outline:none;margin-bottom:6px;">
-    <div style="font-size:11px;color:#8696a0;margin-bottom:14px;text-align:center">La key comienza con <code style="color:#00a884">AIzaSy</code> · Gratis · Sin tarjeta</div>
-    <button onclick="saveApiKey()" style="width:100%;padding:13px;border-radius:10px;border:none;background:#00a884;color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;">Guardar y continuar ✓</button>
-  </div>
-</div>
-
 <!-- Reset Modal -->
 <div id="modal-bg">
   <div id="modal">
@@ -305,23 +283,8 @@ let state = {
 // ═══════════════════════════════════════
 //  API KEY
 // ═══════════════════════════════════════
-function getApiKey() { return localStorage.getItem('finbot-apikey') || ''; }
-function saveApiKey() {
-  const val = document.getElementById('apikey-inp').value.trim();
-  if (!val.startsWith('AIza') || val.length < 20) {
-    document.getElementById('apikey-inp').style.borderColor = '#ff6b6b';
-    document.getElementById('apikey-inp').placeholder = '⚠️ Key inválida, debe comenzar con AIzaSy...';
-    return;
-  }
-  localStorage.setItem('finbot-apikey', val);
-  document.getElementById('apikey-bg').style.display = 'none';
-  welcome();
-}
-function checkApiKey() {
-  if (!getApiKey()) { document.getElementById('apikey-bg').style.display = 'flex'; return false; }
-  document.getElementById('apikey-bg').style.display = 'none';
-  return true;
-}
+function getApiKey() { return 'AIzaSyAvZvbHMISeBjHsnzcM6mJzkC6FFBVbZlQ'; }
+function checkApiKey() { return true; }
 
 // ═══════════════════════════════════════
 //  STORAGE (usa window.storage si existe, si no localStorage)
