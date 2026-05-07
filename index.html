@@ -1,494 +1,902 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <title>Rich Dad AI - Asesor Financiero con IA</title>
-    <style>
-        :root {
-            --whatsapp-green: #075e54;
-            --whatsapp-light-green: #128c7e;
-            --chat-bg: #e5ddd5;
-            --bubble-user: #dcf8c6;
-            --bubble-bot: #ffffff;
-            --text-dark: #303030;
-            --accent-gold: #c8960c;
-            --card-bg: #f8f9fa;
-            --shadow: 0 1px 2px rgba(0,0,0,0.1);
-            --radius: 18px;
-            --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: var(--font);
-            background: #1a1a1a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            min-height: 100dvh;
-        }
-        .phone-frame {
-            width: 100%;
-            max-width: 430px;
-            height: 100vh;
-            height: 100dvh;
-            max-height: 900px;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 40px rgba(0,0,0,0.5);
-        }
-        @media (min-width: 500px) {
-            .phone-frame {
-                border-radius: 20px;
-                height: 92vh;
-                height: 92dvh;
-                max-height: 880px;
-                margin: 0 10px;
-            }
-        }
-        .chat-header {
-            background: var(--whatsapp-green);
-            color: white;
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 10;
-            flex-shrink: 0;
-            min-height: 56px;
-        }
-        .chat-header .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #f9d423, #e6a817);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            flex-shrink: 0;
-            position: relative;
-        }
-        .chat-header .avatar .online-dot {
-            width: 10px;
-            height: 10px;
-            background: #4caf50;
-            border-radius: 50%;
-            position: absolute;
-            bottom: 1px;
-            right: 1px;
-            border: 2px solid var(--whatsapp-green);
-        }
-        .chat-header .info { flex: 1; min-width: 0; }
-        .chat-header .name { font-weight: 600; font-size: 16px; }
-        .chat-header .status { font-size: 12px; opacity: 0.85; }
-        .chat-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px 8px;
-            background-color: var(--chat-bg);
-            background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='200' height='200' fill='%23efeae2'/%3E%3Ccircle cx='100' cy='100' r='80' fill='none' stroke='%23e2dbd1' stroke-width='0.8' opacity='0.5'/%3E%3C/svg%3E");
-            background-size: 180px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-        }
-        .message-wrapper { display: flex; margin: 3px 0; animation: fadeInUp 0.3s ease; }
-        .message-wrapper.user { justify-content: flex-end; }
-        .message-wrapper.bot { justify-content: flex-start; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-        .bubble {
-            max-width: 82%;
-            padding: 9px 13px;
-            border-radius: var(--radius);
-            font-size: 15px;
-            line-height: 1.45;
-            word-wrap: break-word;
-            position: relative;
-            box-shadow: var(--shadow);
-        }
-        .user .bubble { background: var(--bubble-user); border-top-right-radius: 6px; color: var(--text-dark); }
-        .bot .bubble { background: var(--bubble-bot); border-top-left-radius: 6px; color: var(--text-dark); }
-        .bubble .time { font-size: 10.5px; color: #888; text-align: right; margin-top: 4px; }
-        .input-area {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            background: #f5f5f5;
-            border-top: 1px solid #e0e0e0;
-            flex-shrink: 0;
-            min-height: 56px;
-        }
-        .input-area input {
-            flex: 1;
-            padding: 10px 14px;
-            border-radius: 24px;
-            border: 1px solid #ddd;
-            font-size: 15px;
-            background: white;
-            outline: none;
-        }
-        .input-area input:focus { border-color: var(--whatsapp-light-green); }
-        .input-area .send-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--whatsapp-light-green);
-            border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow);
-        }
-        .send-btn:active { transform: scale(0.92); background: #075e54; }
-        .typing-indicator {
-            display: flex;
-            gap: 4px;
-            padding: 8px 16px;
-            align-items: center;
-        }
-        .typing-indicator span {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #b0b0b0;
-            animation: typingBounce 1.2s infinite;
-        }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typingBounce { 0%,60%,100%{transform:translateY(0);opacity:0.5} 30%{transform:translateY(-8px);opacity:1} }
-        .api-config {
-            background: #fef9e7;
-            padding: 10px;
-            font-size: 13px;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            border-bottom: 1px solid #e0d8b0;
-            flex-shrink: 0;
-        }
-        .api-config input { flex:1; padding: 6px; border:1px solid #ccc; border-radius:4px; }
-        .api-config button { padding: 6px 12px; background:#128c7e; color:white; border:none; border-radius:4px; font-weight:bold; }
-        .hidden { display: none !important; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<title>Rich Dad AI – Coach Financiero</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0d0d;
+  --surface: #161616;
+  --surface2: #1f1f1f;
+  --surface3: #2a2a2a;
+  --gold: #c8960c;
+  --gold-light: #f0b429;
+  --gold-dim: #7a5a07;
+  --green: #22c55e;
+  --red: #ef4444;
+  --blue: #60a5fa;
+  --text: #f0ede8;
+  --text-muted: #8a8580;
+  --text-dim: #5a5550;
+  --border: #2a2a2a;
+  --bubble-user: #1a2a1a;
+  --bubble-bot: #1e1e1e;
+  --radius: 16px;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; background:var(--bg); font-family:var(--font-body); color:var(--text); }
+
+/* ── LAYOUT ── */
+.app { display:flex; height:100dvh; max-width:480px; margin:0 auto; flex-direction:column; position:relative; }
+
+/* ── HEADER ── */
+.header {
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:12px 16px;
+  display:flex; align-items:center; gap:12px;
+  flex-shrink:0;
+  position:relative;
+}
+.header-avatar {
+  width:44px; height:44px; border-radius:50%;
+  background:linear-gradient(135deg,#7a5a07,#c8960c,#f0b429);
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; flex-shrink:0; position:relative;
+}
+.header-avatar::after {
+  content:'';width:10px;height:10px;background:var(--green);
+  border-radius:50%;position:absolute;bottom:1px;right:1px;
+  border:2px solid var(--surface);
+}
+.header-info { flex:1; }
+.header-name { font-family:var(--font-display); font-size:17px; color:var(--gold-light); font-weight:700; }
+.header-sub { font-size:12px; color:var(--text-muted); margin-top:1px; }
+.header-actions { display:flex; gap:8px; }
+.icon-btn {
+  width:36px; height:36px; border-radius:50%; background:var(--surface2);
+  border:1px solid var(--border); color:var(--text-muted); font-size:15px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all .2s;
+}
+.icon-btn:hover { background:var(--surface3); color:var(--gold-light); }
+
+/* ── DASHBOARD STRIP ── */
+.dashboard {
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:10px 16px;
+  display:flex; gap:8px; overflow-x:auto; flex-shrink:0;
+  scrollbar-width:none;
+}
+.dashboard::-webkit-scrollbar { display:none; }
+.kpi {
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:8px 12px;
+  min-width:110px; flex-shrink:0;
+  cursor:pointer; transition:all .2s;
+}
+.kpi:hover { border-color:var(--gold-dim); }
+.kpi-label { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.6px; }
+.kpi-value { font-size:16px; font-weight:600; margin-top:2px; }
+.kpi-value.positive { color:var(--green); }
+.kpi-value.negative { color:var(--red); }
+.kpi-value.gold { color:var(--gold-light); }
+.kpi-value.blue { color:var(--blue); }
+.kpi-sub { font-size:10px; color:var(--text-dim); margin-top:2px; }
+
+/* ── FREEDOM BAR ── */
+.freedom-bar-wrap {
+  background:var(--surface);
+  padding:8px 16px 10px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.freedom-bar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
+.freedom-bar-label { font-size:11px; color:var(--text-muted); }
+.freedom-bar-pct { font-size:12px; font-weight:600; color:var(--gold-light); }
+.freedom-bar-track { height:6px; background:var(--surface3); border-radius:99px; overflow:hidden; }
+.freedom-bar-fill { height:100%; border-radius:99px; transition:width .8s cubic-bezier(.4,0,.2,1); background:linear-gradient(90deg,#7a5a07,#c8960c,#f0b429); }
+
+/* ── CHAT AREA ── */
+.chat-area {
+  flex:1; overflow-y:auto; padding:12px 10px;
+  display:flex; flex-direction:column; gap:6px;
+  background:var(--bg);
+  scrollbar-width:thin; scrollbar-color:var(--surface3) transparent;
+}
+.chat-area::-webkit-scrollbar { width:4px; }
+.chat-area::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:4px; }
+
+.msg-wrap { display:flex; animation:fadeUp .25s ease; }
+.msg-wrap.user { justify-content:flex-end; }
+.msg-wrap.bot { justify-content:flex-start; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+.bubble {
+  max-width:82%; padding:10px 13px;
+  border-radius:var(--radius); font-size:14.5px; line-height:1.5;
+  word-wrap:break-word; position:relative;
+}
+.user .bubble {
+  background:var(--bubble-user);
+  border:1px solid #2a3d2a;
+  border-top-right-radius:4px;
+  color:var(--text);
+}
+.bot .bubble {
+  background:var(--bubble-bot);
+  border:1px solid var(--border);
+  border-top-left-radius:4px;
+  color:var(--text);
+}
+.bubble .btime { font-size:10px; color:var(--text-dim); text-align:right; margin-top:5px; }
+
+/* bot bubble rich formatting */
+.bubble b, .bubble strong { color:var(--gold-light); font-weight:600; }
+.bubble .tag-activo { background:#16302b; color:#4ade80; border-radius:4px; padding:1px 6px; font-size:12px; font-weight:600; }
+.bubble .tag-pasivo { background:#2d1515; color:#f87171; border-radius:4px; padding:1px 6px; font-size:12px; font-weight:600; }
+.bubble .tag-ingreso { background:#1a2a1a; color:#86efac; border-radius:4px; padding:1px 6px; font-size:12px; font-weight:600; }
+.bubble .tag-gasto { background:#2a1a1a; color:#fca5a5; border-radius:4px; padding:1px 6px; font-size:12px; font-weight:600; }
+
+/* typing */
+.typing-bubble { display:flex; gap:5px; align-items:center; padding:12px 16px; background:var(--bubble-bot); border:1px solid var(--border); border-radius:var(--radius); border-top-left-radius:4px; }
+.typing-bubble span { width:7px; height:7px; border-radius:50%; background:var(--gold-dim); animation:bounce 1.2s infinite; }
+.typing-bubble span:nth-child(2){animation-delay:.2s}
+.typing-bubble span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-7px);opacity:1}}
+
+/* date divider */
+.date-divider { text-align:center; font-size:11px; color:var(--text-dim); margin:8px 0; display:flex; align-items:center; gap:8px; }
+.date-divider::before,.date-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ── INPUT AREA ── */
+.input-area {
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  padding:10px 12px;
+  display:flex; gap:8px; align-items:flex-end;
+  flex-shrink:0;
+}
+.input-wrap { flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:24px; padding:8px 14px; transition:border .2s; }
+.input-wrap:focus-within { border-color:var(--gold-dim); }
+#msgInput {
+  width:100%; background:transparent; border:none; outline:none;
+  color:var(--text); font-family:var(--font-body); font-size:15px;
+  resize:none; max-height:100px; line-height:1.4;
+}
+#msgInput::placeholder { color:var(--text-dim); }
+.send-btn {
+  width:42px; height:42px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold-dim),var(--gold));
+  border:none; color:#0d0d0d; font-size:17px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .15s, opacity .15s;
+}
+.send-btn:active { transform:scale(.9); opacity:.8; }
+.send-btn:disabled { opacity:.4; cursor:not-allowed; }
+
+/* quick chips */
+.chips {
+  display:flex; gap:6px; padding:6px 12px 0;
+  overflow-x:auto; scrollbar-width:none; flex-shrink:0;
+  background:var(--surface);
+}
+.chips::-webkit-scrollbar{display:none}
+.chip {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:99px; padding:5px 12px; font-size:12px; color:var(--text-muted);
+  cursor:pointer; white-space:nowrap; flex-shrink:0; transition:all .2s;
+}
+.chip:hover { border-color:var(--gold-dim); color:var(--gold-light); }
+
+/* ── PANELS ── */
+.panel-overlay {
+  display:none; position:absolute; inset:0; background:rgba(0,0,0,.7);
+  z-index:50; align-items:flex-end;
+}
+.panel-overlay.open { display:flex; }
+.panel {
+  background:var(--surface); border-radius:20px 20px 0 0;
+  padding:24px 20px 32px; width:100%;
+  max-height:80dvh; overflow-y:auto;
+  animation:slideUp .3s ease;
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.panel-handle { width:40px; height:4px; background:var(--surface3); border-radius:99px; margin:0 auto 20px; }
+.panel-title { font-family:var(--font-display); font-size:20px; color:var(--gold-light); margin-bottom:16px; }
+
+/* form inside panel */
+.form-group { margin-bottom:14px; }
+.form-label { font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:5px; display:block; }
+.form-input, .form-select {
+  width:100%; background:var(--surface2); border:1px solid var(--border);
+  border-radius:10px; padding:10px 13px; color:var(--text);
+  font-family:var(--font-body); font-size:14px; outline:none;
+  transition:border .2s;
+}
+.form-input:focus, .form-select:focus { border-color:var(--gold-dim); }
+.form-select { appearance:none; }
+.btn-primary {
+  width:100%; padding:13px; border-radius:12px;
+  background:linear-gradient(135deg,var(--gold-dim),var(--gold));
+  border:none; color:#0d0d0d; font-weight:700; font-size:15px;
+  cursor:pointer; font-family:var(--font-body); transition:opacity .2s;
+}
+.btn-primary:hover { opacity:.9; }
+.btn-cancel { display:block; text-align:center; margin-top:10px; color:var(--text-muted); font-size:13px; cursor:pointer; }
+
+/* API setup overlay */
+.api-overlay {
+  position:absolute; inset:0; background:var(--bg); z-index:100;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:32px 24px;
+}
+.api-overlay.hidden { display:none; }
+.api-logo { font-size:56px; margin-bottom:16px; }
+.api-title { font-family:var(--font-display); font-size:28px; color:var(--gold-light); text-align:center; margin-bottom:8px; }
+.api-subtitle { font-size:14px; color:var(--text-muted); text-align:center; margin-bottom:32px; line-height:1.6; }
+.api-input {
+  width:100%; background:var(--surface2); border:1px solid var(--border);
+  border-radius:12px; padding:13px 16px; color:var(--text);
+  font-size:15px; outline:none; margin-bottom:12px;
+  font-family:var(--font-body);
+}
+.api-input:focus { border-color:var(--gold-dim); }
+.api-note { font-size:11px; color:var(--text-dim); text-align:center; margin-top:12px; line-height:1.6; }
+
+/* report section */
+.report-section { margin-bottom:20px; }
+.report-section-title { font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.6px; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:6px; }
+.report-row { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--border); font-size:13px; }
+.report-row:last-child { border:none; }
+.report-row .rlabel { color:var(--text-muted); }
+.report-row .rvalue { font-weight:600; }
+.asset-item { background:var(--surface2); border-radius:10px; padding:10px 12px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; }
+.asset-item .aname { font-size:13px; color:var(--text); }
+.asset-item .aamt { font-size:14px; font-weight:600; }
+.asset-item .adel { background:none; border:none; color:var(--red); cursor:pointer; font-size:16px; padding:4px; }
+.empty-state { text-align:center; color:var(--text-dim); font-size:13px; padding:16px 0; }
+
+/* freedom meter full */
+.freedom-meter-full { text-align:center; padding:20px 0; }
+.freedom-pct-big { font-family:var(--font-display); font-size:56px; color:var(--gold-light); font-weight:900; }
+.freedom-label { font-size:13px; color:var(--text-muted); margin-top:4px; }
+.freedom-message { margin-top:12px; font-size:13px; color:var(--text-muted); line-height:1.6; background:var(--surface2); border-radius:10px; padding:10px 14px; }
+
+/* tab bar in report */
+.tab-bar { display:flex; gap:4px; background:var(--surface2); border-radius:10px; padding:4px; margin-bottom:16px; }
+.tab { flex:1; text-align:center; padding:7px; border-radius:7px; font-size:12px; color:var(--text-muted); cursor:pointer; transition:all .2s; }
+.tab.active { background:var(--gold-dim); color:var(--gold-light); font-weight:600; }
+
+@media (min-width:500px) {
+  .app { border-radius:24px; height:94dvh; margin:3vh auto; box-shadow:0 0 60px rgba(0,0,0,.6); overflow:hidden; }
+}
+</style>
 </head>
 <body>
-    <div class="phone-frame" id="phoneFrame">
-        <div class="chat-header">
-            <div class="avatar">🎩<div class="online-dot"></div></div>
-            <div class="info">
-                <div class="name">Rich Dad AI</div>
-                <div class="status">en línea · Coach Financiero</div>
-            </div>
-        </div>
-        <div id="apiPanel" class="api-config">
-            <span>🔑 API Key:</span>
-            <input type="password" id="apiKeyInput" placeholder="sk-...">
-            <button onclick="saveApiKey()">Guardar</button>
-        </div>
-        <div class="chat-area" id="chatArea"></div>
-        <div class="typing-indicator" id="typingIndicator" style="display:none; background:var(--chat-bg);"><span></span><span></span><span></span></div>
-        <div class="input-area">
-            <input type="text" id="messageInput" placeholder="Escribe un mensaje..." autocomplete="off" enterkeyhint="send">
-            <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
-        </div>
+<div class="app" id="app">
+
+  <!-- API SETUP -->
+  <div class="api-overlay" id="apiOverlay">
+    <div class="api-logo">🎩</div>
+    <div class="api-title">Rich Dad AI</div>
+    <div class="api-subtitle">Tu coach financiero con IA.<br>Ingresa tu API Key de OpenAI para comenzar.</div>
+    <input class="api-input" type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off">
+    <button class="btn-primary" onclick="saveApiKey()">Comenzar →</button>
+    <div class="api-note">Tu clave se guarda solo en este dispositivo y nunca sale de él.<br>Obtén tu key en <b>platform.openai.com</b></div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-avatar">🎩</div>
+    <div class="header-info">
+      <div class="header-name">Rich Dad AI</div>
+      <div class="header-sub">Coach de Libertad Financiera</div>
     </div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="openPanel('reportPanel')" title="Mi situación">📊</button>
+      <button class="icon-btn" onclick="openPanel('addPanel')" title="Registrar">＋</button>
+      <button class="icon-btn" onclick="resetAll()" title="Reiniciar datos">🔄</button>
+    </div>
+  </div>
 
-    <script>
-        (function() {
-            // Estado financiero local (se mantiene sincronizado con lo que la IA interpreta)
-            const STORAGE_KEY = 'richdad_finance_data';
-            const CHAT_STORAGE_KEY = 'richdad_chat_history_ai';
-            const API_KEY_STORAGE = 'richdad_openai_key';
+  <!-- DASHBOARD KPIs -->
+  <div class="dashboard" id="dashboard">
+    <div class="kpi" onclick="openPanel('reportPanel')">
+      <div class="kpi-label">Ingresos Pasivos</div>
+      <div class="kpi-value gold" id="kpiPasivos">$0</div>
+      <div class="kpi-sub">por mes</div>
+    </div>
+    <div class="kpi" onclick="openPanel('reportPanel')">
+      <div class="kpi-label">Gastos</div>
+      <div class="kpi-value negative" id="kpiGastos">$0</div>
+      <div class="kpi-sub">por mes</div>
+    </div>
+    <div class="kpi" onclick="openPanel('reportPanel')">
+      <div class="kpi-label">Flujo Neto</div>
+      <div class="kpi-value" id="kpiFlujo">$0</div>
+      <div class="kpi-sub">activos – gastos</div>
+    </div>
+    <div class="kpi" onclick="openPanel('reportPanel')">
+      <div class="kpi-label">Activos</div>
+      <div class="kpi-value blue" id="kpiActivos">0</div>
+      <div class="kpi-sub">registrados</div>
+    </div>
+  </div>
 
-            let financeData = {
-                ingresosMensuales: 0,
-                gastosMensuales: 0,
-                ingresosPasivos: 0,
-                activos: [],
-                pasivos: [],
-                metaPasivos: 2000,
-                historial: []
-            };
-            let chatHistory = [];
-            let isProcessing = false;
+  <!-- FREEDOM BAR -->
+  <div class="freedom-bar-wrap">
+    <div class="freedom-bar-header">
+      <div class="freedom-bar-label">🎯 Progreso a Libertad Financiera</div>
+      <div class="freedom-bar-pct" id="freedomPct">0%</div>
+    </div>
+    <div class="freedom-bar-track">
+      <div class="freedom-bar-fill" id="freedomFill" style="width:0%"></div>
+    </div>
+  </div>
 
-            // Cargar datos
-            function loadData() {
-                try {
-                    const saved = localStorage.getItem(STORAGE_KEY);
-                    if (saved) financeData = { ...financeData, ...JSON.parse(saved) };
-                } catch(e) {}
-                try {
-                    const savedChat = localStorage.getItem(CHAT_STORAGE_KEY);
-                    if (savedChat) chatHistory = JSON.parse(savedChat);
-                } catch(e) {}
-            }
-            function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(financeData)); }
-            function saveChatHistory() {
-                if (chatHistory.length > 200) chatHistory = chatHistory.slice(-200);
-                localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chatHistory));
-            }
+  <!-- CHAT -->
+  <div class="chat-area" id="chatArea"></div>
 
-            // API Key
-            function getApiKey() { return localStorage.getItem(API_KEY_STORAGE) || ''; }
-            function saveApiKey() {
-                const key = document.getElementById('apiKeyInput').value.trim();
-                if (key) {
-                    localStorage.setItem(API_KEY_STORAGE, key);
-                    document.getElementById('apiPanel').classList.add('hidden');
-                    showWelcomeIfNeeded();
-                }
-            }
-            function checkApiKey() {
-                if (getApiKey()) {
-                    document.getElementById('apiPanel').classList.add('hidden');
-                    return true;
-                } else {
-                    document.getElementById('apiPanel').classList.remove('hidden');
-                    return false;
-                }
-            }
+  <!-- CHIPS -->
+  <div class="chips">
+    <div class="chip" onclick="quickSend('¿Cómo calculo mi libertad financiera?')">¿Cómo mido mi libertad?</div>
+    <div class="chip" onclick="quickSend('¿Qué activos me recomiendas para empezar?')">Primeros activos</div>
+    <div class="chip" onclick="quickSend('Analiza mi situación actual')">Analizar situación</div>
+    <div class="chip" onclick="quickSend('¿Cómo reduzco mis gastos inteligentemente?')">Reducir gastos</div>
+    <div class="chip" onclick="quickSend('Dame un plan de 90 días para salir del círculo de la rata')">Plan 90 días</div>
+  </div>
 
-            // DOM
-            const chatArea = document.getElementById('chatArea');
-            const messageInput = document.getElementById('messageInput');
-            const sendBtn = document.getElementById('sendBtn');
-            const typingIndicator = document.getElementById('typingIndicator');
+  <!-- INPUT -->
+  <div class="input-area">
+    <div class="input-wrap">
+      <textarea id="msgInput" rows="1" placeholder="Cuéntame sobre tus finanzas..."></textarea>
+    </div>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+  </div>
 
-            function getTimeStr() {
-                const now = new Date();
-                return now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-            }
-            function scrollToBottom() { setTimeout(() => { chatArea.scrollTop = chatArea.scrollHeight; }, 100); }
+  <!-- ══ PANEL: AGREGAR TRANSACCIÓN ══ -->
+  <div class="panel-overlay" id="addPanel" onclick="closePanel('addPanel',event)">
+    <div class="panel">
+      <div class="panel-handle"></div>
+      <div class="panel-title">Registrar Movimiento</div>
+      <div class="form-group">
+        <label class="form-label">Tipo</label>
+        <select class="form-select" id="addType" onchange="onTypeChange()">
+          <option value="ingreso">💼 Ingreso activo (trabajo/empleo)</option>
+          <option value="ingreso_pasivo">💰 Ingreso pasivo (renta, dividendos…)</option>
+          <option value="gasto">💸 Gasto mensual</option>
+          <option value="activo">🏦 Activo (genera dinero)</option>
+          <option value="pasivo">⚠️ Pasivo / deuda</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descripción</label>
+        <input class="form-input" type="text" id="addDesc" placeholder="Ej: Renta departamento">
+      </div>
+      <div class="form-group">
+        <label class="form-label" id="addAmtLabel">Monto mensual ($)</label>
+        <input class="form-input" type="number" id="addAmt" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="form-group" id="addIncomePctGroup" style="display:none">
+        <label class="form-label">Rendimiento anual estimado (%)</label>
+        <input class="form-input" type="number" id="addPct" placeholder="Ej: 8" min="0" max="100" step="0.1">
+      </div>
+      <button class="btn-primary" onclick="addTransaction()">Registrar ✓</button>
+      <span class="btn-cancel" onclick="closePanel('addPanel')">Cancelar</span>
+    </div>
+  </div>
 
-            function addMessage(sender, text, isHTML=false) {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'message-wrapper ' + sender;
-                const bubble = document.createElement('div');
-                bubble.className = 'bubble';
-                if (isHTML) bubble.innerHTML = text;
-                else bubble.textContent = text;
-                const timeSpan = document.createElement('div');
-                timeSpan.className = 'time';
-                timeSpan.textContent = getTimeStr();
-                bubble.appendChild(timeSpan);
-                wrapper.appendChild(bubble);
-                chatArea.appendChild(wrapper);
-                scrollToBottom();
-                return wrapper;
-            }
+  <!-- ══ PANEL: REPORTE ══ -->
+  <div class="panel-overlay" id="reportPanel" onclick="closePanel('reportPanel',event)">
+    <div class="panel">
+      <div class="panel-handle"></div>
+      <div class="panel-title">Mi Situación Financiera</div>
 
-            function showTyping(show=true) {
-                typingIndicator.style.display = show ? 'flex' : 'none';
-                scrollToBottom();
-            }
+      <!-- Freedom meter -->
+      <div class="freedom-meter-full">
+        <div class="freedom-pct-big" id="rFreedomPct">0%</div>
+        <div class="freedom-label">Libertad Financiera Alcanzada</div>
+        <div class="freedom-message" id="rFreedomMsg">Empieza registrando tus ingresos y gastos.</div>
+      </div>
 
-            // Construir el contexto financiero para enviar a la IA
-            function buildFinancialContext() {
-                return `DATOS FINANCIEROS ACTUALES DEL USUARIO:
-- Ingresos totales este mes: $${financeData.ingresosMensuales.toFixed(2)}
-- Gastos totales este mes: $${financeData.gastosMensuales.toFixed(2)}
-- Ingresos pasivos mensuales: $${financeData.ingresosPasivos.toFixed(2)}
-- Meta de ingresos pasivos: $${financeData.metaPasivos.toFixed(2)}
-- Activos registrados: ${financeData.activos.length ? financeData.activos.map(a => a.desc + ' ($' + a.cantidad + ')').join(', ') : 'Ninguno'}
-- Pasivos registrados: ${financeData.pasivos.length ? financeData.pasivos.map(p => p.desc + ' ($' + p.cantidad + ')').join(', ') : 'Ninguno'}
-- Ratio de libertad (ingresos pasivos / gastos): ${financeData.gastosMensuales > 0 ? ((financeData.ingresosPasivos / financeData.gastosMensuales)*100).toFixed(1) : 0}%
-- ¿Está en círculo de la rata? ${financeData.ingresosPasivos < financeData.gastosMensuales ? 'SÍ' : 'NO (ha escapado)'}`;
-            }
+      <!-- Tabs -->
+      <div class="tab-bar">
+        <div class="tab active" onclick="switchTab('resumen')">Resumen</div>
+        <div class="tab" onclick="switchTab('activos')">Activos</div>
+        <div class="tab" onclick="switchTab('pasivos')">Pasivos</div>
+      </div>
 
-            // Llamada a la API de OpenAI
-            async function callOpenAI(userMessage) {
-                const apiKey = getApiKey();
-                if (!apiKey) throw new Error('API key no configurada');
+      <!-- Tab: resumen -->
+      <div id="tabResumen">
+        <div class="report-section">
+          <div class="report-section-title">Flujo de Dinero</div>
+          <div class="report-row"><span class="rlabel">Ingresos activos (trabajo)</span><span class="rvalue positive" id="rIngresos">$0</span></div>
+          <div class="report-row"><span class="rlabel">Ingresos pasivos</span><span class="rvalue gold" id="rPasivos">$0</span></div>
+          <div class="report-row"><span class="rlabel">Gastos mensuales</span><span class="rvalue negative" id="rGastos">$0</span></div>
+          <div class="report-row"><span class="rlabel">Flujo neto (pasivos – gastos)</span><span class="rvalue" id="rFlujo">$0</span></div>
+          <div class="report-row"><span class="rlabel">Meta ingresos pasivos</span><span class="rvalue gold" id="rMeta">$0</span></div>
+        </div>
+        <div class="report-section">
+          <div class="report-section-title">¿Estás en el Círculo de la Rata?</div>
+          <div class="report-row"><span class="rlabel">Estado actual</span><span class="rvalue" id="rRatRace">—</span></div>
+          <div class="report-row"><span class="rlabel">Necesitas generar</span><span class="rvalue gold" id="rNeedMore">—</span></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <label class="form-label">Meta de ingresos pasivos ($/mes)</label>
+          <div style="display:flex;gap:8px;margin-top:5px">
+            <input class="form-input" type="number" id="metaInput" placeholder="Ej: 3000" style="flex:1">
+            <button class="btn-primary" style="width:auto;padding:10px 16px;flex-shrink:0" onclick="saveMeta()">Guardar</button>
+          </div>
+        </div>
+      </div>
 
-                const systemPrompt = `Eres "Rich Dad AI", un asesor financiero virtual basado en los principios de Robert Kiyosaki (autor de "Padre Rico, Padre Pobre"). Tu misión es ayudar al usuario a ESCAPAR DEL CÍRCULO DE LA RATA y alcanzar la LIBERTAD FINANCIERA.
+      <!-- Tab: activos -->
+      <div id="tabActivos" style="display:none">
+        <div id="activosList"></div>
+        <button class="btn-primary" onclick="closePanel('reportPanel');openPanel('addPanel');document.getElementById('addType').value='activo';onTypeChange()">+ Agregar Activo</button>
+      </div>
 
-PRINCIPIOS CLAVE QUE DEBES APLICAR:
-- Los activos ponen dinero en tu bolsillo; los pasivos lo sacan.
-- La libertad financiera ocurre cuando los ingresos pasivos > gastos totales.
-- Debemos enfocarnos en construir activos que generen ingresos pasivos (bienes raíces en renta, dividendos, negocios automatizados, regalías).
-- Los pasivos disfrazados de activos (autos de lujo, casa propia si no genera ingreso) son trampas.
+      <!-- Tab: pasivos -->
+      <div id="tabPasivos" style="display:none">
+        <div id="pasivosList"></div>
+        <button class="btn-primary" onclick="closePanel('reportPanel');openPanel('addPanel');document.getElementById('addType').value='pasivo';onTypeChange()">+ Agregar Pasivo</button>
+      </div>
 
-ESTILO DE COMUNICACIÓN:
-- Sé directo, motivador y ligeramente provocador, como un coach.
-- Haz preguntas para profundizar en la situación financiera del usuario.
-- Cuando el usuario registre una transacción, INTERPRÉTALA y clasifícala (ingreso, gasto, activo, pasivo) y actualiza TÚ MISMO los datos diciendo explícitamente "ACTUALIZAR_DATOS: tipo=monto|descripción".
-- Ejemplo: si dice "gané 500 de renta", responde aconsejando y al final incluye: ACTUALIZAR_DATOS: ingreso_pasivo=500|renta.
-- Si dice "compré un auto de 10000", debes advertir que es un pasivo a menos que genere ingresos.
-- Monitorea el progreso hacia la meta de ingresos pasivos y alerta cuando los gastos superen los ingresos pasivos.
+    </div>
+  </div>
 
-FORMATO DE ACTUALIZACIÓN (debes incluirlo en tu respuesta cuando corresponda):
-ACTUALIZAR_DATOS: acción|cantidad|descripción
-Acciones posibles: ingreso, ingreso_pasivo, gasto, activo, pasivo, meta
+</div><!-- /app -->
+
+<script>
+(function(){
+'use strict';
+
+/* ══ STORAGE ══ */
+const SK_DATA  = 'richdad_v3_data';
+const SK_CHAT  = 'richdad_v3_chat';
+const SK_API   = 'richdad_v3_apikey';
+
+let fd = {
+  ingresosActivos: 0,
+  ingresosPasivos: 0,
+  gastosMensuales: 0,
+  metaPasivos: 3000,
+  activos: [],   // {id, desc, monto, rendPct, ingresoMensual, fecha}
+  pasivos: [],   // {id, desc, monto, fecha}
+  transacciones: [] // log
+};
+let chatHistory = [];
+let isProcessing = false;
+
+function loadAll(){
+  try{ const d=localStorage.getItem(SK_DATA); if(d) fd={...fd,...JSON.parse(d)}; }catch(e){}
+  try{ const c=localStorage.getItem(SK_CHAT); if(c) chatHistory=JSON.parse(c); }catch(e){}
+}
+function saveData(){ localStorage.setItem(SK_DATA,JSON.stringify(fd)); }
+function saveChat(){
+  if(chatHistory.length>120) chatHistory=chatHistory.slice(-120);
+  localStorage.setItem(SK_CHAT,JSON.stringify(chatHistory));
+}
+function getApiKey(){ return localStorage.getItem(SK_API)||''; }
+function saveApiKey(){
+  const k=document.getElementById('apiKeyInput').value.trim();
+  if(!k){ alert('Ingresa una API key válida'); return; }
+  localStorage.setItem(SK_API,k);
+  document.getElementById('apiOverlay').classList.add('hidden');
+  updateUI();
+  if(chatHistory.length===0) showWelcome();
+  else restoreChat();
+}
+
+/* ══ UI UPDATE ══ */
+function fmt(n){ return '$'+Math.abs(n).toLocaleString('es-MX',{minimumFractionDigits:0,maximumFractionDigits:0}); }
+function pct(a,b){ return b>0?Math.min(100,(a/b)*100):0; }
+
+function updateUI(){
+  const flujo = fd.ingresosPasivos - fd.gastosMensuales;
+  const freedom = pct(fd.ingresosPasivos, fd.gastosMensuales || fd.metaPasivos);
+
+  // dashboard
+  document.getElementById('kpiPasivos').textContent = fmt(fd.ingresosPasivos);
+  document.getElementById('kpiGastos').textContent  = fmt(fd.gastosMensuales);
+  const kpiFlujo = document.getElementById('kpiFlujo');
+  kpiFlujo.textContent = (flujo>=0?'+':'-')+fmt(flujo).replace('$','')+ ' ';
+  kpiFlujo.className = 'kpi-value ' + (flujo>=0?'positive':'negative');
+  document.getElementById('kpiActivos').textContent = fd.activos.length;
+
+  // bar
+  const p = Math.round(freedom);
+  document.getElementById('freedomPct').textContent = p+'%';
+  document.getElementById('freedomFill').style.width = p+'%';
+
+  // report panel values
+  document.getElementById('rIngresos').textContent = fmt(fd.ingresosActivos);
+  document.getElementById('rPasivos').textContent  = fmt(fd.ingresosPasivos);
+  document.getElementById('rGastos').textContent   = fmt(fd.gastosMensuales);
+  document.getElementById('rFlujo').textContent    = (flujo>=0?'+':'')+fmt(flujo);
+  document.getElementById('rFlujo').className      = 'rvalue '+(flujo>=0?'positive':'negative');
+  document.getElementById('rMeta').textContent     = fmt(fd.metaPasivos);
+  document.getElementById('metaInput').value       = fd.metaPasivos||'';
+  document.getElementById('rFreedomPct').textContent = p+'%';
+
+  const inRat = fd.ingresosPasivos < fd.gastosMensuales;
+  const rr = document.getElementById('rRatRace');
+  rr.textContent = inRat ? '🐀 SÍ, aún en el círculo' : '🏆 ¡Libre! Ingresos pasivos cubren tus gastos';
+  rr.className   = 'rvalue '+(inRat?'negative':'positive');
+
+  const need = Math.max(0, fd.gastosMensuales - fd.ingresosPasivos);
+  document.getElementById('rNeedMore').textContent = need>0 ? fmt(need)+'/mes más de activos' : '¡Meta cubierta!';
+
+  const msgs = [
+    [0,  '🐀 Aún dentro. Cada peso que inviertes en activos es un paso hacia afuera.'],
+    [25, '⚡ Buen inicio. Tus activos cubren el 25% de tus gastos. Sigue construyendo.'],
+    [50, '🔥 Halfway! La mitad de tus gastos ya los pagan tus activos. No pares.'],
+    [75, '🚀 ¡75%! Estás muy cerca. Un activo más puede cambiar tu vida.'],
+    [100,'🏆 ¡LIBERTAD FINANCIERA! Tus activos pagan tus gastos. Ahora escala.']
+  ];
+  const msg = [...msgs].reverse().find(([t])=>p>=t);
+  document.getElementById('rFreedomMsg').textContent = msg?.[1]||'';
+
+  // lists
+  renderList('activosList', fd.activos, 'activo');
+  renderList('pasivosList', fd.pasivos, 'pasivo');
+}
+
+function renderList(elId, list, type){
+  const el=document.getElementById(elId);
+  if(!list.length){ el.innerHTML='<div class="empty-state">Ninguno registrado aún.</div>'; return; }
+  el.innerHTML = list.map((item,i)=>`
+    <div class="asset-item">
+      <div>
+        <div class="aname">${item.desc}</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px">${item.fecha||''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="aamt" style="color:${type==='activo'?'var(--green)':'var(--red)'}">
+          ${type==='activo'?'+'+fmt(item.ingresoMensual||0)+'/mes':fmt(item.monto)}
+        </div>
+        <button class="adel" onclick="removeItem('${type}',${i})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function removeItem(type, i){
+  if(type==='activo'){
+    fd.ingresosPasivos -= fd.activos[i].ingresoMensual||0;
+    fd.activos.splice(i,1);
+  } else {
+    fd.pasivos.splice(i,1);
+  }
+  saveData(); updateUI();
+}
+
+function saveMeta(){
+  const v=parseFloat(document.getElementById('metaInput').value);
+  if(isNaN(v)||v<=0){ alert('Ingresa una meta válida'); return; }
+  fd.metaPasivos=v; saveData(); updateUI();
+}
+
+/* ══ PANELS ══ */
+function openPanel(id){
+  document.getElementById(id).classList.add('open');
+  if(id==='reportPanel') updateUI();
+}
+function closePanel(id,e){
+  if(e && e.target!==document.getElementById(id)) return;
+  document.getElementById(id).classList.remove('open');
+}
+window.openPanel=openPanel; window.closePanel=closePanel;
+
+function switchTab(name){
+  ['resumen','activos','pasivos'].forEach(t=>{
+    document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).style.display = t===name?'block':'none';
+  });
+  document.querySelectorAll('.tab').forEach((el,i)=>{
+    el.classList.toggle('active',['resumen','activos','pasivos'][i]===name);
+  });
+}
+window.switchTab=switchTab;
+
+function onTypeChange(){
+  const t=document.getElementById('addType').value;
+  const lbl=document.getElementById('addAmtLabel');
+  const pctG=document.getElementById('addIncomePctGroup');
+  if(t==='activo'){
+    lbl.textContent='Valor del activo ($)';
+    pctG.style.display='block';
+  } else if(t==='ingreso'||t==='ingreso_pasivo'||t==='gasto'){
+    lbl.textContent='Monto mensual ($)';
+    pctG.style.display='none';
+  } else {
+    lbl.textContent='Monto total de la deuda ($)';
+    pctG.style.display='none';
+  }
+}
+window.onTypeChange=onTypeChange;
+
+function addTransaction(){
+  const type=document.getElementById('addType').value;
+  const desc=document.getElementById('addDesc').value.trim()||'Sin descripción';
+  const amt=parseFloat(document.getElementById('addAmt').value);
+  const rendPct=parseFloat(document.getElementById('addPct').value)||0;
+  if(isNaN(amt)||amt<0){ alert('Ingresa un monto válido'); return; }
+
+  const fecha = new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'});
+
+  switch(type){
+    case 'ingreso':        fd.ingresosActivos  += amt; break;
+    case 'ingreso_pasivo': fd.ingresosPasivos  += amt; break;
+    case 'gasto':          fd.gastosMensuales  += amt; break;
+    case 'activo':{
+      const ingresoMensual = rendPct>0 ? (amt*(rendPct/100))/12 : amt*0.006; // fallback ~7.2% anual
+      fd.activos.push({id:Date.now(),desc,monto:amt,rendPct,ingresoMensual,fecha});
+      fd.ingresosPasivos += ingresoMensual;
+      break;
+    }
+    case 'pasivo':
+      fd.pasivos.push({id:Date.now(),desc,monto:amt,fecha});
+      break;
+  }
+
+  saveData(); updateUI();
+  closePanel('addPanel');
+  document.getElementById('addDesc').value='';
+  document.getElementById('addAmt').value='';
+  document.getElementById('addPct').value='';
+
+  // Notificar a la IA del cambio manual
+  const typeLabels={ingreso:'ingreso activo',ingreso_pasivo:'ingreso pasivo',gasto:'gasto',activo:'activo',pasivo:'pasivo/deuda'};
+  addMessage('user',`Registré manualmente: ${typeLabels[type]} de $${amt} — ${desc}`);
+  sendToAI(`El usuario acaba de registrar manualmente un ${typeLabels[type]} de $${amt} llamado "${desc}". Solo dame un breve comentario o consejo al respecto.`);
+}
+window.addTransaction=addTransaction;
+window.removeItem=removeItem;
+window.saveMeta=saveMeta;
+window.saveApiKey=saveApiKey;
+
+function resetAll(){
+  if(!confirm('¿Resetear todos los datos financieros? El historial del chat se conserva.')) return;
+  fd={ ingresosActivos:0, ingresosPasivos:0, gastosMensuales:0, metaPasivos:3000, activos:[], pasivos:[], transacciones:[] };
+  saveData(); updateUI();
+  addMessage('bot','✅ Datos financieros reiniciados. ¡Nuevo comienzo! ¿Cuál es tu situación actual?');
+}
+window.resetAll=resetAll;
+
+/* ══ CHAT ══ */
+function timeStr(){
+  const n=new Date();
+  return n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');
+}
+function scrollDown(){ setTimeout(()=>{ const c=document.getElementById('chatArea'); c.scrollTop=c.scrollHeight; },80); }
+
+function addMessage(sender,html,raw=false){
+  const chatArea=document.getElementById('chatArea');
+  const wrap=document.createElement('div');
+  wrap.className='msg-wrap '+sender;
+  const bub=document.createElement('div');
+  bub.className='bubble';
+  if(raw) bub.textContent=html;
+  else bub.innerHTML=html;
+  const t=document.createElement('div');
+  t.className='btime'; t.textContent=timeStr();
+  bub.appendChild(t);
+  wrap.appendChild(bub);
+  chatArea.appendChild(wrap);
+  scrollDown();
+  return wrap;
+}
+
+function showTyping(show){
+  const chatArea=document.getElementById('chatArea');
+  const ex=document.getElementById('typingBubble');
+  if(show && !ex){
+    const w=document.createElement('div');
+    w.className='msg-wrap bot'; w.id='typingBubble';
+    w.innerHTML='<div class="typing-bubble"><span></span><span></span><span></span></div>';
+    chatArea.appendChild(w); scrollDown();
+  } else if(!show && ex){ ex.remove(); }
+}
+
+function restoreChat(){
+  chatHistory.forEach(m=>addMessage(m.sender,m.text));
+}
+
+function showWelcome(){
+  const txt=`🎩 <b>Bienvenido a Rich Dad AI</b><br><br>Soy tu coach financiero personal, basado en los principios de <b>Robert Kiyosaki</b>. Mi misión: ayudarte a <b>escapar del círculo de la rata</b> y construir libertad financiera real.<br><br>Para empezar: <b>¿cuánto ganas y cuánto gastas cada mes?</b> Cuéntame con total confianza.`;
+  addMessage('bot',txt);
+  chatHistory.push({sender:'bot',text:txt}); saveChat();
+}
+
+/* ══ OPENAI ══ */
+function buildContext(){
+  const flujo = fd.ingresosPasivos - fd.gastosMensuales;
+  const freedom = fd.gastosMensuales>0 ? (fd.ingresosPasivos/fd.gastosMensuales*100).toFixed(1) : 0;
+  return `DATOS FINANCIEROS ACTUALES DEL USUARIO:
+• Ingresos activos (trabajo): $${fd.ingresosActivos.toFixed(2)}/mes
+• Ingresos pasivos totales: $${fd.ingresosPasivos.toFixed(2)}/mes
+• Gastos mensuales: $${fd.gastosMensuales.toFixed(2)}/mes
+• Flujo neto (pasivos - gastos): $${flujo.toFixed(2)}/mes
+• Meta de ingresos pasivos: $${fd.metaPasivos.toFixed(2)}/mes
+• Libertad financiera alcanzada: ${freedom}%
+• Activos productivos (${fd.activos.length}): ${fd.activos.length ? fd.activos.map(a=>`${a.desc} (genera $${(a.ingresoMensual||0).toFixed(0)}/mes)`).join(', ') : 'Ninguno registrado'}
+• Pasivos/deudas (${fd.pasivos.length}): ${fd.pasivos.length ? fd.pasivos.map(p=>`${p.desc} ($${p.monto})`).join(', ') : 'Ninguno registrado'}
+• ¿En el círculo de la rata? ${fd.ingresosPasivos < fd.gastosMensuales ? 'SÍ' : 'NO — ¡YA ESCAPÓ!'}`;
+}
+
+const SYSTEM = `Eres "Rich Dad AI", un coach de libertad financiera basado en los principios de Robert Kiyosaki (Padre Rico, Padre Pobre).
+
+MISIÓN: Ayudar al usuario a ESCAPAR DEL CÍRCULO DE LA RATA construyendo activos que generen ingresos pasivos que superen sus gastos.
+
+PRINCIPIOS CLAVE:
+- ACTIVO = lo que pone dinero en tu bolsillo (renta, dividendos, negocios automatizados, regalías, ETFs)
+- PASIVO = lo que saca dinero de tu bolsillo (créditos, autos sin generar ingreso, deudas de consumo)
+- LIBERTAD FINANCIERA = ingresos_pasivos ≥ gastos_mensuales
+- El círculo de la rata = trabajar para pagar gastos sin construir activos
+- Los ricos no trabajan POR dinero, hacen que el dinero trabaje PARA ellos
+- La casa donde vives NO es un activo (genera gastos, no ingresos)
+
+CÓMO DEBES ACTUAR:
+1. Cuando el usuario mencione ingresos, gastos, activos o deudas, REGÍSTRALOS usando el formato especial abajo.
+2. Compara siempre su situación con el objetivo: ingresos_pasivos > gastos.
+3. Sé directo y honesto, como un coach financiero real. No seas condescendiente.
+4. Haz UNA pregunta estratégica por respuesta para profundizar.
+5. Cuando des consejos, sé concreto: menciona ETFs reales, tipos de propiedades, formas de ingreso pasivo específicas para Latinoamérica.
+6. Celebra los avances. Alerta sobre trampas (créditos innecesarios, "activos" falsos).
+
+FORMATO DE REGISTRO (úsalo SOLO cuando el usuario declare un dato concreto):
+REGISTRAR: tipo=valor|descripción
+Tipos: ingreso_activo, ingreso_pasivo, gasto, activo(valor;rendimiento%), pasivo
+
 Ejemplos:
-ACTUALIZAR_DATOS: ingreso=500|salario
-ACTUALIZAR_DATOS: ingreso_pasivo=300|renta departamento
-ACTUALIZAR_DATOS: gasto=200|supermercado
-ACTUALIZAR_DATOS: activo=50000|casa en renta
-ACTUALIZAR_DATOS: pasivo=15000|préstamo auto
-ACTUALIZAR_DATOS: meta=3000
+REGISTRAR: ingreso_activo=8000|salario mensual
+REGISTRAR: ingreso_pasivo=2500|renta de departamento
+REGISTRAR: gasto=4500|gastos totales mensuales
+REGISTRAR: activo=150000;8|departamento en renta
+REGISTRAR: pasivo=80000|crédito automotriz
 
-Si no hay transacción que registrar, NO incluyas ACTUALIZAR_DATOS.
+NO incluyas REGISTRAR si el usuario solo pregunta o conversa.
 
-${buildFinancialContext()}
+FORMATO DE RESPUESTA:
+- Texto conversacional, máximo 4 párrafos cortos
+- Usa **negritas** para conceptos clave
+- Sin listas largas ni puntos excesivos
+- Termina siempre con UNA pregunta estratégica`;
 
-Responde siempre en español, en formato conversacional de chat.`;
+async function callAI(userMsg){
+  const apiKey=getApiKey();
+  if(!apiKey) throw new Error('API key no configurada');
 
-                const messages = [
-                    { role: "system", content: systemPrompt },
-                    ...chatHistory.slice(-10).map(msg => ({
-                        role: msg.sender === 'user' ? 'user' : 'assistant',
-                        content: msg.text
-                    })),
-                    { role: "user", content: userMessage }
-                ];
+  const msgs=[
+    {role:'system', content: SYSTEM+'\n\n'+buildContext()},
+    ...chatHistory.slice(-12).map(m=>({role:m.sender==='user'?'user':'assistant', content:m.text.replace(/<[^>]+>/g,'')})),
+    {role:'user', content:userMsg}
+  ];
 
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: 'gpt-4o-mini',
-                        messages: messages,
-                        temperature: 0.7,
-                        max_tokens: 600
-                    })
-                });
+  const res=await fetch('https://api.openai.com/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+    body:JSON.stringify({model:'gpt-4o-mini', messages:msgs, temperature:0.72, max_tokens:500})
+  });
 
-                if (!response.ok) {
-                    const err = await response.json();
-                    throw new Error(err.error?.message || 'Error en la API');
-                }
+  if(!res.ok){
+    const err=await res.json();
+    throw new Error(err.error?.message||'Error en OpenAI API');
+  }
+  return (await res.json()).choices[0].message.content;
+}
 
-                const data = await response.json();
-                return data.choices[0].message.content;
-            }
+function processRegistros(text){
+  const re=/REGISTRAR:\s*(.+)/g;
+  let m, changed=false;
+  while((m=re.exec(text))!==null){
+    const raw=m[1].trim();
+    const [tipoRaw,resto]=raw.split('=');
+    const tipo=tipoRaw.trim();
+    if(!resto) continue;
+    const [valPart,desc]= resto.split('|');
+    const description=(desc||'').trim()||'Sin descripción';
+    if(tipo==='activo'){
+      const [montoS,rend]=valPart.split(';');
+      const monto=parseFloat(montoS);
+      const rendPct=parseFloat(rend)||7;
+      if(!isNaN(monto)&&monto>0){
+        const ingresoMensual=(monto*(rendPct/100))/12;
+        fd.activos.push({id:Date.now(),desc:description,monto,rendPct,ingresoMensual,fecha:new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})});
+        fd.ingresosPasivos+=ingresoMensual;
+        changed=true;
+      }
+    } else {
+      const v=parseFloat(valPart);
+      if(isNaN(v)||v<0) continue;
+      switch(tipo){
+        case 'ingreso_activo':  fd.ingresosActivos+=v; changed=true; break;
+        case 'ingreso_pasivo':  fd.ingresosPasivos+=v; changed=true; break;
+        case 'gasto':           fd.gastosMensuales+=v; changed=true; break;
+        case 'pasivo':
+          fd.pasivos.push({id:Date.now(),desc:description,monto:v,fecha:new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})});
+          changed=true; break;
+      }
+    }
+  }
+  if(changed){ saveData(); updateUI(); }
+  // Format markdown and remove directives
+  let clean=text.replace(/REGISTRAR:.*$/gm,'').trim();
+  clean=clean.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  return clean;
+}
 
-            // Procesar directivas de actualización en la respuesta de la IA
-            function processUpdates(aiText) {
-                const regex = /ACTUALIZAR_DATOS:\s*(.+)/g;
-                let match;
-                let updated = false;
-                while ((match = regex.exec(aiText)) !== null) {
-                    const content = match[1].trim();
-                    const parts = content.split('|');
-                    if (parts.length >= 2) {
-                        const accion = parts[0].split('=');
-                        if (accion.length === 2) {
-                            const tipo = accion[0].trim();
-                            const cantidad = parseFloat(accion[1]);
-                            const desc = parts[1]?.trim() || 'Sin descripción';
-                            if (!isNaN(cantidad)) {
-                                switch(tipo) {
-                                    case 'ingreso':
-                                        financeData.ingresosMensuales += cantidad;
-                                        break;
-                                    case 'ingreso_pasivo':
-                                        financeData.ingresosPasivos += cantidad;
-                                        financeData.ingresosMensuales += cantidad;
-                                        break;
-                                    case 'gasto':
-                                        financeData.gastosMensuales += cantidad;
-                                        break;
-                                    case 'activo':
-                                        financeData.activos.push({ cantidad, desc, fecha: new Date().toISOString() });
-                                        financeData.gastosMensuales += cantidad; // asumimos que el activo se compró y es un gasto inicial
-                                        break;
-                                    case 'pasivo':
-                                        financeData.pasivos.push({ cantidad, desc, fecha: new Date().toISOString() });
-                                        financeData.gastosMensuales += cantidad;
-                                        break;
-                                    case 'meta':
-                                        financeData.metaPasivos = cantidad;
-                                        break;
-                                }
-                                updated = true;
-                            }
-                        }
-                    }
-                }
-                if (updated) saveData();
-                // Quitar las directivas del texto visible
-                return aiText.replace(/ACTUALIZAR_DATOS:.*$/gm, '').trim();
-            }
+async function sendToAI(prompt){
+  isProcessing=true;
+  const btn=document.getElementById('sendBtn');
+  btn.disabled=true;
+  showTyping(true);
+  try{
+    const raw=await callAI(prompt);
+    const clean=processRegistros(raw);
+    showTyping(false);
+    addMessage('bot',clean);
+    chatHistory.push({sender:'bot',text:clean}); saveChat();
+  }catch(err){
+    showTyping(false);
+    addMessage('bot','❌ <b>Error:</b> '+err.message);
+  }finally{
+    isProcessing=false;
+    btn.disabled=false;
+  }
+}
 
-            async function sendMessage() {
-                if (isProcessing) return;
-                const userText = messageInput.value.trim();
-                if (!userText) return;
-                if (!getApiKey()) {
-                    alert('Por favor configura tu API key de OpenAI primero.');
-                    return;
-                }
+async function sendMessage(){
+  if(isProcessing) return;
+  const inp=document.getElementById('msgInput');
+  const txt=inp.value.trim();
+  if(!txt) return;
+  if(!getApiKey()){
+    document.getElementById('apiOverlay').classList.remove('hidden');
+    return;
+  }
+  inp.value=''; inp.style.height='auto';
+  addMessage('user',txt,true);
+  chatHistory.push({sender:'user',text:txt}); saveChat();
+  await sendToAI(txt);
+}
 
-                isProcessing = true;
-                messageInput.value = '';
-                addMessage('user', userText);
-                chatHistory.push({ sender: 'user', text: userText, time: getTimeStr() });
-                showTyping(true);
+function quickSend(txt){
+  document.getElementById('msgInput').value=txt;
+  sendMessage();
+}
 
-                try {
-                    const aiResponse = await callOpenAI(userText);
-                    const cleanResponse = processUpdates(aiResponse);
-                    showTyping(false);
-                    addMessage('bot', cleanResponse, true);
-                    chatHistory.push({ sender: 'bot', text: cleanResponse, time: getTimeStr() });
-                    saveChatHistory();
-                } catch (error) {
-                    showTyping(false);
-                    addMessage('bot', `❌ Error: ${error.message}. Verifica tu API key y conexión.`, false);
-                } finally {
-                    isProcessing = false;
-                    scrollToBottom();
-                }
-            }
+window.sendMessage=sendMessage;
+window.quickSend=quickSend;
 
-            function showWelcomeIfNeeded() {
-                if (chatHistory.length === 0 && getApiKey()) {
-                    const welcome = `🎩 ¡Bienvenido! Soy <b>Rich Dad AI</b>, tu coach financiero con inteligencia artificial. Estoy aquí para guiarte a escapar del círculo de la rata.<br><br>Cuéntame sobre tu situación financiera actual: ¿cuáles son tus ingresos, gastos, deudas? ¿Tienes activos que generen ingresos pasivos?<br><br>Puedes hablarme con total naturalidad, y yo iré registrando tus datos y dándote un plan personalizado.`;
-                    addMessage('bot', welcome, true);
-                    chatHistory.push({ sender: 'bot', text: welcome, time: getTimeStr() });
-                    saveChatHistory();
-                }
-            }
+/* ── Auto-resize textarea ── */
+document.getElementById('msgInput').addEventListener('input',function(){
+  this.style.height='auto';
+  this.style.height=Math.min(this.scrollHeight,100)+'px';
+});
+document.getElementById('msgInput').addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMessage(); }
+});
 
-            // Inicialización
-            loadData();
-            if (checkApiKey()) {
-                // Restaurar historial si existe
-                if (chatHistory.length > 0) {
-                    chatHistory.forEach(msg => addMessage(msg.sender, msg.text, msg.sender==='bot'));
-                } else {
-                    showWelcomeIfNeeded();
-                }
-            }
+/* ══ INIT ══ */
+loadAll();
+if(getApiKey()){
+  document.getElementById('apiOverlay').classList.add('hidden');
+  updateUI();
+  if(chatHistory.length>0) restoreChat();
+  else showWelcome();
+} else {
+  updateUI();
+}
 
-            // Listeners
-            sendBtn.addEventListener('click', sendMessage);
-            messageInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-
-            // Exponer funciones globales
-            window.sendMessage = sendMessage;
-            window.saveApiKey = saveApiKey;
-        })();
-    </script>
+})();
+</script>
 </body>
 </html>
