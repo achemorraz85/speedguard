@@ -3,35 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <title>Rich Dad AI - Chat Financiero</title>
+    <title>Rich Dad AI - Asesor Financiero con IA</title>
     <style>
         :root {
             --whatsapp-green: #075e54;
             --whatsapp-light-green: #128c7e;
-            --whatsapp-bg: #e5ddd5;
-            --chat-bg: #efeae2;
+            --chat-bg: #e5ddd5;
             --bubble-user: #dcf8c6;
             --bubble-bot: #ffffff;
             --text-dark: #303030;
-            --text-light: #6b6b6b;
             --accent-gold: #c8960c;
-            --danger-red: #c0392b;
-            --success-green: #27ae60;
             --card-bg: #f8f9fa;
-            --input-bg: #f0f0f0;
-            --shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow: 0 1px 2px rgba(0,0,0,0.1);
             --radius: 18px;
-            --radius-sm: 10px;
-            --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: var(--font);
             background: #1a1a1a;
@@ -40,11 +27,7 @@
             align-items: center;
             min-height: 100vh;
             min-height: 100dvh;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-font-smoothing: antialiased;
         }
-
-        /* Contenedor del teléfono */
         .phone-frame {
             width: 100%;
             max-width: 430px;
@@ -56,10 +39,8 @@
             flex-direction: column;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
-            border-radius: 0;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
         }
-
         @media (min-width: 500px) {
             .phone-frame {
                 border-radius: 20px;
@@ -69,8 +50,6 @@
                 margin: 0 10px;
             }
         }
-
-        /* Header estilo WhatsApp */
         .chat-header {
             background: var(--whatsapp-green);
             color: white;
@@ -81,21 +60,6 @@
             z-index: 10;
             flex-shrink: 0;
             min-height: 56px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-        }
-        .chat-header .back-btn {
-            font-size: 22px;
-            cursor: pointer;
-            width: 34px;
-            height: 34px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background 0.2s;
-        }
-        .chat-header .back-btn:active {
-            background: rgba(255, 255, 255, 0.2);
         }
         .chat-header .avatar {
             width: 40px;
@@ -107,7 +71,6 @@
             justify-content: center;
             font-size: 22px;
             flex-shrink: 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             position: relative;
         }
         .chat-header .avatar .online-dot {
@@ -120,37 +83,15 @@
             right: 1px;
             border: 2px solid var(--whatsapp-green);
         }
-        .chat-header .info {
-            flex: 1;
-            min-width: 0;
-        }
-        .chat-header .name {
-            font-weight: 600;
-            font-size: 16px;
-            line-height: 1.2;
-            letter-spacing: 0.2px;
-        }
-        .chat-header .status {
-            font-size: 12px;
-            opacity: 0.85;
-            line-height: 1.3;
-        }
-        .chat-header .menu-dots {
-            font-size: 20px;
-            cursor: pointer;
-            padding: 6px 4px;
-            letter-spacing: 2px;
-            opacity: 0.9;
-        }
-
-        /* Área de chat */
+        .chat-header .info { flex: 1; min-width: 0; }
+        .chat-header .name { font-weight: 600; font-size: 16px; }
+        .chat-header .status { font-size: 12px; opacity: 0.85; }
         .chat-area {
             flex: 1;
             overflow-y: auto;
-            overflow-x: hidden;
             padding: 10px 8px;
             background-color: var(--chat-bg);
-            background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='200' height='200' fill='%23efeae2'/%3E%3Ccircle cx='100' cy='100' r='80' fill='none' stroke='%23e2dbd1' stroke-width='0.8' opacity='0.5'/%3E%3Ccircle cx='100' cy='100' r='50' fill='none' stroke='%23e2dbd1' stroke-width='0.6' opacity='0.4'/%3E%3Ccircle cx='100' cy='100' r='20' fill='none' stroke='%23e2dbd1' stroke-width='0.5' opacity='0.3'/%3E%3Cline x1='40' y1='100' x2='160' y2='100' stroke='%23e2dbd1' stroke-width='0.4' opacity='0.3'/%3E%3Cline x1='100' y1='40' x2='100' y2='160' stroke='%23e2dbd1' stroke-width='0.4' opacity='0.3'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='200' height='200' fill='%23efeae2'/%3E%3Ccircle cx='100' cy='100' r='80' fill='none' stroke='%23e2dbd1' stroke-width='0.8' opacity='0.5'/%3E%3C/svg%3E");
             background-size: 180px;
             display: flex;
             flex-direction: column;
@@ -158,36 +99,10 @@
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
         }
-        .chat-area::-webkit-scrollbar {
-            width: 4px;
-        }
-        .chat-area::-webkit-scrollbar-thumb {
-            background: #c0b9ad;
-            border-radius: 10px;
-        }
-
-        /* Mensajes */
-        .message-wrapper {
-            display: flex;
-            margin: 3px 0;
-            animation: fadeInUp 0.3s ease;
-        }
-        .message-wrapper.user {
-            justify-content: flex-end;
-        }
-        .message-wrapper.bot {
-            justify-content: flex-start;
-        }
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        .message-wrapper { display: flex; margin: 3px 0; animation: fadeInUp 0.3s ease; }
+        .message-wrapper.user { justify-content: flex-end; }
+        .message-wrapper.bot { justify-content: flex-start; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         .bubble {
             max-width: 82%;
             padding: 9px 13px;
@@ -198,101 +113,9 @@
             position: relative;
             box-shadow: var(--shadow);
         }
-        .user .bubble {
-            background: var(--bubble-user);
-            border-top-right-radius: 6px;
-            color: var(--text-dark);
-        }
-        .bot .bubble {
-            background: var(--bubble-bot);
-            border-top-left-radius: 6px;
-            color: var(--text-dark);
-        }
-        .bubble .time {
-            font-size: 10.5px;
-            color: #888;
-            text-align: right;
-            margin-top: 4px;
-            letter-spacing: 0.3px;
-        }
-        .user .bubble .time {
-            color: #7a9d6e;
-        }
-
-        /* Tarjeta financiera dentro del chat */
-        .finance-card {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 14px 16px;
-            margin: 6px 0;
-            box-shadow: var(--shadow-lg);
-            border-left: 4px solid var(--whatsapp-light-green);
-            font-size: 13px;
-            line-height: 1.5;
-        }
-        .finance-card.warning {
-            border-left-color: #e74c3c;
-            background: #fff5f5;
-        }
-        .finance-card.success {
-            border-left-color: #27ae60;
-            background: #f5fff8;
-        }
-        .finance-card.gold {
-            border-left-color: #f39c12;
-            background: #fffef5;
-        }
-        .finance-card .card-title {
-            font-weight: 700;
-            font-size: 14px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .finance-card .card-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 13px;
-        }
-        .finance-card .card-row:last-child {
-            border-bottom: none;
-        }
-        .finance-card .card-row .val {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        .finance-card .card-row .val.positive {
-            color: #27ae60;
-        }
-        .finance-card .card-row .val.negative {
-            color: #e74c3c;
-        }
-        .finance-card .highlight {
-            background: #fffde7;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 700;
-        }
-
-        /* Barra de progreso */
-        .progress-bar-wrap {
-            background: #e9ecef;
-            border-radius: 10px;
-            height: 10px;
-            margin: 8px 0;
-            overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.6s ease;
-            background: linear-gradient(90deg, #e74c3c, #f39c12, #27ae60);
-        }
-
-        /* Input area */
+        .user .bubble { background: var(--bubble-user); border-top-right-radius: 6px; color: var(--text-dark); }
+        .bot .bubble { background: var(--bubble-bot); border-top-left-radius: 6px; color: var(--text-dark); }
+        .bubble .time { font-size: 10.5px; color: #888; text-align: right; margin-top: 4px; }
         .input-area {
             display: flex;
             align-items: center;
@@ -311,15 +134,9 @@
             font-size: 15px;
             background: white;
             outline: none;
-            font-family: var(--font);
-            transition: border 0.2s;
-            min-width: 0;
         }
-        .input-area input:focus {
-            border-color: var(--whatsapp-light-green);
-            box-shadow: 0 0 0 2px rgba(18, 140, 126, 0.1);
-        }
-        .input-area .icon-btn {
+        .input-area input:focus { border-color: var(--whatsapp-light-green); }
+        .input-area .send-btn {
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -331,62 +148,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
             box-shadow: var(--shadow);
         }
-        .input-area .icon-btn:active {
-            transform: scale(0.92);
-            background: #075e54;
-        }
-        .input-area .icon-btn.secondary {
-            background: #e0e0e0;
-            color: #555;
-            font-size: 16px;
-        }
-        .input-area .icon-btn.secondary:active {
-            background: #ccc;
-        }
-
-        /* Quick commands */
-        .quick-commands {
-            display: flex;
-            gap: 6px;
-            padding: 6px 10px;
-            background: #fafafa;
-            overflow-x: auto;
-            flex-shrink: 0;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-        .quick-commands::-webkit-scrollbar {
-            display: none;
-        }
-        .quick-commands .chip {
-            white-space: nowrap;
-            padding: 7px 13px;
-            border-radius: 20px;
-            background: white;
-            border: 1.5px solid #ddd;
-            font-size: 12.5px;
-            cursor: pointer;
-            font-family: var(--font);
-            transition: all 0.2s;
-            flex-shrink: 0;
-            user-select: none;
-        }
-        .quick-commands .chip:active {
-            background: var(--whatsapp-light-green);
-            color: white;
-            border-color: var(--whatsapp-light-green);
-            transform: scale(0.95);
-        }
-
-        /* Typing indicator */
+        .send-btn:active { transform: scale(0.92); background: #075e54; }
         .typing-indicator {
             display: flex;
             gap: 4px;
-            padding: 8px 0;
+            padding: 8px 16px;
             align-items: center;
         }
         .typing-indicator span {
@@ -396,213 +164,121 @@
             background: #b0b0b0;
             animation: typingBounce 1.2s infinite;
         }
-        .typing-indicator span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        .typing-indicator span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-        @keyframes typingBounce {
-            0%,
-            60%,
-            100% {
-                transform: translateY(0);
-                opacity: 0.5;
-            }
-            30% {
-                transform: translateY(-8px);
-                opacity: 1;
-            }
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 20px;
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typingBounce { 0%,60%,100%{transform:translateY(0);opacity:0.5} 30%{transform:translateY(-8px);opacity:1} }
+        .api-config {
+            background: #fef9e7;
+            padding: 10px;
             font-size: 13px;
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-            font-family: var(--font);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border-bottom: 1px solid #e0d8b0;
+            flex-shrink: 0;
         }
-        .toast.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        @media (max-width: 380px) {
-            .bubble {
-                max-width: 88%;
-                font-size: 14px;
-                padding: 7px 10px;
-            }
-            .chat-header {
-                padding: 8px 10px;
-                min-height: 50px;
-            }
-            .chat-header .name {
-                font-size: 15px;
-            }
-            .finance-card {
-                padding: 10px 12px;
-                font-size: 12px;
-            }
-            .input-area input {
-                font-size: 14px;
-                padding: 8px 12px;
-            }
-            .quick-commands .chip {
-                font-size: 11px;
-                padding: 6px 10px;
-            }
-        }
+        .api-config input { flex:1; padding: 6px; border:1px solid #ccc; border-radius:4px; }
+        .api-config button { padding: 6px 12px; background:#128c7e; color:white; border:none; border-radius:4px; font-weight:bold; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
-
     <div class="phone-frame" id="phoneFrame">
-        <!-- Header -->
         <div class="chat-header">
-            <div class="back-btn" onclick="showToast('🏠 Chat principal')">←</div>
-            <div class="avatar">
-                🎩
-                <div class="online-dot"></div>
-            </div>
+            <div class="avatar">🎩<div class="online-dot"></div></div>
             <div class="info">
                 <div class="name">Rich Dad AI</div>
-                <div class="status">en línea · Asesor Financiero</div>
+                <div class="status">en línea · Coach Financiero</div>
             </div>
-            <div class="menu-dots" onclick="showQuickInfo()">⋮</div>
         </div>
-
-        <!-- Área de chat -->
+        <div id="apiPanel" class="api-config">
+            <span>🔑 API Key:</span>
+            <input type="password" id="apiKeyInput" placeholder="sk-...">
+            <button onclick="saveApiKey()">Guardar</button>
+        </div>
         <div class="chat-area" id="chatArea"></div>
-
-        <!-- Indicador de escribiendo -->
-        <div class="typing-indicator" id="typingIndicator" style="display:none; padding:4px 16px; background:var(--chat-bg);">
-            <span></span><span></span><span></span>
-        </div>
-
-        <!-- Comandos rápidos -->
-        <div class="quick-commands" id="quickCommands">
-            <div class="chip" onclick="sendQuick('📊 /balance')">📊 Balance</div>
-            <div class="chip" onclick="sendQuick('💰 /ingreso ')">💰 Ingreso</div>
-            <div class="chip" onclick="sendQuick('💸 /gasto ')">💸 Gasto</div>
-            <div class="chip" onclick="sendQuick('🏠 /activo ')">🏠 Activo</div>
-            <div class="chip" onclick="sendQuick('📉 /pasivo ')">📉 Pasivo</div>
-            <div class="chip" onclick="sendQuick('🆓 /libertad')">🆓 Libertad</div>
-        </div>
-
-        <!-- Input -->
+        <div class="typing-indicator" id="typingIndicator" style="display:none; background:var(--chat-bg);"><span></span><span></span><span></span></div>
         <div class="input-area">
-            <button class="icon-btn secondary" onclick="showToast('📎 Adjuntar comprobante (próximamente)')" aria-label="Adjuntar">📎</button>
             <input type="text" id="messageInput" placeholder="Escribe un mensaje..." autocomplete="off" enterkeyhint="send">
-            <button class="icon-btn" id="sendBtn" onclick="sendMessage()" aria-label="Enviar">➤</button>
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
-
     <script>
         (function() {
-            // ==================== ESTADO FINANCIERO ====================
+            // Estado financiero local (se mantiene sincronizado con lo que la IA interpreta)
             const STORAGE_KEY = 'richdad_finance_data';
-            const CHAT_STORAGE_KEY = 'richdad_chat_history';
+            const CHAT_STORAGE_KEY = 'richdad_chat_history_ai';
+            const API_KEY_STORAGE = 'richdad_openai_key';
 
             let financeData = {
-                balance: 0,
-                ingresosMes: 0,
-                gastosMes: 0,
+                ingresosMensuales: 0,
+                gastosMensuales: 0,
                 ingresosPasivos: 0,
                 activos: [],
                 pasivos: [],
                 metaPasivos: 2000,
-                historial: [],
-                mesActual: new Date().getMonth(),
-                añoActual: new Date().getFullYear(),
+                historial: []
             };
-
             let chatHistory = [];
             let isProcessing = false;
 
-            // Cargar datos guardados
+            // Cargar datos
             function loadData() {
                 try {
                     const saved = localStorage.getItem(STORAGE_KEY);
-                    if (saved) {
-                        const parsed = JSON.parse(saved);
-                        financeData = { ...financeData, ...parsed };
-                        // Verificar cambio de mes
-                        const now = new Date();
-                        if (financeData.mesActual !== now.getMonth() || financeData.añoActual !== now
-                            .getFullYear()) {
-                            financeData.ingresosMes = 0;
-                            financeData.gastosMes = 0;
-                            financeData.mesActual = now.getMonth();
-                            financeData.añoActual = now.getFullYear();
-                            saveData();
-                        }
-                    }
-                } catch (e) {
-                    console.log('Nuevo usuario, datos fresh');
-                }
+                    if (saved) financeData = { ...financeData, ...JSON.parse(saved) };
+                } catch(e) {}
                 try {
                     const savedChat = localStorage.getItem(CHAT_STORAGE_KEY);
                     if (savedChat) chatHistory = JSON.parse(savedChat);
-                } catch (e) {
-                    chatHistory = [];
-                }
+                } catch(e) {}
             }
-
-            function saveData() {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(financeData));
-            }
-
+            function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(financeData)); }
             function saveChatHistory() {
-                // Guardar solo últimos 200 mensajes
                 if (chatHistory.length > 200) chatHistory = chatHistory.slice(-200);
                 localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chatHistory));
             }
 
-            // ==================== REFERENCIAS DOM ====================
+            // API Key
+            function getApiKey() { return localStorage.getItem(API_KEY_STORAGE) || ''; }
+            function saveApiKey() {
+                const key = document.getElementById('apiKeyInput').value.trim();
+                if (key) {
+                    localStorage.setItem(API_KEY_STORAGE, key);
+                    document.getElementById('apiPanel').classList.add('hidden');
+                    showWelcomeIfNeeded();
+                }
+            }
+            function checkApiKey() {
+                if (getApiKey()) {
+                    document.getElementById('apiPanel').classList.add('hidden');
+                    return true;
+                } else {
+                    document.getElementById('apiPanel').classList.remove('hidden');
+                    return false;
+                }
+            }
+
+            // DOM
             const chatArea = document.getElementById('chatArea');
             const messageInput = document.getElementById('messageInput');
             const sendBtn = document.getElementById('sendBtn');
             const typingIndicator = document.getElementById('typingIndicator');
-            const quickCommands = document.getElementById('quickCommands');
 
-            // ==================== RENDERIZADO ====================
             function getTimeStr() {
                 const now = new Date();
-                return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2,
-                    '0');
+                return now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
             }
+            function scrollToBottom() { setTimeout(() => { chatArea.scrollTop = chatArea.scrollHeight; }, 100); }
 
-            function scrollToBottom() {
-                setTimeout(() => {
-                    chatArea.scrollTop = chatArea.scrollHeight;
-                }, 100);
-            }
-
-            function addMessageToChat(sender, content, isHTML = false) {
+            function addMessage(sender, text, isHTML=false) {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'message-wrapper ' + sender;
                 const bubble = document.createElement('div');
                 bubble.className = 'bubble';
-                if (isHTML) {
-                    bubble.innerHTML = content;
-                } else {
-                    bubble.textContent = content;
-                }
+                if (isHTML) bubble.innerHTML = text;
+                else bubble.textContent = text;
                 const timeSpan = document.createElement('div');
                 timeSpan.className = 'time';
                 timeSpan.textContent = getTimeStr();
@@ -613,499 +289,195 @@
                 return wrapper;
             }
 
-            function addFinanceCard(cardHTML, cardClass = '') {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'message-wrapper bot';
-                const bubble = document.createElement('div');
-                bubble.className = 'bubble';
-                const card = document.createElement('div');
-                card.className = 'finance-card ' + cardClass;
-                card.innerHTML = cardHTML;
-                bubble.appendChild(card);
-                const timeSpan = document.createElement('div');
-                timeSpan.className = 'time';
-                timeSpan.textContent = getTimeStr();
-                bubble.appendChild(timeSpan);
-                wrapper.appendChild(bubble);
-                chatArea.appendChild(wrapper);
+            function showTyping(show=true) {
+                typingIndicator.style.display = show ? 'flex' : 'none';
                 scrollToBottom();
-                return wrapper;
             }
 
-            function showTyping(duration = 1200) {
-                typingIndicator.style.display = 'flex';
-                scrollToBottom();
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        typingIndicator.style.display = 'none';
-                        resolve();
-                    }, duration);
+            // Construir el contexto financiero para enviar a la IA
+            function buildFinancialContext() {
+                return `DATOS FINANCIEROS ACTUALES DEL USUARIO:
+- Ingresos totales este mes: $${financeData.ingresosMensuales.toFixed(2)}
+- Gastos totales este mes: $${financeData.gastosMensuales.toFixed(2)}
+- Ingresos pasivos mensuales: $${financeData.ingresosPasivos.toFixed(2)}
+- Meta de ingresos pasivos: $${financeData.metaPasivos.toFixed(2)}
+- Activos registrados: ${financeData.activos.length ? financeData.activos.map(a => a.desc + ' ($' + a.cantidad + ')').join(', ') : 'Ninguno'}
+- Pasivos registrados: ${financeData.pasivos.length ? financeData.pasivos.map(p => p.desc + ' ($' + p.cantidad + ')').join(', ') : 'Ninguno'}
+- Ratio de libertad (ingresos pasivos / gastos): ${financeData.gastosMensuales > 0 ? ((financeData.ingresosPasivos / financeData.gastosMensuales)*100).toFixed(1) : 0}%
+- ¿Está en círculo de la rata? ${financeData.ingresosPasivos < financeData.gastosMensuales ? 'SÍ' : 'NO (ha escapado)'}`;
+            }
+
+            // Llamada a la API de OpenAI
+            async function callOpenAI(userMessage) {
+                const apiKey = getApiKey();
+                if (!apiKey) throw new Error('API key no configurada');
+
+                const systemPrompt = `Eres "Rich Dad AI", un asesor financiero virtual basado en los principios de Robert Kiyosaki (autor de "Padre Rico, Padre Pobre"). Tu misión es ayudar al usuario a ESCAPAR DEL CÍRCULO DE LA RATA y alcanzar la LIBERTAD FINANCIERA.
+
+PRINCIPIOS CLAVE QUE DEBES APLICAR:
+- Los activos ponen dinero en tu bolsillo; los pasivos lo sacan.
+- La libertad financiera ocurre cuando los ingresos pasivos > gastos totales.
+- Debemos enfocarnos en construir activos que generen ingresos pasivos (bienes raíces en renta, dividendos, negocios automatizados, regalías).
+- Los pasivos disfrazados de activos (autos de lujo, casa propia si no genera ingreso) son trampas.
+
+ESTILO DE COMUNICACIÓN:
+- Sé directo, motivador y ligeramente provocador, como un coach.
+- Haz preguntas para profundizar en la situación financiera del usuario.
+- Cuando el usuario registre una transacción, INTERPRÉTALA y clasifícala (ingreso, gasto, activo, pasivo) y actualiza TÚ MISMO los datos diciendo explícitamente "ACTUALIZAR_DATOS: tipo=monto|descripción".
+- Ejemplo: si dice "gané 500 de renta", responde aconsejando y al final incluye: ACTUALIZAR_DATOS: ingreso_pasivo=500|renta.
+- Si dice "compré un auto de 10000", debes advertir que es un pasivo a menos que genere ingresos.
+- Monitorea el progreso hacia la meta de ingresos pasivos y alerta cuando los gastos superen los ingresos pasivos.
+
+FORMATO DE ACTUALIZACIÓN (debes incluirlo en tu respuesta cuando corresponda):
+ACTUALIZAR_DATOS: acción|cantidad|descripción
+Acciones posibles: ingreso, ingreso_pasivo, gasto, activo, pasivo, meta
+Ejemplos:
+ACTUALIZAR_DATOS: ingreso=500|salario
+ACTUALIZAR_DATOS: ingreso_pasivo=300|renta departamento
+ACTUALIZAR_DATOS: gasto=200|supermercado
+ACTUALIZAR_DATOS: activo=50000|casa en renta
+ACTUALIZAR_DATOS: pasivo=15000|préstamo auto
+ACTUALIZAR_DATOS: meta=3000
+
+Si no hay transacción que registrar, NO incluyas ACTUALIZAR_DATOS.
+
+${buildFinancialContext()}
+
+Responde siempre en español, en formato conversacional de chat.`;
+
+                const messages = [
+                    { role: "system", content: systemPrompt },
+                    ...chatHistory.slice(-10).map(msg => ({
+                        role: msg.sender === 'user' ? 'user' : 'assistant',
+                        content: msg.text
+                    })),
+                    { role: "user", content: userMessage }
+                ];
+
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: messages,
+                        temperature: 0.7,
+                        max_tokens: 600
+                    })
                 });
-            }
 
-            // ==================== TOAST ====================
-            function showToast(msg) {
-                const toast = document.getElementById('toast');
-                toast.textContent = msg;
-                toast.classList.add('show');
-                clearTimeout(toast._timeout);
-                toast._timeout = setTimeout(() => toast.classList.remove('show'), 2000);
-            }
-
-            // ==================== PROCESAMIENTO DE MENSAJES ====================
-            function parseAmount(text) {
-                // Buscar números con posible formato: 1000, 1.000, 1,000, $1000, 1000€, etc.
-                const cleaned = text.replace(/[€$]/g, '').replace(/\./g, '').replace(/,/g, '.');
-                const match = cleaned.match(/(\d+(?:\.\d+)?)/);
-                if (match) {
-                    const num = parseFloat(match[1]);
-                    return isNaN(num) ? null : Math.round(num * 100) / 100;
-                }
-                return null;
-            }
-
-            function extractDescription(text, amount) {
-                // Quitar el número y comandos para obtener descripción
-                let desc = text
-                    .replace(/\/\w+/g, '')
-                    .replace(/[€$]/g, '')
-                    .replace(/[\d.,]+/g, '')
-                    .replace(/\s+/g, ' ')
-                    .trim();
-                if (!desc || desc.length < 2) desc = 'Sin descripción';
-                return desc.substring(0, 60);
-            }
-
-            function detectIntent(text) {
-                const lower = text.toLowerCase().trim();
-
-                // Comandos explícitos
-                if (lower.startsWith('/ingreso') || lower.startsWith('/income')) return 'ingreso';
-                if (lower.startsWith('/gasto') || lower.startsWith('/expense') || lower.startsWith('/gasté') || lower
-                    .startsWith('/gaste')) return 'gasto';
-                if (lower.startsWith('/activo') || lower.startsWith('/asset')) return 'activo';
-                if (lower.startsWith('/pasivo') || lower.startsWith('/liability')) return 'pasivo';
-                if (lower.startsWith('/balance') || lower.startsWith('/resumen')) return 'balance';
-                if (lower.startsWith('/libertad') || lower.startsWith('/freedom')) return 'libertad';
-                if (lower.startsWith('/consejo') || lower.startsWith('/tip')) return 'consejo';
-                if (lower.startsWith('/meta')) return 'meta';
-                if (lower.startsWith('/ayuda') || lower.startsWith('/help')) return 'ayuda';
-                if (lower.startsWith('/limpiar') || lower.startsWith('/reset')) return 'limpiar';
-
-                // Lenguaje natural
-                if (/(gan[éeé]|cobr[éeé]|recib[ií]|ingres[oó]|factur[éeé]|vend[ií])/i.test(lower) && parseAmount(lower))
-                    return 'ingreso';
-                if (/(gast[éeé]|pag[uéé]|compr[éeé]|pagué|transfer[ií]|retir[éeé])/i.test(lower) && parseAmount(lower))
-                    return 'gasto';
-                if (/(compr[éeé].*(?:casa|depa|inmueble|terreno|local|edificio)|invert[ií].*(?:casa|inmueble))/i.test(
-                        lower) && parseAmount(lower)) return 'activo';
-                if (/(compr[éeé].*(?:auto|coche|carro|moto)|deuda|pr[ée]stamo|cr[ée]dito|hipoteca)/i.test(lower) &&
-                    parseAmount(lower)) return 'pasivo';
-                if (/(c[oó]mo estoy|balance|resumen|cu[aá]nto tengo|mi dinero|mis finanzas)/i.test(lower)) return
-                'balance';
-                if (/(libertad|financiera|c[ií]rculo.*rata|salir.*rata|v[ií]a r[aá]pida)/i.test(lower)) return
-                    'libertad';
-                if (/(consejo|qu[ée] hago|recomi[ée]ndame|sugerencia|tip)/i.test(lower)) return 'consejo';
-
-                return 'general';
-            }
-
-            // ==================== RESPUESTAS DEL ASISTENTE ====================
-            function getBotResponse(intent, amount, description, fullText) {
-                const lower = fullText.toLowerCase().trim();
-                switch (intent) {
-                    case 'ingreso':
-                        return handleIngreso(amount, description);
-                    case 'gasto':
-                        return handleGasto(amount, description);
-                    case 'activo':
-                        return handleActivo(amount, description);
-                    case 'pasivo':
-                        return handlePasivo(amount, description);
-                    case 'balance':
-                        return buildBalanceResponse();
-                    case 'libertad':
-                        return buildLibertadResponse();
-                    case 'consejo':
-                        return buildConsejoResponse();
-                    case 'meta':
-                        return handleMeta(amount, description);
-                    case 'ayuda':
-                        return buildAyudaResponse();
-                    case 'limpiar':
-                        return { text: '🗑️ Datos reiniciados. Empiezas de cero. ¿Listo para construir tu libertad financiera?', card: null };
-                    case 'general':
-                    default:
-                        return handleGeneral(lower);
-                }
-            }
-
-            function handleIngreso(amount, description) {
-                financeData.ingresosMes += amount;
-                financeData.balance += amount;
-                financeData.historial.push({ tipo: 'ingreso', cantidad: amount, desc: description, fecha: new Date()
-                        .toISOString() });
-                saveData();
-
-                const esPasivo = /pasivo|renta|alquiler|dividendo|regal[ií]a|inter[eé]s|inversi[oó]n/i.test(description);
-                if (esPasivo) {
-                    financeData.ingresosPasivos += amount;
-                    saveData();
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error?.message || 'Error en la API');
                 }
 
-                const ratio = financeData.gastosMes > 0 ? (financeData.ingresosPasivos / financeData.gastosMes) * 100 : 0;
-                const emoji = esPasivo ? '🎯✨' : '👍';
-                let cardHTML = null;
+                const data = await response.json();
+                return data.choices[0].message.content;
+            }
 
-                if (esPasivo) {
-                    cardHTML = `
-                <div class="card-title">🎯 ¡Ingreso Pasivo Detectado!</div>
-                <div class="card-row"><span>💵 Ingreso registrado</span><span class="val positive">+$${amount.toFixed(2)}</span></div>
-                <div class="card-row"><span>📊 Ingresos pasivos/mes</span><span class="val">$${financeData.ingresosPasivos.toFixed(2)}</span></div>
-                <div class="card-row"><span>🆓 Ratio de libertad</span><span class="val">${ratio.toFixed(1)}%</span></div>
-                <div style="margin-top:6px;font-size:12px;color:#666;">💡 <em>Según Kiyosaki, los ingresos pasivos son la llave para escapar del círculo de la rata.</em></div>`;
+            // Procesar directivas de actualización en la respuesta de la IA
+            function processUpdates(aiText) {
+                const regex = /ACTUALIZAR_DATOS:\s*(.+)/g;
+                let match;
+                let updated = false;
+                while ((match = regex.exec(aiText)) !== null) {
+                    const content = match[1].trim();
+                    const parts = content.split('|');
+                    if (parts.length >= 2) {
+                        const accion = parts[0].split('=');
+                        if (accion.length === 2) {
+                            const tipo = accion[0].trim();
+                            const cantidad = parseFloat(accion[1]);
+                            const desc = parts[1]?.trim() || 'Sin descripción';
+                            if (!isNaN(cantidad)) {
+                                switch(tipo) {
+                                    case 'ingreso':
+                                        financeData.ingresosMensuales += cantidad;
+                                        break;
+                                    case 'ingreso_pasivo':
+                                        financeData.ingresosPasivos += cantidad;
+                                        financeData.ingresosMensuales += cantidad;
+                                        break;
+                                    case 'gasto':
+                                        financeData.gastosMensuales += cantidad;
+                                        break;
+                                    case 'activo':
+                                        financeData.activos.push({ cantidad, desc, fecha: new Date().toISOString() });
+                                        financeData.gastosMensuales += cantidad; // asumimos que el activo se compró y es un gasto inicial
+                                        break;
+                                    case 'pasivo':
+                                        financeData.pasivos.push({ cantidad, desc, fecha: new Date().toISOString() });
+                                        financeData.gastosMensuales += cantidad;
+                                        break;
+                                    case 'meta':
+                                        financeData.metaPasivos = cantidad;
+                                        break;
+                                }
+                                updated = true;
+                            }
+                        }
+                    }
                 }
-
-                let text = `${emoji} ¡Registrado! Ingreso de <b>$${amount.toFixed(2)}</b> por "${description}".\n\nTu balance mensual: <b>+$${financeData.ingresosMes.toFixed(2)}</b> en ingresos este mes.`;
-                if (esPasivo) text +=
-                    `\n\n🔥 Este es un <b>ingreso pasivo</b>. ¡Así se construye la libertad financiera! Sigue acumulando activos.`;
-
-                return { text, card: cardHTML, cardClass: esPasivo ? 'success' : '' };
+                if (updated) saveData();
+                // Quitar las directivas del texto visible
+                return aiText.replace(/ACTUALIZAR_DATOS:.*$/gm, '').trim();
             }
 
-            function handleGasto(amount, description) {
-                financeData.gastosMes += amount;
-                financeData.balance -= amount;
-                financeData.historial.push({ tipo: 'gasto', cantidad: amount, desc: description, fecha: new Date()
-                        .toISOString() });
-                saveData();
-
-                const esPasivo = /deuda|pr[eé]stamo|cr[eé]dito|hipoteca|inter[eé]s|tarjeta|financiamiento/i.test(
-                description);
-                const ratio = financeData.gastosMes > 0 ? (financeData.ingresosPasivos / financeData.gastosMes) * 100 : 0;
-                let cardHTML = null;
-                let cardClass = '';
-
-                if (ratio < 100 && financeData.gastosMes > financeData.ingresosPasivos) {
-                    cardHTML = `
-                <div class="card-title">⚠️ Alerta del Círculo de la Rata</div>
-                <div class="card-row"><span>💸 Gastos del mes</span><span class="val negative">$${financeData.gastosMes.toFixed(2)}</span></div>
-                <div class="card-row"><span>💤 Ingresos pasivos</span><span class="val">$${financeData.ingresosPasivos.toFixed(2)}</span></div>
-                <div class="card-row"><span>🔴 Brecha</span><span class="val negative">-$${(financeData.gastosMes - financeData.ingresosPasivos).toFixed(2)}</span></div>
-                <div style="margin-top:6px;font-size:12px;color:#c0392b;">🏃 Estás en el <b>círculo de la rata</b>: trabajas para pagar gastos. ¡Necesitas más activos que generen ingresos pasivos!</div>`;
-                    cardClass = 'warning';
-                }
-
-                let text =
-                    `💸 Gasto registrado: <b>$${amount.toFixed(2)}</b> en "${description}".\n\nTotal gastos este mes: <b>$${financeData.gastosMes.toFixed(2)}</b>.`;
-                if (esPasivo) text +=
-                    `\n\n⚠️ Esto parece un <b>pasivo</b> (deuda/crédito). Recuerda: los pasivos <b>sacan</b> dinero de tu bolsillo.`;
-
-                return { text, card: cardHTML, cardClass };
-            }
-
-            function handleActivo(amount, description) {
-                financeData.activos.push({ cantidad: amount, desc: description, fecha: new Date().toISOString() });
-                financeData.balance -= amount;
-                financeData.gastosMes += amount;
-                financeData.historial.push({ tipo: 'activo', cantidad: amount, desc: description, fecha: new Date()
-                        .toISOString() });
-                saveData();
-
-                const cardHTML = `
-              <div class="card-title">🏠 ¡Activo Adquirido!</div>
-              <div class="card-row"><span>🏗️ Activo</span><span class="val">${description}</span></div>
-              <div class="card-row"><span>💲 Inversión</span><span class="val">$${amount.toFixed(2)}</span></div>
-              <div style="margin-top:8px;font-size:12px;color:#27ae60;">💡 <b>Kiyosaki:</b> <em>"Los activos ponen dinero en tu bolsillo."</em> Asegúrate de que este activo <b>genere ingresos pasivos</b> (rentas, dividendos, etc). Cuando registres esos ingresos, usa <span class="highlight">/ingreso</span> y menciona "renta" o "pasivo".</div>`;
-
-                return {
-                    text: `🏠 ¡Excelente decisión! Has adquirido un <b>activo</b>: "${description}" por $${amount.toFixed(2)}.\n\nRecuerda: para que sea un verdadero activo según Kiyosaki, debe <b>generar ingresos pasivos</b> recurrentes.`,
-                    card: cardHTML,
-                    cardClass: 'success'
-                };
-            }
-
-            function handlePasivo(amount, description) {
-                financeData.pasivos.push({ cantidad: amount, desc: description, fecha: new Date().toISOString() });
-                financeData.gastosMes += amount;
-                financeData.balance -= amount;
-                financeData.historial.push({ tipo: 'pasivo', cantidad: amount, desc: description, fecha: new Date()
-                        .toISOString() });
-                saveData();
-
-                const cardHTML = `
-              <div class="card-title">📉 ¡Cuidado! Esto es un Pasivo</div>
-              <div class="card-row"><span>🔻 Pasivo</span><span class="val">${description}</span></div>
-              <div class="card-row"><span>💲 Costo</span><span class="val negative">$${amount.toFixed(2)}</span></div>
-              <div style="margin-top:8px;font-size:12px;color:#c0392b;">⚠️ <b>Kiyosaki:</b> <em>"Los pasivos sacan dinero de tu bolsillo."</em> Los autos de lujo, deudas de consumo y créditos innecesarios <b>te mantienen en el círculo de la rata</b>.</div>`;
-
-                return {
-                    text: `📉 Has registrado un <b>pasivo</b>: "${description}" por $${amount.toFixed(2)}.\n\n⚠️ Los pasivos <b>drenan</b> tus finanzas. ¿Este gasto era realmente necesario? Prioriza adquirir <b>activos</b> que generen ingresos.`,
-                    card: cardHTML,
-                    cardClass: 'warning'
-                };
-            }
-
-            function buildBalanceResponse() {
-                const neto = financeData.ingresosMes - financeData.gastosMes;
-                const ratio = financeData.gastosMes > 0 ? (financeData.ingresosPasivos / financeData.gastosMes) * 100 :
-                0;
-                const enCirculo = ratio < 100;
-                const progreso = Math.min(ratio, 100);
-
-                const cardHTML = `
-              <div class="card-title">📊 Resumen Financiero Mensual</div>
-              <div class="card-row"><span>💰 Ingresos totales</span><span class="val positive">+$${financeData.ingresosMes.toFixed(2)}</span></div>
-              <div class="card-row"><span>💸 Gastos totales</span><span class="val negative">-$${financeData.gastosMes.toFixed(2)}</span></div>
-              <div class="card-row" style="font-weight:700;"><span>📈 Neto</span><span class="val" style="color:${neto>=0?'#27ae60':'#e74c3c'}">$${neto.toFixed(2)}</span></div>
-              <div class="card-row"><span>💤 Ingresos pasivos</span><span class="val">$${financeData.ingresosPasivos.toFixed(2)}</span></div>
-              <div class="card-row"><span>🎯 Meta pasivos</span><span class="val">$${financeData.metaPasivos.toFixed(2)}</span></div>
-              <div style="margin-top:6px;">
-                <span style="font-size:11px;color:#888;">🆓 Ratio de libertad: ${ratio.toFixed(1)}%</span>
-                <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${progreso}%;${progreso>=100?'background:#27ae60;':''}"></div></div>
-              </div>
-              <div style="margin-top:6px;font-size:12px;color:${enCirculo?'#c0392b':'#27ae60'};font-weight:600;">
-                ${enCirculo ? '🏃 Estás en el <b>círculo de la rata</b>' : '🎉 ¡Estás en la <b>vía rápida</b>! Tus ingresos pasivos cubren tus gastos'}
-              </div>`;
-
-                return {
-                    text: `📊 Aquí está tu resumen financiero:\n\n• Ingresos: <b>+$${financeData.ingresosMes.toFixed(2)}</b>\n• Gastos: <b>-$${financeData.gastosMes.toFixed(2)}</b>\n• Ingresos pasivos: <b>$${financeData.ingresosPasivos.toFixed(2)}</b>\n• Ratio de libertad: <b>${ratio.toFixed(1)}%</b>\n\n${enCirculo?'🏃 Aún en el círculo de la rata.':'🎉 ¡Vía rápida activada!'}`,
-                    card: cardHTML,
-                    cardClass: enCirculo ? 'warning' : 'success'
-                };
-            }
-
-            function buildLibertadResponse() {
-                const ratio = financeData.gastosMes > 0 ? (financeData.ingresosPasivos / financeData.gastosMes) * 100 :
-                0;
-                const faltante = Math.max(0, financeData.gastosMes - financeData.ingresosPasivos);
-                const enCirculo = ratio < 100;
-
-                const cardHTML = `
-              <div class="card-title ${enCirculo?'warning':'success'}">🆓 Diagnóstico de Libertad Financiera</div>
-              <div class="card-row"><span>💤 Ingresos pasivos/mes</span><span class="val">$${financeData.ingresosPasivos.toFixed(2)}</span></div>
-              <div class="card-row"><span>💸 Gastos/mes</span><span class="val">$${financeData.gastosMes.toFixed(2)}</span></div>
-              <div class="card-row"><span>🔴 Faltante para libertad</span><span class="val negative">$${faltante.toFixed(2)}</span></div>
-              <div class="card-row"><span>🎯 Meta de ingresos pasivos</span><span class="val">$${financeData.metaPasivos.toFixed(2)}</span></div>
-              <div style="margin-top:8px;padding:8px;background:#fffde7;border-radius:8px;font-size:12px;">
-                <b>🧠 Fórmula de Kiyosaki:</b><br>
-                <em>Ingresos Pasivos > Gastos Totales = <b>LIBERTAD FINANCIERA</b></em><br>
-                ${enCirculo ? '🔴 Aún no lo has logrado. <b>Enfócate en adquirir activos</b> que generen ingresos sin tu presencia.' : '🟢 ¡Lo lograste! Tus activos trabajan por ti.'}
-              </div>`;
-
-                return {
-                    text: `🆓 Diagnóstico de libertad:\n\n• Ingresos pasivos: <b>$${financeData.ingresosPasivos.toFixed(2)}</b>\n• Gastos: <b>$${financeData.gastosMes.toFixed(2)}</b>\n• Te faltan: <b>$${faltante.toFixed(2)}</b>/mes para ser libre\n\n${enCirculo?'🔴 Sigues en el círculo de la rata.':'🟢 Eres financieramente libre.'} "${enCirculo?'Tu trabajo paga tus cuentas.':'Tus activos pagan tus cuentas.'}"`,
-                    card: cardHTML,
-                    cardClass: enCirculo ? 'warning' : 'success'
-                };
-            }
-
-            function buildConsejoResponse() {
-                const ratio = financeData.gastosMes > 0 ? (financeData.ingresosPasivos / financeData.gastosMes) * 100 :
-                0;
-                const consejos = [
-                    '💡 <b>Regla de oro de Kiyosaki:</b> "Los pobres y la clase media trabajan por dinero. Los ricos hacen que el dinero trabaje para ellos." Compra activos, no pasivos.',
-                    '🏠 <b>Activos que generan ingresos pasivos:</b> Bienes raíces en renta, dividendos de acciones, regalías de propiedad intelectual, negocios automatizados.',
-                    '📚 <b>Educación financiera:</b> Invierte en tu conocimiento antes que en bienes de lujo. La ignorancia financiera es el mayor pasivo.',
-                    '🚗 <b>Cuidado con los "activos falsos":</b> Un auto nuevo no es un activo, es un pasivo que se deprecia. Solo es activo si lo usas para generar ingresos (Uber, reparto).',
-                    '📊 <b>La clave:</b> Cada dólar que ganes, destina una parte a comprar activos. Así construyes tu "máquina de dinero".',
-                    '💸 <b>Reduce gastos hormiga:</b> Pequeños gastos diarios (café, suscripciones) suman grandes cantidades. Recorta y redirige a inversiones.',
-                    '🎯 <b>Establece una meta clara:</b> Define cuánto necesitas en ingresos pasivos para cubrir tus gastos. Usa <span class="highlight">/meta [cantidad]</span> para fijarla.',
-                ];
-                const consejo = consejos[Math.floor(Math.random() * consejos.length)];
-
-                const cardHTML = `
-              <div class="card-title gold">🌟 Consejo de Rich Dad</div>
-              <div style="font-size:13px;line-height:1.6;">${consejo}</div>
-              <div style="margin-top:8px;font-size:11px;color:#888;">📖 Basado en <em>"Padre Rico, Padre Pobre"</em> de Robert Kiyosaki</div>`;
-
-                return {
-                    text: `🌟 ${consejo.replace(/<[^>]+>/g,'')}`,
-                    card: cardHTML,
-                    cardClass: 'gold'
-                };
-            }
-
-            function handleMeta(amount, description) {
-                if (amount && amount > 0) {
-                    financeData.metaPasivos = amount;
-                    saveData();
-                    const ratio = financeData.gastosMes > 0 ? (financeData.ingresosPasivos / financeData
-                        .gastosMes) * 100 : 0;
-                    return {
-                        text: `🎯 Meta de ingresos pasivos actualizada a <b>$${amount.toFixed(2)}</b>/mes.\n\nActualmente tienes <b>$${financeData.ingresosPasivos.toFixed(2)}</b> en ingresos pasivos (${ratio.toFixed(1)}% del camino).\n\n📈 Te faltan <b>$${(amount - financeData.ingresosPasivos).toFixed(2)}</b> para alcanzar tu meta.`,
-                        card: null
-                    };
-                }
-                return {
-                    text: `🎯 Tu meta actual de ingresos pasivos es <b>$${financeData.metaPasivos.toFixed(2)}</b>/mes.\n\nPara cambiarla, escribe: <b>/meta [nueva cantidad]</b>\nEjemplo: /meta 3000`,
-                    card: null
-                };
-            }
-
-            function buildAyudaResponse() {
-                return {
-                    text: `📋 <b>Comandos disponibles:</b>\n\n💰 <b>/ingreso [cantidad] [desc]</b> - Registrar ingreso\n💸 <b>/gasto [cantidad] [desc]</b> - Registrar gasto\n🏠 <b>/activo [cantidad] [desc]</b> - Adquirir activo\n📉 <b>/pasivo [cantidad] [desc]</b> - Registrar pasivo\n📊 <b>/balance</b> - Ver resumen\n🆓 <b>/libertad</b> - Ver estado de libertad\n🌟 <b>/consejo</b> - Recibir consejo\n🎯 <b>/meta [cantidad]</b> - Fijar meta\n\n💬 También puedes hablar naturalmente: "Gané 500", "Gasté 200 en comida", "Compré una casa de 50000"...\n\n🧠 <b>Kiyosaki:</b> <em>Los activos ponen dinero en tu bolsillo. Los pasivos lo sacan.</em>`,
-                    card: null
-                };
-            }
-
-            function handleGeneral(text) {
-                const saludos = ['hola', 'hey', 'buenos días', 'buenas tardes', 'buenas noches', 'qué tal', 'como estas',
-                    'holi'
-                ];
-                const lower = text.toLowerCase().trim();
-
-                if (saludos.some(s => lower.includes(s))) {
-                    return {
-                        text: `👋 ¡Hola! Soy <b>Rich Dad AI</b>, tu asesor financiero personal.\n\nEstoy aquí para ayudarte a <b>escapar del círculo de la rata</b> y alcanzar la libertad financiera, siguiendo los principios de Robert Kiyosaki.\n\n💰 Registra tus ingresos y gastos\n🏠 Adquiere activos que generen ingresos pasivos\n📊 Monitorea tu progreso\n\nEscribe <b>/ayuda</b> para ver todos los comandos. ¿En qué puedo ayudarte hoy?`,
-                        card: null
-                    };
-                }
-
-                if (/(gracias|thank|thx)/i.test(lower)) {
-                    return {
-                        text: `😊 ¡De nada! Recuerda: <b>"No trabajes por dinero, haz que el dinero trabaje para ti."</b> — Kiyosaki\n\n¿Necesitas algo más?`,
-                        card: null
-                    };
-                }
-
-                if (/(círculo|circulo|rata|escapar|salir)/i.test(lower)) {
-                    return buildLibertadResponse();
-                }
-
-                return {
-                    text: `🤔 No entendí bien. Puedes:\n\n• Usar comandos como <b>/ingreso</b>, <b>/gasto</b>, <b>/balance</b>\n• Hablar naturalmente: "Gané 500 vendiendo", "Gasté 200 en super"\n• Pedir <b>/consejo</b> o <b>/ayuda</b>\n\n¿Qué te gustaría hacer?`,
-                    card: null
-                };
-            }
-
-            // ==================== ENVIAR MENSAJE ====================
-            async function sendMessage(textOverride = null) {
+            async function sendMessage() {
                 if (isProcessing) return;
-                const rawText = textOverride || messageInput.value.trim();
-                if (!rawText) return;
-
-                isProcessing = true;
-                if (!textOverride) messageInput.value = '';
-                messageInput.focus();
-
-                // Mostrar mensaje del usuario
-                addMessageToChat('user', rawText);
-                chatHistory.push({ sender: 'user', text: rawText, time: getTimeStr() });
-
-                // Procesar
-                const intent = detectIntent(rawText);
-                const amount = parseAmount(rawText);
-                const description = extractDescription(rawText, amount);
-
-                // Si es comando limpiar
-                if (intent === 'limpiar') {
-                    financeData = {
-                        balance: 0,
-                        ingresosMes: 0,
-                        gastosMes: 0,
-                        ingresosPasivos: 0,
-                        activos: [],
-                        pasivos: [],
-                        metaPasivos: 2000,
-                        historial: [],
-                        mesActual: new Date().getMonth(),
-                        añoActual: new Date().getFullYear(),
-                    };
-                    saveData();
-                    chatHistory = [];
-                    saveChatHistory();
-                    chatArea.innerHTML = '';
-                    await showTyping(800);
-                    const resp = getBotResponse('limpiar', null, null, rawText);
-                    addMessageToChat('bot', resp.text, true);
-                    chatHistory.push({ sender: 'bot', text: resp.text, time: getTimeStr() });
-                    saveChatHistory();
-                    isProcessing = false;
+                const userText = messageInput.value.trim();
+                if (!userText) return;
+                if (!getApiKey()) {
+                    alert('Por favor configura tu API key de OpenAI primero.');
                     return;
                 }
 
-                // Mostrar typing
-                await showTyping(900 + Math.random() * 600);
+                isProcessing = true;
+                messageInput.value = '';
+                addMessage('user', userText);
+                chatHistory.push({ sender: 'user', text: userText, time: getTimeStr() });
+                showTyping(true);
 
-                // Obtener respuesta
-                const resp = getBotResponse(intent, amount, description, rawText);
-
-                // Mostrar respuesta
-                if (resp.card) {
-                    addFinanceCard(resp.card, resp.cardClass || '');
-                }
-                addMessageToChat('bot', resp.text, true);
-                chatHistory.push({ sender: 'bot', text: resp.text, time: getTimeStr(), hasCard: !!resp.card });
-                saveChatHistory();
-
-                // Si es primer mensaje o balance muy desbalanceado, mostrar alerta proactiva
-                if (intent === 'gasto' && financeData.gastosMes > financeData.ingresosPasivos * 1.5 &&
-                    financeData.ingresosPasivos < financeData.metaPasivos * 0.3) {
-                    await showTyping(1500);
-                    const alerta = {
-                        text: `⚠️ <b>Alerta proactiva:</b> Tus gastos ($${financeData.gastosMes.toFixed(2)}) superan ampliamente tus ingresos pasivos ($${financeData.ingresosPasivos.toFixed(2)}).\n\n📚 <b>Kiyosaki diría:</b> "Estás en el círculo de la rata. Cada peso que gastas en pasivos te aleja de la libertad."\n\n🌟 ¿Quieres un <b>/consejo</b> para cambiar esto?`,
-                        card: null
-                    };
-                    addMessageToChat('bot', alerta.text, true);
-                    chatHistory.push({ sender: 'bot', text: alerta.text, time: getTimeStr() });
+                try {
+                    const aiResponse = await callOpenAI(userText);
+                    const cleanResponse = processUpdates(aiResponse);
+                    showTyping(false);
+                    addMessage('bot', cleanResponse, true);
+                    chatHistory.push({ sender: 'bot', text: cleanResponse, time: getTimeStr() });
                     saveChatHistory();
+                } catch (error) {
+                    showTyping(false);
+                    addMessage('bot', `❌ Error: ${error.message}. Verifica tu API key y conexión.`, false);
+                } finally {
+                    isProcessing = false;
+                    scrollToBottom();
                 }
-
-                isProcessing = false;
-                scrollToBottom();
             }
 
-            function sendQuick(text) {
-                if (text.includes('/ingreso ') || text.includes('/gasto ') || text.includes('/activo ') || text.includes(
-                        '/pasivo ')) {
-                    messageInput.value = text + ' ';
-                    messageInput.focus();
+            function showWelcomeIfNeeded() {
+                if (chatHistory.length === 0 && getApiKey()) {
+                    const welcome = `🎩 ¡Bienvenido! Soy <b>Rich Dad AI</b>, tu coach financiero con inteligencia artificial. Estoy aquí para guiarte a escapar del círculo de la rata.<br><br>Cuéntame sobre tu situación financiera actual: ¿cuáles son tus ingresos, gastos, deudas? ¿Tienes activos que generen ingresos pasivos?<br><br>Puedes hablarme con total naturalidad, y yo iré registrando tus datos y dándote un plan personalizado.`;
+                    addMessage('bot', welcome, true);
+                    chatHistory.push({ sender: 'bot', text: welcome, time: getTimeStr() });
+                    saveChatHistory();
+                }
+            }
+
+            // Inicialización
+            loadData();
+            if (checkApiKey()) {
+                // Restaurar historial si existe
+                if (chatHistory.length > 0) {
+                    chatHistory.forEach(msg => addMessage(msg.sender, msg.text, msg.sender==='bot'));
                 } else {
-                    messageInput.value = text;
-                    sendMessage(text);
+                    showWelcomeIfNeeded();
                 }
             }
 
-            function showQuickInfo() {
-                const ratio = financeData.gastosMes > 0 ? (financeData.ingresosPasivos / financeData.gastosMes) * 100 :
-                0;
-                showToast(
-                    `💰 Balance: $${financeData.balance.toFixed(2)} | 🆓 Libertad: ${ratio.toFixed(0)}% | 🎯 Meta: $${financeData.metaPasivos.toFixed(0)}/mes`
-                    );
-            }
-
-            // ==================== INICIALIZACIÓN ====================
-            function initChat() {
-                loadData();
-                // Si no hay chat previo, mostrar bienvenida
-                if (chatHistory.length === 0) {
-                    const welcomeMsg = `👋 ¡Hola! Soy <b>Rich Dad AI</b> 🎩, tu asesor financiero personal basado en los principios de <b>Robert Kiyosaki</b> ("Padre Rico, Padre Pobre").\n\nEstoy aquí para ayudarte a <b>escapar del círculo de la rata</b> y alcanzar la <b>libertad financiera</b>.\n\n📋 <b>¿Cómo funciona?</b>\n• Registra tus ingresos y gastos\n• Identifica activos vs pasivos\n• Monitorea tus ingresos pasivos\n• Recibe consejos personalizados\n\nEscribe <b>/ayuda</b> para ver los comandos o simplemente dime qué necesitas. ¡Empecemos! 💪`;
-                    addMessageToChat('bot', welcomeMsg, true);
-                    chatHistory.push({ sender: 'bot', text: welcomeMsg, time: getTimeStr() });
-                    saveChatHistory();
-                } else {
-                    // Restaurar chat previo
-                    chatHistory.forEach(msg => {
-                        if (msg.sender === 'user') {
-                            addMessageToChat('user', msg.text);
-                        } else {
-                            addMessageToChat('bot', msg.text, true);
-                        }
-                    });
-                    // Mensaje de sesión
-                    const sesionMsg =
-                        `📊 <b>Sesión restaurada.</b> Tu balance: <b>$${financeData.balance.toFixed(2)}</b> | Ingresos pasivos: <b>$${financeData.ingresosPasivos.toFixed(2)}</b>/mes\n\n¿Continuamos? Escribe <b>/balance</b> para ver tu resumen completo.`;
-                    addMessageToChat('bot', sesionMsg, true);
-                    chatHistory.push({ sender: 'bot', text: sesionMsg, time: getTimeStr() });
-                    saveChatHistory();
-                }
-                scrollToBottom();
-            }
-
-            // ==================== EVENT LISTENERS ====================
-            sendBtn.addEventListener('click', () => sendMessage());
+            // Listeners
+            sendBtn.addEventListener('click', sendMessage);
             messageInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -1113,33 +485,9 @@
                 }
             });
 
-            // Click en chips de comandos rápidos
-            document.querySelectorAll('.quick-commands .chip').forEach(chip => {
-                chip.addEventListener('click', function() {
-                    const cmd = this.textContent.replace(/^[📊💰💸🏠📉🆓🌟]\s*/, '').trim();
-                    if (cmd.includes('/ingreso') || cmd.includes('/gasto') || cmd.includes('/activo') ||
-                        cmd.includes('/pasivo')) {
-                        messageInput.value = cmd + ' ';
-                        messageInput.focus();
-                    } else {
-                        sendMessage(cmd);
-                    }
-                });
-            });
-
-            // Iniciar
-            initChat();
-
             // Exponer funciones globales
             window.sendMessage = sendMessage;
-            window.sendQuick = sendQuick;
-            window.showToast = showToast;
-            window.showQuickInfo = showQuickInfo;
-
-            console.log('🎩 Rich Dad AI - Chat Financiero iniciado');
-            console.log('📚 "Los activos ponen dinero en tu bolsillo. Los pasivos lo sacan." - Robert Kiyosaki');
-            console.log('💡 Comandos: /ingreso, /gasto, /activo, /pasivo, /balance, /libertad, /consejo, /meta, /ayuda');
-            console.log('🗣️ También puedes hablar naturalmente: "Gané 500", "Gasté 200 en comida"...');
+            window.saveApiKey = saveApiKey;
         })();
     </script>
 </body>
