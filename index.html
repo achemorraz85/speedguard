@@ -3,343 +3,331 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-<title>Rich Dad AI – Coach Financiero</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Rich Dad AI – Asesor Financiero</title>
+
+<!-- PWA: pantalla completa sin barra del navegador -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rich Dad AI">
+<meta name="application-name" content="Rich Dad AI">
+<meta name="theme-color" content="#075e54">
+<meta name="description" content="Tu coach de libertad financiera personal — basado en Robert Kiyosaki">
+
+<!-- Iconos para pantalla de inicio (iOS + Android) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23075e54'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle'%3E%F0%9F%8E%A9%3C/text%3E%3C/svg%3E">
+
+<!-- Manifest inline via JS (no necesita servidor) -->
+<script>
+(function(){
+  const manifest = {
+    name: "Rich Dad AI – Coach Financiero",
+    short_name: "Rich Dad AI",
+    description: "Tu asesor de libertad financiera personal",
+    start_url: window.location.href,
+    display: "standalone",
+    background_color: "#075e54",
+    theme_color: "#075e54",
+    orientation: "portrait",
+    icons: [
+      {
+        src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23075e54'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle'%3E%F0%9F%8E%A9%3C/text%3E%3C/svg%3E",
+        sizes: "512x512",
+        type: "image/svg+xml",
+        purpose: "any maskable"
+      }
+    ]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement('link');
+  link.rel   = 'manifest';
+  link.href  = url;
+  document.head.appendChild(link);
+})();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
-  --bg: #0d0d0d;
-  --surface: #161616;
-  --surface2: #1f1f1f;
-  --surface3: #2a2a2a;
-  --gold: #c8960c;
-  --gold-light: #f0b429;
-  --gold-dim: #7a5a07;
-  --green: #22c55e;
-  --red: #ef4444;
-  --blue: #60a5fa;
-  --text: #f0ede8;
-  --text-muted: #8a8580;
-  --text-dim: #5a5550;
-  --border: #2a2a2a;
-  --bubble-user: #1a2a1a;
-  --bubble-bot: #1e1e1e;
-  --radius: 16px;
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
+  --wa-header:       #075e54;
+  --wa-header-dark:  #054d44;
+  --wa-green:        #128c7e;
+  --wa-green-light:  #25d366;
+  --chat-bg:         #ece5dd;
+  --bubble-in:       #ffffff;
+  --bubble-out:      #dcf8c6;
+  --text-main:       #111b21;
+  --text-secondary:  #667781;
+  --text-meta:       #8696a0;
+  --gold:            #c8960c;
+  --gold-light:      #f0b429;
+  --red:             #e53935;
+  --green-pos:       #2e7d32;
+  --divider:         rgba(0,0,0,.1);
+  --font:            'Nunito', -apple-system, sans-serif;
+  --shadow-b:        0 1px 2px rgba(0,0,0,.15);
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-html, body { height:100%; background:var(--bg); font-family:var(--font-body); color:var(--text); }
+html, body { height:100%; background:#111; font-family:var(--font); color:var(--text-main); }
 
-/* ── LAYOUT ── */
-.app { display:flex; height:100dvh; max-width:480px; margin:0 auto; flex-direction:column; position:relative; }
-
-/* ── HEADER ── */
-.header {
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  padding:12px 16px;
-  display:flex; align-items:center; gap:12px;
-  flex-shrink:0;
-  position:relative;
+.phone {
+  width:100%; max-width:430px; height:100dvh; max-height:900px;
+  margin:0 auto; display:flex; flex-direction:column;
+  background:#000; overflow:hidden; position:relative;
 }
-.header-avatar {
-  width:44px; height:44px; border-radius:50%;
+@media(min-width:500px){
+  .phone { border-radius:28px; height:94dvh; margin:3vh auto; box-shadow:0 24px 80px rgba(0,0,0,.7); }
+}
+
+/* ── WA HEADER ── */
+.wa-header {
+  background:var(--wa-header); padding:10px 12px;
+  display:flex; align-items:center; gap:10px; flex-shrink:0;
+  box-shadow:0 1px 4px rgba(0,0,0,.25);
+}
+.wa-back { color:#fff; font-size:24px; opacity:.9; cursor:pointer; line-height:1; flex-shrink:0; }
+.wa-avatar {
+  width:40px; height:40px; border-radius:50%; flex-shrink:0;
   background:linear-gradient(135deg,#7a5a07,#c8960c,#f0b429);
   display:flex; align-items:center; justify-content:center;
-  font-size:22px; flex-shrink:0; position:relative;
+  font-size:21px; position:relative; box-shadow:0 2px 6px rgba(0,0,0,.3);
 }
-.header-avatar::after {
-  content:'';width:10px;height:10px;background:var(--green);
-  border-radius:50%;position:absolute;bottom:1px;right:1px;
-  border:2px solid var(--surface);
+.wa-avatar .dot {
+  width:11px; height:11px; background:var(--wa-green-light); border-radius:50%;
+  position:absolute; bottom:0; right:0; border:2px solid var(--wa-header);
 }
-.header-info { flex:1; }
-.header-name { font-family:var(--font-display); font-size:17px; color:var(--gold-light); font-weight:700; }
-.header-sub { font-size:12px; color:var(--text-muted); margin-top:1px; }
-.header-actions { display:flex; gap:8px; }
-.icon-btn {
-  width:36px; height:36px; border-radius:50%; background:var(--surface2);
-  border:1px solid var(--border); color:var(--text-muted); font-size:15px;
-  cursor:pointer; display:flex; align-items:center; justify-content:center;
-  transition:all .2s;
+.wa-info { flex:1; min-width:0; }
+.wa-name   { font-size:16px; font-weight:700; color:#fff; line-height:1.2; }
+.wa-status { font-size:12px; color:rgba(255,255,255,.75); }
+.wa-acts   { display:flex; gap:4px; }
+.wa-btn {
+  width:36px; height:36px; border-radius:50%; background:transparent; border:none;
+  color:rgba(255,255,255,.85); font-size:17px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:background .15s;
 }
-.icon-btn:hover { background:var(--surface3); color:var(--gold-light); }
+.wa-btn:hover { background:rgba(255,255,255,.12); }
 
-/* ── DASHBOARD STRIP ── */
-.dashboard {
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  padding:10px 16px;
-  display:flex; gap:8px; overflow-x:auto; flex-shrink:0;
-  scrollbar-width:none;
+/* ── FINANCE STRIP ── */
+.fstrip {
+  background:var(--wa-header-dark); padding:7px 12px;
+  display:flex; gap:6px; overflow-x:auto; flex-shrink:0; scrollbar-width:none;
 }
-.dashboard::-webkit-scrollbar { display:none; }
-.kpi {
-  background:var(--surface2);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:8px 12px;
-  min-width:110px; flex-shrink:0;
-  cursor:pointer; transition:all .2s;
+.fstrip::-webkit-scrollbar{display:none}
+.fkpi {
+  background:rgba(255,255,255,.1); border-radius:10px; padding:6px 10px;
+  min-width:98px; flex-shrink:0; cursor:pointer; transition:background .2s;
 }
-.kpi:hover { border-color:var(--gold-dim); }
-.kpi-label { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.6px; }
-.kpi-value { font-size:16px; font-weight:600; margin-top:2px; }
-.kpi-value.positive { color:var(--green); }
-.kpi-value.negative { color:var(--red); }
-.kpi-value.gold { color:var(--gold-light); }
-.kpi-value.blue { color:var(--blue); }
-.kpi-sub { font-size:10px; color:var(--text-dim); margin-top:2px; }
+.fkpi:hover{ background:rgba(255,255,255,.18); }
+.fk-lbl { font-size:9.5px; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:.5px; }
+.fk-val { font-size:15px; font-weight:700; color:#fff; margin-top:2px; }
+.fk-val.gold { color:var(--gold-light); }
+.fk-val.pos  { color:#a5f3b4; }
+.fk-val.neg  { color:#ffb3b3; }
+.fk-sub { font-size:9px; color:rgba(255,255,255,.4); margin-top:1px; }
 
 /* ── FREEDOM BAR ── */
-.freedom-bar-wrap {
-  background:var(--surface);
-  padding:8px 16px 10px;
-  border-bottom:1px solid var(--border);
-  flex-shrink:0;
-}
-.freedom-bar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
-.freedom-bar-label { font-size:11px; color:var(--text-muted); }
-.freedom-bar-pct { font-size:12px; font-weight:600; color:var(--gold-light); }
-.freedom-bar-track { height:6px; background:var(--surface3); border-radius:99px; overflow:hidden; }
-.freedom-bar-fill { height:100%; border-radius:99px; transition:width .8s cubic-bezier(.4,0,.2,1); background:linear-gradient(90deg,#7a5a07,#c8960c,#f0b429); }
+.fbar-wrap { background:var(--wa-header-dark); padding:5px 12px 9px; flex-shrink:0; }
+.fbar-top  { display:flex; justify-content:space-between; margin-bottom:4px; }
+.fbar-lbl  { font-size:10px; color:rgba(255,255,255,.6); }
+.fbar-pct  { font-size:11px; font-weight:700; color:var(--gold-light); }
+.fbar-track{ height:5px; background:rgba(255,255,255,.15); border-radius:99px; overflow:hidden; }
+.fbar-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#7a5a07,#c8960c,#f0b429); transition:width .9s cubic-bezier(.4,0,.2,1); }
 
-/* ── CHAT AREA ── */
+/* ── CHAT ── */
 .chat-area {
-  flex:1; overflow-y:auto; padding:12px 10px;
-  display:flex; flex-direction:column; gap:6px;
-  background:var(--bg);
-  scrollbar-width:thin; scrollbar-color:var(--surface3) transparent;
+  flex:1; overflow-y:auto; padding:10px 8px 6px;
+  background-color:var(--chat-bg);
+  background-image:radial-gradient(circle at 1px 1px,rgba(0,0,0,.04) 1px,transparent 0);
+  background-size:24px 24px;
+  display:flex; flex-direction:column; gap:3px;
+  -webkit-overflow-scrolling:touch; scrollbar-width:thin; scrollbar-color:rgba(0,0,0,.15) transparent;
 }
-.chat-area::-webkit-scrollbar { width:4px; }
-.chat-area::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:4px; }
+.chat-area::-webkit-scrollbar{width:4px}
+.chat-area::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px}
 
-.msg-wrap { display:flex; animation:fadeUp .25s ease; }
-.msg-wrap.user { justify-content:flex-end; }
-.msg-wrap.bot { justify-content:flex-start; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.mwrap { display:flex; animation:popIn .2s ease; }
+.mwrap.bot  { justify-content:flex-start; padding-left:4px; }
+.mwrap.user { justify-content:flex-end;  padding-right:4px; }
+@keyframes popIn{from{opacity:0;transform:scale(.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
 
 .bubble {
-  max-width:82%; padding:10px 13px;
-  border-radius:var(--radius); font-size:14.5px; line-height:1.5;
-  word-wrap:break-word; position:relative;
+  max-width:80%; padding:8px 11px 6px; font-size:14.5px; line-height:1.47;
+  word-wrap:break-word; position:relative; box-shadow:var(--shadow-b);
 }
-.user .bubble {
-  background:var(--bubble-user);
-  border:1px solid #2a3d2a;
-  border-top-right-radius:4px;
-  color:var(--text);
-}
-.bot .bubble {
-  background:var(--bubble-bot);
-  border:1px solid var(--border);
-  border-top-left-radius:4px;
-  color:var(--text);
-}
-.bubble .btime { font-size:10px; color:var(--text-dim); text-align:right; margin-top:5px; }
+.bot  .bubble { background:var(--bubble-in);  border-radius:0 18px 18px 18px; }
+.user .bubble { background:var(--bubble-out); border-radius:18px 0 18px 18px; }
+.user .bubble::after { content:'✓✓'; position:absolute; bottom:6px; right:9px; font-size:10px; color:#53bdeb; }
+.btime { font-size:10.5px; color:var(--text-meta); text-align:right; margin-top:3px; display:block; }
+.user .btime { padding-right:20px; }
 
-/* bot bubble rich formatting */
-.bubble b, .bubble strong { color:var(--gold-light); font-weight:600; }
-.bubble .tag-activo { background:#16302b; color:#4ade80; border-radius:4px; padding:1px 6px; font-size:12px; font-weight:600; }
-.bubble .tag-pasivo { background:#2d1515; color:#f87171; border-radius:4px; padding:1px 6px; font-size:12px; font-weight:600; }
-.bubble .tag-ingreso { background:#1a2a1a; color:#86efac; border-radius:4px; padding:1px 6px; font-size:12px; font-weight:600; }
-.bubble .tag-gasto { background:#2a1a1a; color:#fca5a5; border-radius:4px; padding:1px 6px; font-size:12px; font-weight:600; }
+.bubble b, .bubble strong { color:#075e54; font-weight:700; }
 
 /* typing */
-.typing-bubble { display:flex; gap:5px; align-items:center; padding:12px 16px; background:var(--bubble-bot); border:1px solid var(--border); border-radius:var(--radius); border-top-left-radius:4px; }
-.typing-bubble span { width:7px; height:7px; border-radius:50%; background:var(--gold-dim); animation:bounce 1.2s infinite; }
-.typing-bubble span:nth-child(2){animation-delay:.2s}
-.typing-bubble span:nth-child(3){animation-delay:.4s}
-@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-7px);opacity:1}}
+.twrap { display:flex; justify-content:flex-start; padding-left:4px; animation:popIn .2s ease; }
+.tbub  { background:var(--bubble-in); border-radius:0 18px 18px 18px; padding:12px 16px; display:flex; gap:5px; align-items:center; box-shadow:var(--shadow-b); }
+.tbub span { width:7px; height:7px; border-radius:50%; background:var(--text-meta); animation:bnc 1.3s infinite; }
+.tbub span:nth-child(2){animation-delay:.18s} .tbub span:nth-child(3){animation-delay:.36s}
+@keyframes bnc{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-6px);opacity:1}}
 
 /* date divider */
-.date-divider { text-align:center; font-size:11px; color:var(--text-dim); margin:8px 0; display:flex; align-items:center; gap:8px; }
-.date-divider::before,.date-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+.dsep { text-align:center; display:flex; align-items:center; gap:8px; color:var(--text-secondary); font-size:12px; margin:6px 0; }
+.dsep::before,.dsep::after{content:'';flex:1;height:1px;background:var(--divider)}
+.dsep span{background:rgba(0,0,0,.08);padding:3px 10px;border-radius:99px}
 
-/* ── INPUT AREA ── */
-.input-area {
-  background:var(--surface);
-  border-top:1px solid var(--border);
-  padding:10px 12px;
-  display:flex; gap:8px; align-items:flex-end;
-  flex-shrink:0;
-}
-.input-wrap { flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:24px; padding:8px 14px; transition:border .2s; }
-.input-wrap:focus-within { border-color:var(--gold-dim); }
-#msgInput {
-  width:100%; background:transparent; border:none; outline:none;
-  color:var(--text); font-family:var(--font-body); font-size:15px;
-  resize:none; max-height:100px; line-height:1.4;
-}
-#msgInput::placeholder { color:var(--text-dim); }
-.send-btn {
-  width:42px; height:42px; border-radius:50%; flex-shrink:0;
-  background:linear-gradient(135deg,var(--gold-dim),var(--gold));
-  border:none; color:#0d0d0d; font-size:17px; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  transition:transform .15s, opacity .15s;
-}
-.send-btn:active { transform:scale(.9); opacity:.8; }
-.send-btn:disabled { opacity:.4; cursor:not-allowed; }
-
-/* quick chips */
+/* ── CHIPS ── */
 .chips {
-  display:flex; gap:6px; padding:6px 12px 0;
-  overflow-x:auto; scrollbar-width:none; flex-shrink:0;
-  background:var(--surface);
+  display:flex; gap:6px; padding:6px 10px 5px; overflow-x:auto;
+  flex-shrink:0; background:var(--chat-bg); scrollbar-width:none;
+  border-top:1px solid rgba(0,0,0,.06);
 }
 .chips::-webkit-scrollbar{display:none}
 .chip {
-  background:var(--surface2); border:1px solid var(--border);
-  border-radius:99px; padding:5px 12px; font-size:12px; color:var(--text-muted);
-  cursor:pointer; white-space:nowrap; flex-shrink:0; transition:all .2s;
+  background:#fff; border:1.5px solid #d9d9d9; border-radius:99px;
+  padding:5px 13px; font-size:12.5px; color:var(--wa-green); font-weight:600;
+  cursor:pointer; white-space:nowrap; flex-shrink:0; transition:all .15s;
+  font-family:var(--font); box-shadow:0 1px 2px rgba(0,0,0,.08);
 }
-.chip:hover { border-color:var(--gold-dim); color:var(--gold-light); }
+.chip:hover { background:var(--wa-green); color:#fff; border-color:var(--wa-green); }
+.chip:active { transform:scale(.94); }
 
-/* ── PANELS ── */
-.panel-overlay {
-  display:none; position:absolute; inset:0; background:rgba(0,0,0,.7);
-  z-index:50; align-items:flex-end;
-}
-.panel-overlay.open { display:flex; }
-.panel {
-  background:var(--surface); border-radius:20px 20px 0 0;
-  padding:24px 20px 32px; width:100%;
-  max-height:80dvh; overflow-y:auto;
-  animation:slideUp .3s ease;
-}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.panel-handle { width:40px; height:4px; background:var(--surface3); border-radius:99px; margin:0 auto 20px; }
-.panel-title { font-family:var(--font-display); font-size:20px; color:var(--gold-light); margin-bottom:16px; }
+/* ── INPUT BAR ── */
+.ibar { background:#f0f2f5; padding:8px 10px; display:flex; align-items:flex-end; gap:8px; flex-shrink:0; border-top:1px solid rgba(0,0,0,.08); }
+.iwrap { flex:1; background:#fff; border-radius:24px; padding:9px 14px; box-shadow:0 1px 2px rgba(0,0,0,.1); display:flex; align-items:flex-end; }
+#msgInput { flex:1; border:none; outline:none; background:transparent; font-size:15px; font-family:var(--font); color:var(--text-main); resize:none; max-height:96px; line-height:1.45; }
+#msgInput::placeholder{color:var(--text-meta)}
+.sbtn { width:44px; height:44px; border-radius:50%; flex-shrink:0; background:var(--wa-green); border:none; color:#fff; font-size:19px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,.25); transition:all .15s; }
+.sbtn:hover{ background:var(--wa-header); }
+.sbtn:active{ transform:scale(.9); }
+.sbtn:disabled{ opacity:.4; cursor:not-allowed; }
 
-/* form inside panel */
-.form-group { margin-bottom:14px; }
-.form-label { font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:5px; display:block; }
-.form-input, .form-select {
-  width:100%; background:var(--surface2); border:1px solid var(--border);
-  border-radius:10px; padding:10px 13px; color:var(--text);
-  font-family:var(--font-body); font-size:14px; outline:none;
-  transition:border .2s;
-}
-.form-input:focus, .form-select:focus { border-color:var(--gold-dim); }
-.form-select { appearance:none; }
-.btn-primary {
-  width:100%; padding:13px; border-radius:12px;
-  background:linear-gradient(135deg,var(--gold-dim),var(--gold));
-  border:none; color:#0d0d0d; font-weight:700; font-size:15px;
-  cursor:pointer; font-family:var(--font-body); transition:opacity .2s;
-}
-.btn-primary:hover { opacity:.9; }
-.btn-cancel { display:block; text-align:center; margin-top:10px; color:var(--text-muted); font-size:13px; cursor:pointer; }
+/* ── BOTTOM SHEET ── */
+.overlay { display:none; position:absolute; inset:0; background:rgba(0,0,0,.5); z-index:50; align-items:flex-end; }
+.overlay.open{ display:flex; }
+.sheet { background:#fff; border-radius:20px 20px 0 0; width:100%; max-height:88dvh; overflow-y:auto; animation:sup .28s cubic-bezier(.32,0,.67,0); }
+@keyframes sup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sh-handle{ width:36px; height:4px; background:#ddd; border-radius:99px; margin:14px auto 0; }
+.sh-head{ padding:14px 20px 12px; border-bottom:1px solid #f0f0f0; }
+.sh-title{ font-size:18px; font-weight:700; color:var(--text-main); }
+.sh-body{ padding:16px 20px; }
 
-/* API setup overlay */
-.api-overlay {
-  position:absolute; inset:0; background:var(--bg); z-index:100;
+/* form */
+.fg{ margin-bottom:13px; }
+.fl{ display:block; font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.5px; margin-bottom:5px; }
+.fi,.fs{ width:100%; background:#f5f5f5; border:1.5px solid #e8e8e8; border-radius:12px; padding:11px 14px; font-size:15px; font-family:var(--font); color:var(--text-main); outline:none; transition:border .2s; }
+.fi:focus,.fs:focus{ border-color:var(--wa-green); background:#fff; }
+.fs{ appearance:none; cursor:pointer; }
+.btnm{ width:100%; padding:13px; border-radius:13px; border:none; background:var(--wa-green); color:#fff; font-size:16px; font-weight:700; font-family:var(--font); cursor:pointer; transition:background .2s; }
+.btnm:hover{ background:var(--wa-header); }
+.btnc{ display:block; text-align:center; padding:11px; color:var(--text-secondary); cursor:pointer; font-size:14px; }
+
+/* report */
+.tabs{ display:flex; background:#f5f5f5; border-radius:12px; padding:4px; margin-bottom:16px; }
+.tab{ flex:1; text-align:center; padding:8px; border-radius:9px; font-size:13px; font-weight:600; color:var(--text-secondary); cursor:pointer; transition:all .2s; }
+.tab.on{ background:#fff; color:var(--wa-green); box-shadow:0 1px 4px rgba(0,0,0,.1); }
+
+.meter{ text-align:center; background:linear-gradient(135deg,#f0faf5,#e0f2e9); border-radius:16px; padding:20px; margin-bottom:18px; }
+.mnum{ font-size:54px; font-weight:700; color:var(--wa-header); line-height:1; }
+.mlbl{ font-size:13px; color:var(--text-secondary); margin-top:3px; }
+.mtrack{ height:8px; background:#c8e6c9; border-radius:99px; overflow:hidden; margin:12px 0 0; }
+.mfill{ height:100%; background:linear-gradient(90deg,#075e54,#25d366); border-radius:99px; transition:width .9s; }
+.mmsg{ margin-top:12px; font-size:13px; color:var(--text-secondary); line-height:1.6; }
+
+.rsec{ margin-bottom:18px; }
+.rsec-t{ font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.6px; margin-bottom:8px; padding-bottom:5px; border-bottom:1px solid #f0f0f0; }
+.rrow{ display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid #f8f8f8; font-size:14px; }
+.rrow:last-child{border:none}
+.rl{ color:var(--text-secondary); }
+.rv{ font-weight:700; }
+.rv.pos{ color:var(--green-pos); }
+.rv.neg{ color:var(--red); }
+.rv.gold{ color:var(--gold); }
+.rv.blue{ color:#1565c0; }
+
+.acard{ background:#f9f9f9; border:1px solid #eee; border-radius:12px; padding:11px 13px; margin-bottom:7px; display:flex; justify-content:space-between; align-items:center; }
+.aname{ font-size:14px; font-weight:600; }
+.adate{ font-size:11px; color:var(--text-meta); margin-top:2px; }
+.aamt{ font-size:14px; font-weight:700; }
+.adel{ background:none; border:none; color:#ccc; font-size:18px; cursor:pointer; padding:4px; line-height:1; transition:color .15s; }
+.adel:hover{color:var(--red)}
+.empty{ text-align:center; color:var(--text-meta); font-size:13px; padding:20px 0; }
+
+/* ── API SCREEN ── */
+.api-screen{
+  position:absolute; inset:0; z-index:100;
+  background:linear-gradient(160deg,#075e54 0%,#054d44 55%,#033830 100%);
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  padding:32px 24px;
+  padding:36px 28px; text-align:center;
 }
-.api-overlay.hidden { display:none; }
-.api-logo { font-size:56px; margin-bottom:16px; }
-.api-title { font-family:var(--font-display); font-size:28px; color:var(--gold-light); text-align:center; margin-bottom:8px; }
-.api-subtitle { font-size:14px; color:var(--text-muted); text-align:center; margin-bottom:32px; line-height:1.6; }
-.api-input {
-  width:100%; background:var(--surface2); border:1px solid var(--border);
-  border-radius:12px; padding:13px 16px; color:var(--text);
-  font-size:15px; outline:none; margin-bottom:12px;
-  font-family:var(--font-body);
-}
-.api-input:focus { border-color:var(--gold-dim); }
-.api-note { font-size:11px; color:var(--text-dim); text-align:center; margin-top:12px; line-height:1.6; }
-
-/* report section */
-.report-section { margin-bottom:20px; }
-.report-section-title { font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.6px; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:6px; }
-.report-row { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--border); font-size:13px; }
-.report-row:last-child { border:none; }
-.report-row .rlabel { color:var(--text-muted); }
-.report-row .rvalue { font-weight:600; }
-.asset-item { background:var(--surface2); border-radius:10px; padding:10px 12px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; }
-.asset-item .aname { font-size:13px; color:var(--text); }
-.asset-item .aamt { font-size:14px; font-weight:600; }
-.asset-item .adel { background:none; border:none; color:var(--red); cursor:pointer; font-size:16px; padding:4px; }
-.empty-state { text-align:center; color:var(--text-dim); font-size:13px; padding:16px 0; }
-
-/* freedom meter full */
-.freedom-meter-full { text-align:center; padding:20px 0; }
-.freedom-pct-big { font-family:var(--font-display); font-size:56px; color:var(--gold-light); font-weight:900; }
-.freedom-label { font-size:13px; color:var(--text-muted); margin-top:4px; }
-.freedom-message { margin-top:12px; font-size:13px; color:var(--text-muted); line-height:1.6; background:var(--surface2); border-radius:10px; padding:10px 14px; }
-
-/* tab bar in report */
-.tab-bar { display:flex; gap:4px; background:var(--surface2); border-radius:10px; padding:4px; margin-bottom:16px; }
-.tab { flex:1; text-align:center; padding:7px; border-radius:7px; font-size:12px; color:var(--text-muted); cursor:pointer; transition:all .2s; }
-.tab.active { background:var(--gold-dim); color:var(--gold-light); font-weight:600; }
-
-@media (min-width:500px) {
-  .app { border-radius:24px; height:94dvh; margin:3vh auto; box-shadow:0 0 60px rgba(0,0,0,.6); overflow:hidden; }
-}
+.api-screen.gone{display:none}
+.api-logo { font-size:64px; margin-bottom:12px; }
+.api-title{ font-size:28px; font-weight:700; color:#fff; margin-bottom:8px; }
+.api-sub  { font-size:14px; color:rgba(255,255,255,.7); margin-bottom:32px; line-height:1.6; }
+.api-inp  { width:100%; background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.25); border-radius:14px; padding:13px 16px; color:#fff; font-size:15px; font-family:var(--font); outline:none; margin-bottom:12px; text-align:center; transition:border .2s; }
+.api-inp::placeholder{color:rgba(255,255,255,.4)}
+.api-inp:focus{border-color:var(--wa-green-light)}
+.api-btn  { width:100%; padding:14px; border-radius:14px; border:none; background:var(--wa-green-light); color:#000; font-size:16px; font-weight:700; font-family:var(--font); cursor:pointer; }
+.api-note { font-size:11px; color:rgba(255,255,255,.4); margin-top:16px; line-height:1.8; }
 </style>
 </head>
 <body>
-<div class="app" id="app">
+<div class="phone" id="phone">
 
   <!-- API SETUP -->
-  <div class="api-overlay" id="apiOverlay">
+  <div class="api-screen" id="apiScreen">
     <div class="api-logo">🎩</div>
     <div class="api-title">Rich Dad AI</div>
-    <div class="api-subtitle">Tu coach financiero con IA.<br>Ingresa tu API Key de OpenAI para comenzar.</div>
-    <input class="api-input" type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off">
-    <button class="btn-primary" onclick="saveApiKey()">Comenzar →</button>
-    <div class="api-note">Tu clave se guarda solo en este dispositivo y nunca sale de él.<br>Obtén tu key en <b>platform.openai.com</b></div>
+    <div class="api-sub">Tu asesor de libertad financiera personal.<br>Habla con él como por WhatsApp.<br>Necesitas tu API Key de OpenAI.</div>
+    <input class="api-inp" type="password" id="apiKeyInp" placeholder="sk-..." autocomplete="off">
+    <button class="api-btn" onclick="doSaveKey()">Empezar →</button>
+    <div class="api-note">Tu clave queda guardada solo en este dispositivo.<br>Obtenla en platform.openai.com → API Keys</div>
   </div>
 
   <!-- HEADER -->
-  <div class="header">
-    <div class="header-avatar">🎩</div>
-    <div class="header-info">
-      <div class="header-name">Rich Dad AI</div>
-      <div class="header-sub">Coach de Libertad Financiera</div>
+  <div class="wa-header">
+    <div class="wa-back">‹</div>
+    <div class="wa-avatar">🎩<div class="dot"></div></div>
+    <div class="wa-info">
+      <div class="wa-name">Rich Dad AI</div>
+      <div class="wa-status" id="waStatus">en línea · Coach Financiero</div>
     </div>
-    <div class="header-actions">
-      <button class="icon-btn" onclick="openPanel('reportPanel')" title="Mi situación">📊</button>
-      <button class="icon-btn" onclick="openPanel('addPanel')" title="Registrar">＋</button>
-      <button class="icon-btn" onclick="resetAll()" title="Reiniciar datos">🔄</button>
+    <div class="wa-acts">
+      <button class="wa-btn" onclick="openSheet('sheetReport')" title="Mi situación">📊</button>
+      <button class="wa-btn" onclick="openSheet('sheetAdd')"    title="Registrar">➕</button>
+      <button class="wa-btn" onclick="doReset()"                title="Reiniciar datos">↺</button>
     </div>
   </div>
 
-  <!-- DASHBOARD KPIs -->
-  <div class="dashboard" id="dashboard">
-    <div class="kpi" onclick="openPanel('reportPanel')">
-      <div class="kpi-label">Ingresos Pasivos</div>
-      <div class="kpi-value gold" id="kpiPasivos">$0</div>
-      <div class="kpi-sub">por mes</div>
+  <!-- KPIs -->
+  <div class="fstrip">
+    <div class="fkpi" onclick="openSheet('sheetReport')">
+      <div class="fk-lbl">Ing. Pasivos</div>
+      <div class="fk-val gold" id="kPasivos">$0</div>
+      <div class="fk-sub">por mes</div>
     </div>
-    <div class="kpi" onclick="openPanel('reportPanel')">
-      <div class="kpi-label">Gastos</div>
-      <div class="kpi-value negative" id="kpiGastos">$0</div>
-      <div class="kpi-sub">por mes</div>
+    <div class="fkpi" onclick="openSheet('sheetReport')">
+      <div class="fk-lbl">Gastos</div>
+      <div class="fk-val neg" id="kGastos">$0</div>
+      <div class="fk-sub">por mes</div>
     </div>
-    <div class="kpi" onclick="openPanel('reportPanel')">
-      <div class="kpi-label">Flujo Neto</div>
-      <div class="kpi-value" id="kpiFlujo">$0</div>
-      <div class="kpi-sub">activos – gastos</div>
+    <div class="fkpi" onclick="openSheet('sheetReport')">
+      <div class="fk-lbl">Flujo Neto</div>
+      <div class="fk-val" id="kFlujo">$0</div>
+      <div class="fk-sub">pasivos–gastos</div>
     </div>
-    <div class="kpi" onclick="openPanel('reportPanel')">
-      <div class="kpi-label">Activos</div>
-      <div class="kpi-value blue" id="kpiActivos">0</div>
-      <div class="kpi-sub">registrados</div>
+    <div class="fkpi" onclick="openSheet('sheetReport')">
+      <div class="fk-lbl">Activos</div>
+      <div class="fk-val pos" id="kActivos">0</div>
+      <div class="fk-sub">productivos</div>
     </div>
   </div>
 
   <!-- FREEDOM BAR -->
-  <div class="freedom-bar-wrap">
-    <div class="freedom-bar-header">
-      <div class="freedom-bar-label">🎯 Progreso a Libertad Financiera</div>
-      <div class="freedom-bar-pct" id="freedomPct">0%</div>
+  <div class="fbar-wrap">
+    <div class="fbar-top">
+      <div class="fbar-lbl">🎯 Libertad Financiera</div>
+      <div class="fbar-pct" id="freePct">0%</div>
     </div>
-    <div class="freedom-bar-track">
-      <div class="freedom-bar-fill" id="freedomFill" style="width:0%"></div>
-    </div>
+    <div class="fbar-track"><div class="fbar-fill" id="freeFill" style="width:0%"></div></div>
   </div>
 
   <!-- CHAT -->
@@ -347,556 +335,527 @@ html, body { height:100%; background:var(--bg); font-family:var(--font-body); co
 
   <!-- CHIPS -->
   <div class="chips">
-    <div class="chip" onclick="quickSend('¿Cómo calculo mi libertad financiera?')">¿Cómo mido mi libertad?</div>
-    <div class="chip" onclick="quickSend('¿Qué activos me recomiendas para empezar?')">Primeros activos</div>
-    <div class="chip" onclick="quickSend('Analiza mi situación actual')">Analizar situación</div>
-    <div class="chip" onclick="quickSend('¿Cómo reduzco mis gastos inteligentemente?')">Reducir gastos</div>
-    <div class="chip" onclick="quickSend('Dame un plan de 90 días para salir del círculo de la rata')">Plan 90 días</div>
+    <div class="chip" onclick="qs('¿Cómo mido si tengo libertad financiera?')">¿Cómo mido mi libertad?</div>
+    <div class="chip" onclick="qs('¿Qué activos me recomiendas para empezar con poco dinero?')">Primeros activos</div>
+    <div class="chip" onclick="qs('Analiza mi situación actual y dime cómo estoy')">Analizar mi situación</div>
+    <div class="chip" onclick="qs('Dame un plan de 90 días para salir del círculo de la rata')">Plan 90 días</div>
+    <div class="chip" onclick="qs('¿Cuáles son mis próximos pasos para construir ingresos pasivos?')">Próximos pasos</div>
   </div>
 
   <!-- INPUT -->
-  <div class="input-area">
-    <div class="input-wrap">
-      <textarea id="msgInput" rows="1" placeholder="Cuéntame sobre tus finanzas..."></textarea>
-    </div>
-    <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+  <div class="ibar">
+    <div class="iwrap"><textarea id="msgInput" rows="1" placeholder="Escribe un mensaje…"></textarea></div>
+    <button class="sbtn" id="sendBtn" onclick="doSend()">➤</button>
   </div>
 
-  <!-- ══ PANEL: AGREGAR TRANSACCIÓN ══ -->
-  <div class="panel-overlay" id="addPanel" onclick="closePanel('addPanel',event)">
-    <div class="panel">
-      <div class="panel-handle"></div>
-      <div class="panel-title">Registrar Movimiento</div>
-      <div class="form-group">
-        <label class="form-label">Tipo</label>
-        <select class="form-select" id="addType" onchange="onTypeChange()">
-          <option value="ingreso">💼 Ingreso activo (trabajo/empleo)</option>
-          <option value="ingreso_pasivo">💰 Ingreso pasivo (renta, dividendos…)</option>
-          <option value="gasto">💸 Gasto mensual</option>
-          <option value="activo">🏦 Activo (genera dinero)</option>
-          <option value="pasivo">⚠️ Pasivo / deuda</option>
-        </select>
+  <!-- SHEET: AGREGAR -->
+  <div class="overlay" id="sheetAdd" onclick="maybeClose('sheetAdd',event)">
+    <div class="sheet">
+      <div class="sh-handle"></div>
+      <div class="sh-head"><div class="sh-title">Registrar movimiento</div></div>
+      <div class="sh-body">
+        <div class="fg">
+          <label class="fl">Tipo</label>
+          <select class="fs" id="addType" onchange="onTypeChange()">
+            <option value="ingreso_activo">💼 Ingreso activo (salario, freelance…)</option>
+            <option value="ingreso_pasivo">💰 Ingreso pasivo (renta, dividendos…)</option>
+            <option value="gasto">💸 Gasto mensual recurrente</option>
+            <option value="activo">🏦 Activo productivo (inversión)</option>
+            <option value="pasivo">⚠️ Pasivo / deuda</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Descripción</label>
+          <input class="fi" type="text" id="addDesc" placeholder="Ej: Renta de departamento">
+        </div>
+        <div class="fg">
+          <label class="fl" id="addAmtLbl">Monto mensual ($)</label>
+          <input class="fi" type="number" id="addAmt" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="fg" id="addRendGroup" style="display:none">
+          <label class="fl">Rendimiento anual estimado (%) — default 7%</label>
+          <input class="fi" type="number" id="addRend" placeholder="Ej: 8" min="0" max="100" step="0.1">
+        </div>
+        <button class="btnm" onclick="doAddTx()">Registrar ✓</button>
+        <span class="btnc" onclick="closeSheet('sheetAdd')">Cancelar</span>
       </div>
-      <div class="form-group">
-        <label class="form-label">Descripción</label>
-        <input class="form-input" type="text" id="addDesc" placeholder="Ej: Renta departamento">
-      </div>
-      <div class="form-group">
-        <label class="form-label" id="addAmtLabel">Monto mensual ($)</label>
-        <input class="form-input" type="number" id="addAmt" placeholder="0.00" min="0" step="0.01">
-      </div>
-      <div class="form-group" id="addIncomePctGroup" style="display:none">
-        <label class="form-label">Rendimiento anual estimado (%)</label>
-        <input class="form-input" type="number" id="addPct" placeholder="Ej: 8" min="0" max="100" step="0.1">
-      </div>
-      <button class="btn-primary" onclick="addTransaction()">Registrar ✓</button>
-      <span class="btn-cancel" onclick="closePanel('addPanel')">Cancelar</span>
     </div>
   </div>
 
-  <!-- ══ PANEL: REPORTE ══ -->
-  <div class="panel-overlay" id="reportPanel" onclick="closePanel('reportPanel',event)">
-    <div class="panel">
-      <div class="panel-handle"></div>
-      <div class="panel-title">Mi Situación Financiera</div>
+  <!-- SHEET: REPORTE -->
+  <div class="overlay" id="sheetReport" onclick="maybeClose('sheetReport',event)">
+    <div class="sheet">
+      <div class="sh-handle"></div>
+      <div class="sh-head"><div class="sh-title">Mi Situación Financiera</div></div>
+      <div class="sh-body">
 
-      <!-- Freedom meter -->
-      <div class="freedom-meter-full">
-        <div class="freedom-pct-big" id="rFreedomPct">0%</div>
-        <div class="freedom-label">Libertad Financiera Alcanzada</div>
-        <div class="freedom-message" id="rFreedomMsg">Empieza registrando tus ingresos y gastos.</div>
-      </div>
-
-      <!-- Tabs -->
-      <div class="tab-bar">
-        <div class="tab active" onclick="switchTab('resumen')">Resumen</div>
-        <div class="tab" onclick="switchTab('activos')">Activos</div>
-        <div class="tab" onclick="switchTab('pasivos')">Pasivos</div>
-      </div>
-
-      <!-- Tab: resumen -->
-      <div id="tabResumen">
-        <div class="report-section">
-          <div class="report-section-title">Flujo de Dinero</div>
-          <div class="report-row"><span class="rlabel">Ingresos activos (trabajo)</span><span class="rvalue positive" id="rIngresos">$0</span></div>
-          <div class="report-row"><span class="rlabel">Ingresos pasivos</span><span class="rvalue gold" id="rPasivos">$0</span></div>
-          <div class="report-row"><span class="rlabel">Gastos mensuales</span><span class="rvalue negative" id="rGastos">$0</span></div>
-          <div class="report-row"><span class="rlabel">Flujo neto (pasivos – gastos)</span><span class="rvalue" id="rFlujo">$0</span></div>
-          <div class="report-row"><span class="rlabel">Meta ingresos pasivos</span><span class="rvalue gold" id="rMeta">$0</span></div>
+        <div class="meter">
+          <div class="mnum" id="rPct">0%</div>
+          <div class="mlbl">Libertad financiera alcanzada</div>
+          <div class="mtrack"><div class="mfill" id="rFill" style="width:0%"></div></div>
+          <div class="mmsg" id="rMsg">Registra tus finanzas para ver tu progreso.</div>
         </div>
-        <div class="report-section">
-          <div class="report-section-title">¿Estás en el Círculo de la Rata?</div>
-          <div class="report-row"><span class="rlabel">Estado actual</span><span class="rvalue" id="rRatRace">—</span></div>
-          <div class="report-row"><span class="rlabel">Necesitas generar</span><span class="rvalue gold" id="rNeedMore">—</span></div>
+
+        <div class="tabs">
+          <div class="tab on" onclick="switchTab('resumen',this)">Resumen</div>
+          <div class="tab"   onclick="switchTab('activos',this)">Activos</div>
+          <div class="tab"   onclick="switchTab('pasivos',this)">Pasivos</div>
         </div>
-        <div style="margin-bottom:10px">
-          <label class="form-label">Meta de ingresos pasivos ($/mes)</label>
-          <div style="display:flex;gap:8px;margin-top:5px">
-            <input class="form-input" type="number" id="metaInput" placeholder="Ej: 3000" style="flex:1">
-            <button class="btn-primary" style="width:auto;padding:10px 16px;flex-shrink:0" onclick="saveMeta()">Guardar</button>
+
+        <div id="tabResumen">
+          <div class="rsec">
+            <div class="rsec-t">Flujo de dinero</div>
+            <div class="rrow"><span class="rl">Ingresos activos (trabajo)</span><span class="rv blue" id="rIngActivo">$0</span></div>
+            <div class="rrow"><span class="rl">Ingresos pasivos</span>          <span class="rv gold" id="rIngPasivo">$0</span></div>
+            <div class="rrow"><span class="rl">Gastos mensuales</span>          <span class="rv neg"  id="rGastos">$0</span></div>
+            <div class="rrow"><span class="rl">Flujo neto (pasivos – gastos)</span><span class="rv"  id="rFlujo">$0</span></div>
+          </div>
+          <div class="rsec">
+            <div class="rsec-t">Círculo de la rata</div>
+            <div class="rrow"><span class="rl">Estado</span>               <span class="rv" id="rRat">—</span></div>
+            <div class="rrow"><span class="rl">Te faltan generar</span>    <span class="rv gold" id="rFalta">—</span></div>
+            <div class="rrow"><span class="rl">Meta ing. pasivos</span>    <span class="rv" id="rMeta">$0/mes</span></div>
+          </div>
+          <div class="fg">
+            <label class="fl">Ajustar meta de ingresos pasivos ($/mes)</label>
+            <div style="display:flex;gap:8px">
+              <input class="fi" type="number" id="metaInp" placeholder="Ej: 3000" style="flex:1">
+              <button class="btnm" style="width:auto;padding:11px 18px;flex-shrink:0" onclick="doSaveMeta()">Guardar</button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Tab: activos -->
-      <div id="tabActivos" style="display:none">
-        <div id="activosList"></div>
-        <button class="btn-primary" onclick="closePanel('reportPanel');openPanel('addPanel');document.getElementById('addType').value='activo';onTypeChange()">+ Agregar Activo</button>
-      </div>
+        <div id="tabActivos" style="display:none">
+          <div id="listaActivos"></div>
+          <button class="btnm" style="margin-top:8px" onclick="closeSheet('sheetReport');openSheet('sheetAdd');document.getElementById('addType').value='activo';onTypeChange()">+ Agregar activo</button>
+        </div>
 
-      <!-- Tab: pasivos -->
-      <div id="tabPasivos" style="display:none">
-        <div id="pasivosList"></div>
-        <button class="btn-primary" onclick="closePanel('reportPanel');openPanel('addPanel');document.getElementById('addType').value='pasivo';onTypeChange()">+ Agregar Pasivo</button>
-      </div>
+        <div id="tabPasivos" style="display:none">
+          <div id="listaPasivos"></div>
+          <button class="btnm" style="margin-top:8px" onclick="closeSheet('sheetReport');openSheet('sheetAdd');document.getElementById('addType').value='pasivo';onTypeChange()">+ Agregar pasivo</button>
+        </div>
 
+      </div>
     </div>
   </div>
 
-</div><!-- /app -->
+  <!-- BANNER: Android/Chrome install -->
+  <div id="installBanner" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:200;background:#fff;border-top:1px solid #e0e0e0;padding:14px 16px;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.15);">
+    <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#075e54,#128c7e);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🎩</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:14px;font-weight:700;color:#111b21;">Instalar Rich Dad AI</div>
+      <div style="font-size:12px;color:#667781;margin-top:1px;">Agregar a tu pantalla de inicio</div>
+    </div>
+    <button onclick="dismissInstall()" style="background:none;border:none;color:#8696a0;font-size:20px;cursor:pointer;padding:4px;line-height:1;">✕</button>
+    <button onclick="doInstall()" style="background:#075e54;color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:var(--font);">Instalar</button>
+  </div>
+
+  <!-- BANNER: iOS instrucción manual -->
+  <div id="iosBanner" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:200;background:#fff;border-top:1px solid #e0e0e0;padding:16px;flex-direction:column;gap:10px;box-shadow:0 -4px 20px rgba(0,0,0,.15);">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:14px;font-weight:700;color:#111b21;">📲 Instalar en iPhone / iPad</div>
+      <button onclick="dismissInstall()" style="background:none;border:none;color:#8696a0;font-size:20px;cursor:pointer;padding:4px;line-height:1;">✕</button>
+    </div>
+    <div style="font-size:13px;color:#667781;line-height:1.7;">
+      1. Toca el botón <b style="color:#075e54;">Compartir</b> (□↑) en Safari<br>
+      2. Selecciona <b style="color:#075e54;">"Agregar a pantalla de inicio"</b><br>
+      3. Toca <b style="color:#075e54;">Agregar</b> — ¡listo! 🎉
+    </div>
+  </div>
+
+</div>
 
 <script>
 (function(){
 'use strict';
+const SK={data:'rd_v4_data',chat:'rd_v4_chat',key:'rd_v4_key'};
 
-/* ══ STORAGE ══ */
-const SK_DATA  = 'richdad_v3_data';
-const SK_CHAT  = 'richdad_v3_chat';
-const SK_API   = 'richdad_v3_apikey';
+let fd={ingActivo:0,ingPasivo:0,gastos:0,meta:3000,activos:[],pasivos:[]};
+let hist=[];
+let busy=false;
 
-let fd = {
-  ingresosActivos: 0,
-  ingresosPasivos: 0,
-  gastosMensuales: 0,
-  metaPasivos: 3000,
-  activos: [],   // {id, desc, monto, rendPct, ingresoMensual, fecha}
-  pasivos: [],   // {id, desc, monto, fecha}
-  transacciones: [] // log
-};
-let chatHistory = [];
-let isProcessing = false;
-
-function loadAll(){
-  try{ const d=localStorage.getItem(SK_DATA); if(d) fd={...fd,...JSON.parse(d)}; }catch(e){}
-  try{ const c=localStorage.getItem(SK_CHAT); if(c) chatHistory=JSON.parse(c); }catch(e){}
+function load(){
+  try{const d=localStorage.getItem(SK.data);if(d)fd={...fd,...JSON.parse(d)};}catch(e){}
+  try{const c=localStorage.getItem(SK.chat);if(c)hist=JSON.parse(c);}catch(e){}
 }
-function saveData(){ localStorage.setItem(SK_DATA,JSON.stringify(fd)); }
-function saveChat(){
-  if(chatHistory.length>120) chatHistory=chatHistory.slice(-120);
-  localStorage.setItem(SK_CHAT,JSON.stringify(chatHistory));
-}
-function getApiKey(){ return localStorage.getItem(SK_API)||''; }
-function saveApiKey(){
-  const k=document.getElementById('apiKeyInput').value.trim();
-  if(!k){ alert('Ingresa una API key válida'); return; }
-  localStorage.setItem(SK_API,k);
-  document.getElementById('apiOverlay').classList.add('hidden');
+function save(){localStorage.setItem(SK.data,JSON.stringify(fd));}
+function saveChat(){if(hist.length>120)hist=hist.slice(-120);localStorage.setItem(SK.chat,JSON.stringify(hist));}
+function getKey(){return localStorage.getItem(SK.key)||'';}
+
+/* ── API KEY ── */
+function doSaveKey(){
+  const k=document.getElementById('apiKeyInp').value.trim();
+  if(!k.startsWith('sk-')){alert('Ingresa una API key válida (empieza con sk-)');return;}
+  localStorage.setItem(SK.key,k);
+  document.getElementById('apiScreen').classList.add('gone');
   updateUI();
-  if(chatHistory.length===0) showWelcome();
-  else restoreChat();
+  if(hist.length===0)showWelcome();else restoreChat();
 }
+window.doSaveKey=doSaveKey;
 
-/* ══ UI UPDATE ══ */
-function fmt(n){ return '$'+Math.abs(n).toLocaleString('es-MX',{minimumFractionDigits:0,maximumFractionDigits:0}); }
-function pct(a,b){ return b>0?Math.min(100,(a/b)*100):0; }
+/* ── FORMATTING ── */
+function money(n){return '$'+Math.abs(n).toLocaleString('es-MX',{minimumFractionDigits:0,maximumFractionDigits:0});}
+function clamp(v){return Math.min(100,Math.max(0,v));}
 
+/* ── UI ── */
 function updateUI(){
-  const flujo = fd.ingresosPasivos - fd.gastosMensuales;
-  const freedom = pct(fd.ingresosPasivos, fd.gastosMensuales || fd.metaPasivos);
+  const flujo=fd.ingPasivo-fd.gastos;
+  const base=fd.gastos||fd.meta||1;
+  const p=clamp(Math.round(fd.ingPasivo/base*100));
 
-  // dashboard
-  document.getElementById('kpiPasivos').textContent = fmt(fd.ingresosPasivos);
-  document.getElementById('kpiGastos').textContent  = fmt(fd.gastosMensuales);
-  const kpiFlujo = document.getElementById('kpiFlujo');
-  kpiFlujo.textContent = (flujo>=0?'+':'-')+fmt(flujo).replace('$','')+ ' ';
-  kpiFlujo.className = 'kpi-value ' + (flujo>=0?'positive':'negative');
-  document.getElementById('kpiActivos').textContent = fd.activos.length;
-
-  // bar
-  const p = Math.round(freedom);
-  document.getElementById('freedomPct').textContent = p+'%';
-  document.getElementById('freedomFill').style.width = p+'%';
-
-  // report panel values
-  document.getElementById('rIngresos').textContent = fmt(fd.ingresosActivos);
-  document.getElementById('rPasivos').textContent  = fmt(fd.ingresosPasivos);
-  document.getElementById('rGastos').textContent   = fmt(fd.gastosMensuales);
-  document.getElementById('rFlujo').textContent    = (flujo>=0?'+':'')+fmt(flujo);
-  document.getElementById('rFlujo').className      = 'rvalue '+(flujo>=0?'positive':'negative');
-  document.getElementById('rMeta').textContent     = fmt(fd.metaPasivos);
-  document.getElementById('metaInput').value       = fd.metaPasivos||'';
-  document.getElementById('rFreedomPct').textContent = p+'%';
-
-  const inRat = fd.ingresosPasivos < fd.gastosMensuales;
-  const rr = document.getElementById('rRatRace');
-  rr.textContent = inRat ? '🐀 SÍ, aún en el círculo' : '🏆 ¡Libre! Ingresos pasivos cubren tus gastos';
-  rr.className   = 'rvalue '+(inRat?'negative':'positive');
-
-  const need = Math.max(0, fd.gastosMensuales - fd.ingresosPasivos);
-  document.getElementById('rNeedMore').textContent = need>0 ? fmt(need)+'/mes más de activos' : '¡Meta cubierta!';
-
-  const msgs = [
-    [0,  '🐀 Aún dentro. Cada peso que inviertes en activos es un paso hacia afuera.'],
-    [25, '⚡ Buen inicio. Tus activos cubren el 25% de tus gastos. Sigue construyendo.'],
-    [50, '🔥 Halfway! La mitad de tus gastos ya los pagan tus activos. No pares.'],
-    [75, '🚀 ¡75%! Estás muy cerca. Un activo más puede cambiar tu vida.'],
-    [100,'🏆 ¡LIBERTAD FINANCIERA! Tus activos pagan tus gastos. Ahora escala.']
-  ];
-  const msg = [...msgs].reverse().find(([t])=>p>=t);
-  document.getElementById('rFreedomMsg').textContent = msg?.[1]||'';
-
-  // lists
-  renderList('activosList', fd.activos, 'activo');
-  renderList('pasivosList', fd.pasivos, 'pasivo');
+  document.getElementById('kPasivos').textContent=money(fd.ingPasivo);
+  document.getElementById('kGastos').textContent=money(fd.gastos);
+  const kf=document.getElementById('kFlujo');
+  kf.textContent=(flujo>=0?'+':'')+money(flujo);
+  kf.className='fk-val '+(flujo>=0?'pos':'neg');
+  document.getElementById('kActivos').textContent=fd.activos.length;
+  document.getElementById('freePct').textContent=p+'%';
+  document.getElementById('freeFill').style.width=p+'%';
+  document.getElementById('rPct').textContent=p+'%';
+  document.getElementById('rFill').style.width=p+'%';
+  document.getElementById('rIngActivo').textContent=money(fd.ingActivo);
+  document.getElementById('rIngPasivo').textContent=money(fd.ingPasivo);
+  document.getElementById('rGastos').textContent=money(fd.gastos);
+  const rf=document.getElementById('rFlujo');
+  rf.textContent=(flujo>=0?'+':'')+money(flujo);
+  rf.className='rv '+(flujo>=0?'pos':'neg');
+  const inRat=fd.ingPasivo<fd.gastos;
+  const rat=document.getElementById('rRat');
+  rat.textContent=inRat?'🐀 Sí, aún dentro':'🏆 ¡Libre! Pasivos ≥ gastos';
+  rat.className='rv '+(inRat?'neg':'pos');
+  const falta=Math.max(0,fd.gastos-fd.ingPasivo);
+  document.getElementById('rFalta').textContent=falta>0?money(falta)+'/mes más':'¡Meta cubierta! 🎉';
+  document.getElementById('rMeta').textContent=money(fd.meta)+'/mes';
+  document.getElementById('metaInp').value=fd.meta||'';
+  const msgs=[[0,'🐀 Cada peso en un activo es un paso afuera del círculo.'],[25,'⚡ Inicio sólido — tus activos cubren el 25% de tus gastos.'],[50,'🔥 ¡Halfway! La mitad de tus gastos ya los pagan tus activos.'],[75,'🚀 75% — estás muy cerca. Un activo más puede cambiarlo todo.'],[100,'🏆 ¡LIBERTAD FINANCIERA! Ahora escala y protege tu patrimonio.']];
+  const m=[...msgs].reverse().find(([t])=>p>=t);
+  document.getElementById('rMsg').textContent=m?.[1]||'';
+  renderLists();
 }
 
-function renderList(elId, list, type){
-  const el=document.getElementById(elId);
-  if(!list.length){ el.innerHTML='<div class="empty-state">Ninguno registrado aún.</div>'; return; }
-  el.innerHTML = list.map((item,i)=>`
-    <div class="asset-item">
-      <div>
-        <div class="aname">${item.desc}</div>
-        <div style="font-size:11px;color:var(--text-dim);margin-top:2px">${item.fecha||''}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="aamt" style="color:${type==='activo'?'var(--green)':'var(--red)'}">
-          ${type==='activo'?'+'+fmt(item.ingresoMensual||0)+'/mes':fmt(item.monto)}
-        </div>
-        <button class="adel" onclick="removeItem('${type}',${i})">✕</button>
-      </div>
-    </div>`).join('');
+function renderLists(){
+  const la=document.getElementById('listaActivos');
+  const lp=document.getElementById('listaPasivos');
+  la.innerHTML=fd.activos.length?fd.activos.map((a,i)=>`<div class="acard"><div><div class="aname">${a.desc}</div><div class="adate">${a.fecha||''} · ${a.rendPct||7}% anual</div></div><div style="display:flex;align-items:center;gap:10px"><div class="aamt pos">+${money(a.ingrMes)}/mes</div><button class="adel" onclick="removeItem('activo',${i})">✕</button></div></div>`).join(''):'<div class="empty">Ningún activo registrado aún.</div>';
+  lp.innerHTML=fd.pasivos.length?fd.pasivos.map((p,i)=>`<div class="acard"><div><div class="aname">${p.desc}</div><div class="adate">${p.fecha||''}</div></div><div style="display:flex;align-items:center;gap:10px"><div class="aamt neg">${money(p.monto)}</div><button class="adel" onclick="removeItem('pasivo',${i})">✕</button></div></div>`).join(''):'<div class="empty">Ningún pasivo registrado.</div>';
 }
 
-function removeItem(type, i){
-  if(type==='activo'){
-    fd.ingresosPasivos -= fd.activos[i].ingresoMensual||0;
-    fd.activos.splice(i,1);
-  } else {
-    fd.pasivos.splice(i,1);
-  }
-  saveData(); updateUI();
+function removeItem(type,i){
+  if(type==='activo'){fd.ingPasivo-=fd.activos[i].ingrMes||0;fd.activos.splice(i,1);}
+  else fd.pasivos.splice(i,1);
+  save();updateUI();
 }
+window.removeItem=removeItem;
 
-function saveMeta(){
-  const v=parseFloat(document.getElementById('metaInput').value);
-  if(isNaN(v)||v<=0){ alert('Ingresa una meta válida'); return; }
-  fd.metaPasivos=v; saveData(); updateUI();
-}
+/* ── PANELS ── */
+function openSheet(id){document.getElementById(id).classList.add('open');if(id==='sheetReport')updateUI();}
+function closeSheet(id){document.getElementById(id).classList.remove('open');}
+function maybeClose(id,e){if(e.target===document.getElementById(id))closeSheet(id);}
+window.openSheet=openSheet;window.closeSheet=closeSheet;window.maybeClose=maybeClose;
 
-/* ══ PANELS ══ */
-function openPanel(id){
-  document.getElementById(id).classList.add('open');
-  if(id==='reportPanel') updateUI();
-}
-function closePanel(id,e){
-  if(e && e.target!==document.getElementById(id)) return;
-  document.getElementById(id).classList.remove('open');
-}
-window.openPanel=openPanel; window.closePanel=closePanel;
-
-function switchTab(name){
-  ['resumen','activos','pasivos'].forEach(t=>{
-    document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).style.display = t===name?'block':'none';
-  });
-  document.querySelectorAll('.tab').forEach((el,i)=>{
-    el.classList.toggle('active',['resumen','activos','pasivos'][i]===name);
-  });
+function switchTab(name,el){
+  ['resumen','activos','pasivos'].forEach(t=>{document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).style.display=t===name?'block':'none';});
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
 }
 window.switchTab=switchTab;
 
 function onTypeChange(){
   const t=document.getElementById('addType').value;
-  const lbl=document.getElementById('addAmtLabel');
-  const pctG=document.getElementById('addIncomePctGroup');
-  if(t==='activo'){
-    lbl.textContent='Valor del activo ($)';
-    pctG.style.display='block';
-  } else if(t==='ingreso'||t==='ingreso_pasivo'||t==='gasto'){
-    lbl.textContent='Monto mensual ($)';
-    pctG.style.display='none';
-  } else {
-    lbl.textContent='Monto total de la deuda ($)';
-    pctG.style.display='none';
-  }
+  document.getElementById('addAmtLbl').textContent=t==='activo'?'Valor total del activo ($)':t==='pasivo'?'Monto total de la deuda ($)':'Monto mensual ($)';
+  document.getElementById('addRendGroup').style.display=t==='activo'?'block':'none';
 }
 window.onTypeChange=onTypeChange;
 
-function addTransaction(){
+function doAddTx(){
   const type=document.getElementById('addType').value;
   const desc=document.getElementById('addDesc').value.trim()||'Sin descripción';
   const amt=parseFloat(document.getElementById('addAmt').value);
-  const rendPct=parseFloat(document.getElementById('addPct').value)||0;
-  if(isNaN(amt)||amt<0){ alert('Ingresa un monto válido'); return; }
-
-  const fecha = new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'});
-
+  const rend=parseFloat(document.getElementById('addRend').value)||7;
+  if(isNaN(amt)||amt<0){alert('Ingresa un monto válido');return;}
+  const fecha=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'});
+  const labels={ingreso_activo:'ingreso activo',ingreso_pasivo:'ingreso pasivo',gasto:'gasto mensual',activo:'activo productivo',pasivo:'pasivo/deuda'};
   switch(type){
-    case 'ingreso':        fd.ingresosActivos  += amt; break;
-    case 'ingreso_pasivo': fd.ingresosPasivos  += amt; break;
-    case 'gasto':          fd.gastosMensuales  += amt; break;
-    case 'activo':{
-      const ingresoMensual = rendPct>0 ? (amt*(rendPct/100))/12 : amt*0.006; // fallback ~7.2% anual
-      fd.activos.push({id:Date.now(),desc,monto:amt,rendPct,ingresoMensual,fecha});
-      fd.ingresosPasivos += ingresoMensual;
-      break;
-    }
-    case 'pasivo':
-      fd.pasivos.push({id:Date.now(),desc,monto:amt,fecha});
-      break;
+    case 'ingreso_activo': fd.ingActivo+=amt; break;
+    case 'ingreso_pasivo': fd.ingPasivo+=amt; break;
+    case 'gasto':          fd.gastos+=amt; break;
+    case 'activo':{const im=(amt*(rend/100))/12;fd.activos.push({desc,monto:amt,rendPct:rend,ingrMes:im,fecha});fd.ingPasivo+=im;break;}
+    case 'pasivo': fd.pasivos.push({desc,monto:amt,fecha}); break;
   }
-
-  saveData(); updateUI();
-  closePanel('addPanel');
+  save();updateUI();closeSheet('sheetAdd');
   document.getElementById('addDesc').value='';
   document.getElementById('addAmt').value='';
-  document.getElementById('addPct').value='';
-
-  // Notificar a la IA del cambio manual
-  const typeLabels={ingreso:'ingreso activo',ingreso_pasivo:'ingreso pasivo',gasto:'gasto',activo:'activo',pasivo:'pasivo/deuda'};
-  addMessage('user',`Registré manualmente: ${typeLabels[type]} de $${amt} — ${desc}`);
-  sendToAI(`El usuario acaba de registrar manualmente un ${typeLabels[type]} de $${amt} llamado "${desc}". Solo dame un breve comentario o consejo al respecto.`);
+  document.getElementById('addRend').value='';
+  const um=`Registré: ${labels[type]} de $${amt} — ${desc}`;
+  addMsg('user',um,true);
+  hist.push({role:'user',content:um});saveChat();
+  aiReply(`El usuario registró un ${labels[type]} de $${amt} llamado "${desc}". Da un comentario breve (2-3 líneas) y un consejo concreto.`);
 }
-window.addTransaction=addTransaction;
-window.removeItem=removeItem;
-window.saveMeta=saveMeta;
-window.saveApiKey=saveApiKey;
+window.doAddTx=doAddTx;
 
-function resetAll(){
-  if(!confirm('¿Resetear todos los datos financieros? El historial del chat se conserva.')) return;
-  fd={ ingresosActivos:0, ingresosPasivos:0, gastosMensuales:0, metaPasivos:3000, activos:[], pasivos:[], transacciones:[] };
-  saveData(); updateUI();
-  addMessage('bot','✅ Datos financieros reiniciados. ¡Nuevo comienzo! ¿Cuál es tu situación actual?');
+function doSaveMeta(){
+  const v=parseFloat(document.getElementById('metaInp').value);
+  if(isNaN(v)||v<=0){alert('Ingresa una meta válida');return;}
+  fd.meta=v;save();updateUI();
 }
-window.resetAll=resetAll;
+window.doSaveMeta=doSaveMeta;
 
-/* ══ CHAT ══ */
-function timeStr(){
-  const n=new Date();
-  return n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');
+function doReset(){
+  if(!confirm('¿Reiniciar todos los datos financieros? El chat se conserva.'))return;
+  fd={ingActivo:0,ingPasivo:0,gastos:0,meta:3000,activos:[],pasivos:[]};
+  save();updateUI();
+  addMsg('bot','✅ Datos reiniciados. Cuéntame tu situación financiera actual para empezar de nuevo.');
 }
-function scrollDown(){ setTimeout(()=>{ const c=document.getElementById('chatArea'); c.scrollTop=c.scrollHeight; },80); }
+window.doReset=doReset;
 
-function addMessage(sender,html,raw=false){
-  const chatArea=document.getElementById('chatArea');
-  const wrap=document.createElement('div');
-  wrap.className='msg-wrap '+sender;
-  const bub=document.createElement('div');
-  bub.className='bubble';
-  if(raw) bub.textContent=html;
-  else bub.innerHTML=html;
-  const t=document.createElement('div');
-  t.className='btime'; t.textContent=timeStr();
-  bub.appendChild(t);
-  wrap.appendChild(bub);
-  chatArea.appendChild(wrap);
-  scrollDown();
-  return wrap;
+/* ── CHAT ── */
+function now(){const d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
+function scroll(){setTimeout(()=>{const c=document.getElementById('chatArea');c.scrollTop=c.scrollHeight;},80);}
+
+function addMsg(who,html,raw=false){
+  const ca=document.getElementById('chatArea');
+  const w=document.createElement('div');w.className='mwrap '+who;
+  const b=document.createElement('div');b.className='bubble';
+  if(raw)b.textContent=html;else b.innerHTML=html;
+  const t=document.createElement('span');t.className='btime';t.textContent=now();
+  b.appendChild(t);w.appendChild(b);ca.appendChild(w);scroll();
 }
 
-function showTyping(show){
-  const chatArea=document.getElementById('chatArea');
-  const ex=document.getElementById('typingBubble');
-  if(show && !ex){
-    const w=document.createElement('div');
-    w.className='msg-wrap bot'; w.id='typingBubble';
-    w.innerHTML='<div class="typing-bubble"><span></span><span></span><span></span></div>';
-    chatArea.appendChild(w); scrollDown();
-  } else if(!show && ex){ ex.remove(); }
-}
-
-function restoreChat(){
-  chatHistory.forEach(m=>addMessage(m.sender,m.text));
+let tEl=null;
+function showTyping(on){
+  const ca=document.getElementById('chatArea');
+  if(on&&!tEl){tEl=document.createElement('div');tEl.className='twrap';tEl.innerHTML='<div class="tbub"><span></span><span></span><span></span></div>';ca.appendChild(tEl);scroll();}
+  else if(!on&&tEl){tEl.remove();tEl=null;}
 }
 
 function showWelcome(){
-  const txt=`🎩 <b>Bienvenido a Rich Dad AI</b><br><br>Soy tu coach financiero personal, basado en los principios de <b>Robert Kiyosaki</b>. Mi misión: ayudarte a <b>escapar del círculo de la rata</b> y construir libertad financiera real.<br><br>Para empezar: <b>¿cuánto ganas y cuánto gastas cada mes?</b> Cuéntame con total confianza.`;
-  addMessage('bot',txt);
-  chatHistory.push({sender:'bot',text:txt}); saveChat();
+  const t=`🎩 <b>¡Hola! Soy Rich Dad AI</b>, tu asesor de libertad financiera personal.<br><br>Estoy basado en los principios de <b>Robert Kiyosaki</b>. Mi trabajo es ayudarte a escapar del <b>círculo de la rata</b> y construir activos que generen dinero mientras duermes.<br><br>Para empezar: <b>¿cuánto ganas y cuánto gastas cada mes?</b> Cuéntame con confianza. 🙂`;
+  addMsg('bot',t);hist.push({role:'assistant',content:t});saveChat();
+}
+function restoreChat(){hist.forEach(m=>addMsg(m.role==='user'?'user':'bot',m.content));}
+
+/* ── OPENAI ── */
+function buildCtx(){
+  const f=fd.ingPasivo-fd.gastos;
+  const p=fd.gastos>0?(fd.ingPasivo/fd.gastos*100).toFixed(1):0;
+  return `SITUACIÓN FINANCIERA ACTUAL:
+• Ingresos activos: $${fd.ingActivo.toFixed(2)}/mes
+• Ingresos pasivos: $${fd.ingPasivo.toFixed(2)}/mes
+• Gastos mensuales: $${fd.gastos.toFixed(2)}/mes
+• Flujo neto (pasivos–gastos): $${f.toFixed(2)}/mes
+• Libertad financiera: ${p}%
+• Meta: $${fd.meta.toFixed(2)}/mes
+• Activos (${fd.activos.length}): ${fd.activos.length?fd.activos.map(a=>`${a.desc} →$${a.ingrMes.toFixed(0)}/mes`).join(', '):'Ninguno'}
+• Pasivos (${fd.pasivos.length}): ${fd.pasivos.length?fd.pasivos.map(p=>`${p.desc} $${p.monto}`).join(', '):'Ninguno'}
+• ¿En círculo de la rata? ${fd.ingPasivo<fd.gastos?'SÍ':'NO — ¡ESCAPÓ!'}`;
 }
 
-/* ══ OPENAI ══ */
-function buildContext(){
-  const flujo = fd.ingresosPasivos - fd.gastosMensuales;
-  const freedom = fd.gastosMensuales>0 ? (fd.ingresosPasivos/fd.gastosMensuales*100).toFixed(1) : 0;
-  return `DATOS FINANCIEROS ACTUALES DEL USUARIO:
-• Ingresos activos (trabajo): $${fd.ingresosActivos.toFixed(2)}/mes
-• Ingresos pasivos totales: $${fd.ingresosPasivos.toFixed(2)}/mes
-• Gastos mensuales: $${fd.gastosMensuales.toFixed(2)}/mes
-• Flujo neto (pasivos - gastos): $${flujo.toFixed(2)}/mes
-• Meta de ingresos pasivos: $${fd.metaPasivos.toFixed(2)}/mes
-• Libertad financiera alcanzada: ${freedom}%
-• Activos productivos (${fd.activos.length}): ${fd.activos.length ? fd.activos.map(a=>`${a.desc} (genera $${(a.ingresoMensual||0).toFixed(0)}/mes)`).join(', ') : 'Ninguno registrado'}
-• Pasivos/deudas (${fd.pasivos.length}): ${fd.pasivos.length ? fd.pasivos.map(p=>`${p.desc} ($${p.monto})`).join(', ') : 'Ninguno registrado'}
-• ¿En el círculo de la rata? ${fd.ingresosPasivos < fd.gastosMensuales ? 'SÍ' : 'NO — ¡YA ESCAPÓ!'}`;
-}
+const SYS=`Eres "Rich Dad AI", asesor de libertad financiera basado en Robert Kiyosaki (Padre Rico, Padre Pobre). El usuario te habla como si fuera por WhatsApp — eres como un amigo experto: directo, cálido, motivador, sin rodeos ni tecnicismos innecesarios.
 
-const SYSTEM = `Eres "Rich Dad AI", un coach de libertad financiera basado en los principios de Robert Kiyosaki (Padre Rico, Padre Pobre).
+PRINCIPIOS CORE:
+- ACTIVO = lo que pone dinero en tu bolsillo (rentas, dividendos, negocios, ETFs, regalías, préstamos P2P).
+- PASIVO = lo que saca dinero de tu bolsillo (deudas, créditos de consumo, autos que no generan ingreso).
+- LIBERTAD FINANCIERA = ingresos_pasivos ≥ gastos_mensuales.
+- La casa donde vives NO es un activo — es un gasto.
+- El objetivo: que el dinero trabaje para ti, no tú para el dinero.
 
-MISIÓN: Ayudar al usuario a ESCAPAR DEL CÍRCULO DE LA RATA construyendo activos que generen ingresos pasivos que superen sus gastos.
+REGLAS DE RESPUESTA:
+1. Máximo 3-4 párrafos cortos. Tono de chat, no de ensayo.
+2. Usa **negritas** para 2-3 conceptos clave por respuesta.
+3. Da ejemplos concretos para Latinoamérica: CETES, ETFs en pesos, Fibras, SIC, crowdfunding inmobiliario (Briq, 100 Ladrillos), franquicias de bajo costo, YouTube, Airbnb, venta de cursos.
+4. Termina con UNA sola pregunta estratégica para seguir avanzando.
+5. Celebra cada avance, por pequeño que sea.
+6. Si algo es un pasivo disfrazado de activo, dilo con honestidad pero con respeto.
 
-PRINCIPIOS CLAVE:
-- ACTIVO = lo que pone dinero en tu bolsillo (renta, dividendos, negocios automatizados, regalías, ETFs)
-- PASIVO = lo que saca dinero de tu bolsillo (créditos, autos sin generar ingreso, deudas de consumo)
-- LIBERTAD FINANCIERA = ingresos_pasivos ≥ gastos_mensuales
-- El círculo de la rata = trabajar para pagar gastos sin construir activos
-- Los ricos no trabajan POR dinero, hacen que el dinero trabaje PARA ellos
-- La casa donde vives NO es un activo (genera gastos, no ingresos)
-
-CÓMO DEBES ACTUAR:
-1. Cuando el usuario mencione ingresos, gastos, activos o deudas, REGÍSTRALOS usando el formato especial abajo.
-2. Compara siempre su situación con el objetivo: ingresos_pasivos > gastos.
-3. Sé directo y honesto, como un coach financiero real. No seas condescendiente.
-4. Haz UNA pregunta estratégica por respuesta para profundizar.
-5. Cuando des consejos, sé concreto: menciona ETFs reales, tipos de propiedades, formas de ingreso pasivo específicas para Latinoamérica.
-6. Celebra los avances. Alerta sobre trampas (créditos innecesarios, "activos" falsos).
-
-FORMATO DE REGISTRO (úsalo SOLO cuando el usuario declare un dato concreto):
-REGISTRAR: tipo=valor|descripción
-Tipos: ingreso_activo, ingreso_pasivo, gasto, activo(valor;rendimiento%), pasivo
+REGISTRO DE DATOS (incluir SOLO cuando el usuario declare un dato concreto, al final de tu respuesta):
+REGISTRAR:tipo=valor|descripción
+Tipos válidos: ingreso_activo, ingreso_pasivo, gasto, activo(monto;rendimiento%), pasivo
 
 Ejemplos:
-REGISTRAR: ingreso_activo=8000|salario mensual
-REGISTRAR: ingreso_pasivo=2500|renta de departamento
-REGISTRAR: gasto=4500|gastos totales mensuales
-REGISTRAR: activo=150000;8|departamento en renta
-REGISTRAR: pasivo=80000|crédito automotriz
+REGISTRAR:ingreso_activo=10000|salario mensual
+REGISTRAR:ingreso_pasivo=2500|renta departamento
+REGISTRAR:gasto=6000|gastos totales mes
+REGISTRAR:activo=200000;8|departamento en renta
+REGISTRAR:pasivo=80000|crédito automotriz
 
-NO incluyas REGISTRAR si el usuario solo pregunta o conversa.
+NO incluyas REGISTRAR si el usuario solo pregunta, platica o pide consejos.`;
 
-FORMATO DE RESPUESTA:
-- Texto conversacional, máximo 4 párrafos cortos
-- Usa **negritas** para conceptos clave
-- Sin listas largas ni puntos excesivos
-- Termina siempre con UNA pregunta estratégica`;
-
-async function callAI(userMsg){
-  const apiKey=getApiKey();
-  if(!apiKey) throw new Error('API key no configurada');
-
+async function callOAI(prompt){
+  const key=getKey();
+  if(!key)throw new Error('API key no configurada.');
   const msgs=[
-    {role:'system', content: SYSTEM+'\n\n'+buildContext()},
-    ...chatHistory.slice(-12).map(m=>({role:m.sender==='user'?'user':'assistant', content:m.text.replace(/<[^>]+>/g,'')})),
-    {role:'user', content:userMsg}
+    {role:'system',content:SYS+'\n\n'+buildCtx()},
+    ...hist.slice(-14).map(m=>({role:m.role,content:typeof m.content==='string'?m.content.replace(/<[^>]+>/g,''):m.content})),
+    {role:'user',content:prompt}
   ];
-
-  const res=await fetch('https://api.openai.com/v1/chat/completions',{
+  const r=await fetch('https://api.openai.com/v1/chat/completions',{
     method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
-    body:JSON.stringify({model:'gpt-4o-mini', messages:msgs, temperature:0.72, max_tokens:500})
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+    body:JSON.stringify({model:'gpt-4o-mini',messages:msgs,temperature:0.72,max_tokens:480})
   });
-
-  if(!res.ok){
-    const err=await res.json();
-    throw new Error(err.error?.message||'Error en OpenAI API');
-  }
-  return (await res.json()).choices[0].message.content;
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Error OpenAI');}
+  return(await r.json()).choices[0].message.content;
 }
 
-function processRegistros(text){
-  const re=/REGISTRAR:\s*(.+)/g;
-  let m, changed=false;
-  while((m=re.exec(text))!==null){
-    const raw=m[1].trim();
-    const [tipoRaw,resto]=raw.split('=');
-    const tipo=tipoRaw.trim();
-    if(!resto) continue;
-    const [valPart,desc]= resto.split('|');
-    const description=(desc||'').trim()||'Sin descripción';
-    if(tipo==='activo'){
-      const [montoS,rend]=valPart.split(';');
-      const monto=parseFloat(montoS);
-      const rendPct=parseFloat(rend)||7;
+function processRes(raw){
+  // parse REGISTRAR tags
+  const re=/REGISTRAR:([a-zA-Z_]+(?:\([^)]*\))?)=([\d.;]+)\|([^\n]*)/g;
+  let m;let changed=false;
+  while((m=re.exec(raw))!==null){
+    let tipo=m[1].trim();
+    const valRaw=m[2].trim();
+    const desc=(m[3]||'').trim()||'Sin descripción';
+    const fecha=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'});
+    if(tipo.toLowerCase().startsWith('activo')){
+      const parts=valRaw.split(';');
+      const monto=parseFloat(parts[0]);
+      const rend=parseFloat(parts[1])||7;
       if(!isNaN(monto)&&monto>0){
-        const ingresoMensual=(monto*(rendPct/100))/12;
-        fd.activos.push({id:Date.now(),desc:description,monto,rendPct,ingresoMensual,fecha:new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})});
-        fd.ingresosPasivos+=ingresoMensual;
-        changed=true;
+        const ingrMes=(monto*(rend/100))/12;
+        fd.activos.push({desc,monto,rendPct:rend,ingrMes,fecha});
+        fd.ingPasivo+=ingrMes;changed=true;
       }
     } else {
-      const v=parseFloat(valPart);
-      if(isNaN(v)||v<0) continue;
-      switch(tipo){
-        case 'ingreso_activo':  fd.ingresosActivos+=v; changed=true; break;
-        case 'ingreso_pasivo':  fd.ingresosPasivos+=v; changed=true; break;
-        case 'gasto':           fd.gastosMensuales+=v; changed=true; break;
-        case 'pasivo':
-          fd.pasivos.push({id:Date.now(),desc:description,monto:v,fecha:new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})});
-          changed=true; break;
+      const v=parseFloat(valRaw);
+      if(!isNaN(v)&&v>=0){
+        switch(tipo.toLowerCase()){
+          case 'ingreso_activo': fd.ingActivo+=v;changed=true;break;
+          case 'ingreso_pasivo': fd.ingPasivo+=v;changed=true;break;
+          case 'gasto':          fd.gastos+=v;changed=true;break;
+          case 'pasivo': fd.pasivos.push({desc,monto:v,fecha});changed=true;break;
+        }
       }
     }
   }
-  if(changed){ saveData(); updateUI(); }
-  // Format markdown and remove directives
-  let clean=text.replace(/REGISTRAR:.*$/gm,'').trim();
-  clean=clean.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
-  return clean;
+  if(changed){save();updateUI();}
+  let txt=raw.replace(/REGISTRAR:[^\n]*/g,'').trim();
+  txt=txt.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  txt=txt.replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
+  return txt;
 }
 
-async function sendToAI(prompt){
-  isProcessing=true;
-  const btn=document.getElementById('sendBtn');
-  btn.disabled=true;
+async function aiReply(prompt){
+  if(busy)return;
+  busy=true;
+  document.getElementById('sendBtn').disabled=true;
+  document.getElementById('waStatus').textContent='escribiendo…';
   showTyping(true);
   try{
-    const raw=await callAI(prompt);
-    const clean=processRegistros(raw);
+    const raw=await callOAI(prompt);
+    const html=processRes(raw);
     showTyping(false);
-    addMessage('bot',clean);
-    chatHistory.push({sender:'bot',text:clean}); saveChat();
+    addMsg('bot',html);
+    hist.push({role:'assistant',content:raw});saveChat();
   }catch(err){
     showTyping(false);
-    addMessage('bot','❌ <b>Error:</b> '+err.message);
+    addMsg('bot','❌ <b>Error:</b> '+err.message);
   }finally{
-    isProcessing=false;
-    btn.disabled=false;
+    busy=false;
+    document.getElementById('sendBtn').disabled=false;
+    document.getElementById('waStatus').textContent='en línea · Coach Financiero';
   }
 }
 
-async function sendMessage(){
-  if(isProcessing) return;
+async function doSend(){
+  if(busy)return;
   const inp=document.getElementById('msgInput');
   const txt=inp.value.trim();
-  if(!txt) return;
-  if(!getApiKey()){
-    document.getElementById('apiOverlay').classList.remove('hidden');
+  if(!txt)return;
+  if(!getKey()){document.getElementById('apiScreen').classList.remove('gone');return;}
+  inp.value='';inp.style.height='auto';
+  addMsg('user',txt,true);
+  hist.push({role:'user',content:txt});saveChat();
+  await aiReply(txt);
+}
+function qs(t){document.getElementById('msgInput').value=t;doSend();}
+window.doSend=doSend;window.qs=qs;
+
+/* textarea auto-grow */
+const inp=document.getElementById('msgInput');
+inp.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,96)+'px';});
+inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doSend();}});
+
+/* INIT */
+load();
+if(getKey()){
+  document.getElementById('apiScreen').classList.add('gone');
+  updateUI();
+  if(hist.length>0)restoreChat();else showWelcome();
+}else{updateUI();}
+
+/* ══ PWA: INSTALL BANNER ══ */
+let deferredPrompt = null;
+
+// Captura el evento antes de que el navegador lo descarte
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner();
+});
+
+function showInstallBanner() {
+  // No mostrar si ya está instalada
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
+  const banner = document.getElementById('installBanner');
+  if (banner) { banner.style.display = 'flex'; }
+}
+
+window.doInstall = async function() {
+  const banner = document.getElementById('installBanner');
+  if (!deferredPrompt) {
+    // iOS: mostrar instrucción manual
+    document.getElementById('installBanner').style.display = 'none';
+    document.getElementById('iosBanner').style.display = 'flex';
     return;
   }
-  inp.value=''; inp.style.height='auto';
-  addMessage('user',txt,true);
-  chatHistory.push({sender:'user',text:txt}); saveChat();
-  await sendToAI(txt);
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  if (banner) banner.style.display = 'none';
+};
+
+window.dismissInstall = function() {
+  document.getElementById('installBanner').style.display = 'none';
+  document.getElementById('iosBanner').style.display = 'none';
+};
+
+// Detectar iOS (no soporta beforeinstallprompt)
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+if (isIOS && !isStandalone) {
+  setTimeout(() => {
+    document.getElementById('iosBanner').style.display = 'flex';
+  }, 2000);
 }
 
-function quickSend(txt){
-  document.getElementById('msgInput').value=txt;
-  sendMessage();
-}
-
-window.sendMessage=sendMessage;
-window.quickSend=quickSend;
-
-/* ── Auto-resize textarea ── */
-document.getElementById('msgInput').addEventListener('input',function(){
-  this.style.height='auto';
-  this.style.height=Math.min(this.scrollHeight,100)+'px';
-});
-document.getElementById('msgInput').addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMessage(); }
-});
-
-/* ══ INIT ══ */
-loadAll();
-if(getApiKey()){
-  document.getElementById('apiOverlay').classList.add('hidden');
-  updateUI();
-  if(chatHistory.length>0) restoreChat();
-  else showWelcome();
-} else {
-  updateUI();
+/* ══ SERVICE WORKER (para modo offline y PWA completa) ══ */
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE = 'richdad-v1';
+    self.addEventListener('install', e => {
+      self.skipWaiting();
+    });
+    self.addEventListener('activate', e => {
+      e.waitUntil(clients.claim());
+    });
+    self.addEventListener('fetch', e => {
+      // Solo cachear recursos propios, pasar el resto (API calls) directo
+      if (e.request.url.includes('openai.com') || e.request.url.includes('fonts.googleapis.com')) {
+        e.respondWith(fetch(e.request));
+        return;
+      }
+      e.respondWith(
+        caches.match(e.request).then(cached => cached || fetch(e.request))
+      );
+    });
+  `;
+  const swBlob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl  = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl, { scope: './' }).catch(() => {});
 }
 
 })();
 </script>
 </body>
 </html>
+
