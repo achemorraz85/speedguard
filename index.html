@@ -4,48 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
 <title>Rich Dad AI – Asesor Financiero</title>
-
-<!-- PWA: pantalla completa sin barra del navegador -->
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Rich Dad AI">
-<meta name="application-name" content="Rich Dad AI">
-<meta name="theme-color" content="#075e54">
-<meta name="description" content="Tu coach de libertad financiera personal — basado en Robert Kiyosaki">
-
-<!-- Iconos para pantalla de inicio (iOS + Android) -->
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23075e54'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle'%3E%F0%9F%8E%A9%3C/text%3E%3C/svg%3E">
-
-<!-- Manifest inline via JS (no necesita servidor) -->
-<script>
-(function(){
-  const manifest = {
-    name: "Rich Dad AI – Coach Financiero",
-    short_name: "Rich Dad AI",
-    description: "Tu asesor de libertad financiera personal",
-    start_url: window.location.href,
-    display: "standalone",
-    background_color: "#075e54",
-    theme_color: "#075e54",
-    orientation: "portrait",
-    icons: [
-      {
-        src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23075e54'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle'%3E%F0%9F%8E%A9%3C/text%3E%3C/svg%3E",
-        sizes: "512x512",
-        type: "image/svg+xml",
-        purpose: "any maskable"
-      }
-    ]
-  };
-  const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
-  const url  = URL.createObjectURL(blob);
-  const link = document.createElement('link');
-  link.rel   = 'manifest';
-  link.href  = url;
-  document.head.appendChild(link);
-})();
-</script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -439,30 +397,6 @@ html, body { height:100%; background:#111; font-family:var(--font); color:var(--
     </div>
   </div>
 
-  <!-- BANNER: Android/Chrome install -->
-  <div id="installBanner" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:200;background:#fff;border-top:1px solid #e0e0e0;padding:14px 16px;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.15);">
-    <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#075e54,#128c7e);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🎩</div>
-    <div style="flex:1;min-width:0;">
-      <div style="font-size:14px;font-weight:700;color:#111b21;">Instalar Rich Dad AI</div>
-      <div style="font-size:12px;color:#667781;margin-top:1px;">Agregar a tu pantalla de inicio</div>
-    </div>
-    <button onclick="dismissInstall()" style="background:none;border:none;color:#8696a0;font-size:20px;cursor:pointer;padding:4px;line-height:1;">✕</button>
-    <button onclick="doInstall()" style="background:#075e54;color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:var(--font);">Instalar</button>
-  </div>
-
-  <!-- BANNER: iOS instrucción manual -->
-  <div id="iosBanner" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:200;background:#fff;border-top:1px solid #e0e0e0;padding:16px;flex-direction:column;gap:10px;box-shadow:0 -4px 20px rgba(0,0,0,.15);">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <div style="font-size:14px;font-weight:700;color:#111b21;">📲 Instalar en iPhone / iPad</div>
-      <button onclick="dismissInstall()" style="background:none;border:none;color:#8696a0;font-size:20px;cursor:pointer;padding:4px;line-height:1;">✕</button>
-    </div>
-    <div style="font-size:13px;color:#667781;line-height:1.7;">
-      1. Toca el botón <b style="color:#075e54;">Compartir</b> (□↑) en Safari<br>
-      2. Selecciona <b style="color:#075e54;">"Agregar a pantalla de inicio"</b><br>
-      3. Toca <b style="color:#075e54;">Agregar</b> — ¡listo! 🎉
-    </div>
-  </div>
-
 </div>
 
 <script>
@@ -782,78 +716,6 @@ if(getKey()){
   updateUI();
   if(hist.length>0)restoreChat();else showWelcome();
 }else{updateUI();}
-
-/* ══ PWA: INSTALL BANNER ══ */
-let deferredPrompt = null;
-
-// Captura el evento antes de que el navegador lo descarte
-window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  deferredPrompt = e;
-  showInstallBanner();
-});
-
-function showInstallBanner() {
-  // No mostrar si ya está instalada
-  if (window.matchMedia('(display-mode: standalone)').matches) return;
-  const banner = document.getElementById('installBanner');
-  if (banner) { banner.style.display = 'flex'; }
-}
-
-window.doInstall = async function() {
-  const banner = document.getElementById('installBanner');
-  if (!deferredPrompt) {
-    // iOS: mostrar instrucción manual
-    document.getElementById('installBanner').style.display = 'none';
-    document.getElementById('iosBanner').style.display = 'flex';
-    return;
-  }
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  if (banner) banner.style.display = 'none';
-};
-
-window.dismissInstall = function() {
-  document.getElementById('installBanner').style.display = 'none';
-  document.getElementById('iosBanner').style.display = 'none';
-};
-
-// Detectar iOS (no soporta beforeinstallprompt)
-const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-if (isIOS && !isStandalone) {
-  setTimeout(() => {
-    document.getElementById('iosBanner').style.display = 'flex';
-  }, 2000);
-}
-
-/* ══ SERVICE WORKER (para modo offline y PWA completa) ══ */
-if ('serviceWorker' in navigator) {
-  const swCode = `
-    const CACHE = 'richdad-v1';
-    self.addEventListener('install', e => {
-      self.skipWaiting();
-    });
-    self.addEventListener('activate', e => {
-      e.waitUntil(clients.claim());
-    });
-    self.addEventListener('fetch', e => {
-      // Solo cachear recursos propios, pasar el resto (API calls) directo
-      if (e.request.url.includes('openai.com') || e.request.url.includes('fonts.googleapis.com')) {
-        e.respondWith(fetch(e.request));
-        return;
-      }
-      e.respondWith(
-        caches.match(e.request).then(cached => cached || fetch(e.request))
-      );
-    });
-  `;
-  const swBlob = new Blob([swCode], { type: 'application/javascript' });
-  const swUrl  = URL.createObjectURL(swBlob);
-  navigator.serviceWorker.register(swUrl, { scope: './' }).catch(() => {});
-}
-
 })();
 </script>
 </body>
