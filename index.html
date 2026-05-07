@@ -4,6 +4,48 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
 <title>Rich Dad AI – Asesor Financiero</title>
+
+<!-- PWA: pantalla completa sin barra del navegador -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rich Dad AI">
+<meta name="application-name" content="Rich Dad AI">
+<meta name="theme-color" content="#075e54">
+<meta name="description" content="Tu coach de libertad financiera personal — basado en Robert Kiyosaki">
+
+<!-- Iconos para pantalla de inicio (iOS + Android) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23075e54'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle'%3E%F0%9F%8E%A9%3C/text%3E%3C/svg%3E">
+
+<!-- Manifest inline via JS (no necesita servidor) -->
+<script>
+(function(){
+  const manifest = {
+    name: "Rich Dad AI – Coach Financiero",
+    short_name: "Rich Dad AI",
+    description: "Tu asesor de libertad financiera personal",
+    start_url: window.location.href,
+    display: "standalone",
+    background_color: "#075e54",
+    theme_color: "#075e54",
+    orientation: "portrait",
+    icons: [
+      {
+        src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23075e54'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle'%3E%F0%9F%8E%A9%3C/text%3E%3C/svg%3E",
+        sizes: "512x512",
+        type: "image/svg+xml",
+        purpose: "any maskable"
+      }
+    ]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement('link');
+  link.rel   = 'manifest';
+  link.href  = url;
+  document.head.appendChild(link);
+})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -65,16 +107,25 @@ html, body { height:100%; background:#111; font-family:var(--font); color:var(--
 }
 .wa-btn:hover { background:rgba(255,255,255,.12); }
 
-/* ── FINANCE STRIP ── */
-.fstrip {
-  background:var(--wa-header-dark); padding:7px 12px;
-  display:flex; gap:6px; overflow-x:auto; flex-shrink:0; scrollbar-width:none;
+/* ── DASHBOARD DRAWER ── */
+.dash-handle {
+  background:var(--wa-header-dark);
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  padding:5px 0 5px; cursor:pointer; flex-shrink:0;
+  transition:background .15s; user-select:none;
 }
+.dash-handle:active { background:rgba(0,0,0,.3); }
+.dash-pill { width:36px; height:4px; border-radius:99px; background:rgba(255,255,255,.3); transition:width .2s; }
+.dash-handle:hover .dash-pill { width:48px; }
+.dash-arrow { font-size:9px; color:rgba(255,255,255,.45); transition:transform .35s cubic-bezier(.4,0,.2,1); }
+.dash-drawer {
+  background:var(--wa-header-dark); overflow:hidden;
+  max-height:0; transition:max-height .38s cubic-bezier(.4,0,.2,1); flex-shrink:0;
+}
+.dash-drawer.open { max-height:140px; }
+.fstrip { padding:8px 12px 4px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; }
 .fstrip::-webkit-scrollbar{display:none}
-.fkpi {
-  background:rgba(255,255,255,.1); border-radius:10px; padding:6px 10px;
-  min-width:98px; flex-shrink:0; cursor:pointer; transition:background .2s;
-}
+.fkpi { background:rgba(255,255,255,.1); border-radius:10px; padding:6px 10px; min-width:98px; flex-shrink:0; cursor:pointer; transition:background .2s; }
 .fkpi:hover{ background:rgba(255,255,255,.18); }
 .fk-lbl { font-size:9.5px; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:.5px; }
 .fk-val { font-size:15px; font-weight:700; color:#fff; margin-top:2px; }
@@ -82,11 +133,9 @@ html, body { height:100%; background:#111; font-family:var(--font); color:var(--
 .fk-val.pos  { color:#a5f3b4; }
 .fk-val.neg  { color:#ffb3b3; }
 .fk-sub { font-size:9px; color:rgba(255,255,255,.4); margin-top:1px; }
-
-/* ── FREEDOM BAR ── */
-.fbar-wrap { background:var(--wa-header-dark); padding:5px 12px 9px; flex-shrink:0; }
+.fbar-wrap { padding:4px 12px 10px; }
 .fbar-top  { display:flex; justify-content:space-between; margin-bottom:4px; }
-.fbar-lbl  { font-size:10px; color:rgba(255,255,255,.6); }
+.fbar-lbl  { font-size:10px; color:rgba(255,255,255,.55); }
 .fbar-pct  { font-size:11px; font-weight:700; color:var(--gold-light); }
 .fbar-track{ height:5px; background:rgba(255,255,255,.15); border-radius:99px; overflow:hidden; }
 .fbar-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#7a5a07,#c8960c,#f0b429); transition:width .9s cubic-bezier(.4,0,.2,1); }
@@ -132,19 +181,22 @@ html, body { height:100%; background:#111; font-family:var(--font); color:var(--
 .dsep::before,.dsep::after{content:'';flex:1;height:1px;background:var(--divider)}
 .dsep span{background:rgba(0,0,0,.08);padding:3px 10px;border-radius:99px}
 
-/* ── CHIPS ── */
+/* ── AI SUGGESTION CHIPS (generadas dinámicamente) ── */
 .chips {
   display:flex; gap:6px; padding:6px 10px 5px; overflow-x:auto;
   flex-shrink:0; background:var(--chat-bg); scrollbar-width:none;
   border-top:1px solid rgba(0,0,0,.06);
 }
+.chips:empty { display:none; }
 .chips::-webkit-scrollbar{display:none}
 .chip {
   background:#fff; border:1.5px solid #d9d9d9; border-radius:99px;
   padding:5px 13px; font-size:12.5px; color:var(--wa-green); font-weight:600;
   cursor:pointer; white-space:nowrap; flex-shrink:0; transition:all .15s;
   font-family:var(--font); box-shadow:0 1px 2px rgba(0,0,0,.08);
+  animation:chipIn .25s ease;
 }
+@keyframes chipIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .chip:hover { background:var(--wa-green); color:#fff; border-color:var(--wa-green); }
 .chip:active { transform:scale(.94); }
 
@@ -255,50 +307,50 @@ html, body { height:100%; background:#111; font-family:var(--font); color:var(--
     </div>
   </div>
 
-  <!-- KPIs -->
-  <div class="fstrip">
-    <div class="fkpi" onclick="openSheet('sheetReport')">
-      <div class="fk-lbl">Ing. Pasivos</div>
-      <div class="fk-val gold" id="kPasivos">$0</div>
-      <div class="fk-sub">por mes</div>
-    </div>
-    <div class="fkpi" onclick="openSheet('sheetReport')">
-      <div class="fk-lbl">Gastos</div>
-      <div class="fk-val neg" id="kGastos">$0</div>
-      <div class="fk-sub">por mes</div>
-    </div>
-    <div class="fkpi" onclick="openSheet('sheetReport')">
-      <div class="fk-lbl">Flujo Neto</div>
-      <div class="fk-val" id="kFlujo">$0</div>
-      <div class="fk-sub">pasivos–gastos</div>
-    </div>
-    <div class="fkpi" onclick="openSheet('sheetReport')">
-      <div class="fk-lbl">Activos</div>
-      <div class="fk-val pos" id="kActivos">0</div>
-      <div class="fk-sub">productivos</div>
-    </div>
+  <!-- DASHBOARD DRAWER HANDLE -->
+  <div class="dash-handle" id="dashHandle" onclick="toggleDash()">
+    <div class="dash-pill"></div>
+    <span class="dash-arrow" id="dashArrow">▼</span>
   </div>
 
-  <!-- FREEDOM BAR -->
-  <div class="fbar-wrap">
-    <div class="fbar-top">
-      <div class="fbar-lbl">🎯 Libertad Financiera</div>
-      <div class="fbar-pct" id="freePct">0%</div>
+  <!-- COLLAPSIBLE DASHBOARD -->
+  <div class="dash-drawer" id="dashDrawer">
+    <div class="fstrip">
+      <div class="fkpi" onclick="openSheet('sheetReport')">
+        <div class="fk-lbl">Ing. Pasivos</div>
+        <div class="fk-val gold" id="kPasivos">$0</div>
+        <div class="fk-sub">por mes</div>
+      </div>
+      <div class="fkpi" onclick="openSheet('sheetReport')">
+        <div class="fk-lbl">Gastos</div>
+        <div class="fk-val neg" id="kGastos">$0</div>
+        <div class="fk-sub">por mes</div>
+      </div>
+      <div class="fkpi" onclick="openSheet('sheetReport')">
+        <div class="fk-lbl">Flujo Neto</div>
+        <div class="fk-val" id="kFlujo">$0</div>
+        <div class="fk-sub">pasivos–gastos</div>
+      </div>
+      <div class="fkpi" onclick="openSheet('sheetReport')">
+        <div class="fk-lbl">Activos</div>
+        <div class="fk-val pos" id="kActivos">0</div>
+        <div class="fk-sub">productivos</div>
+      </div>
     </div>
-    <div class="fbar-track"><div class="fbar-fill" id="freeFill" style="width:0%"></div></div>
+    <div class="fbar-wrap">
+      <div class="fbar-top">
+        <div class="fbar-lbl">🎯 Libertad Financiera</div>
+        <div class="fbar-pct" id="freePct">0%</div>
+      </div>
+      <div class="fbar-track"><div class="fbar-fill" id="freeFill" style="width:0%"></div></div>
+    </div>
   </div>
 
   <!-- CHAT -->
   <div class="chat-area" id="chatArea"></div>
 
-  <!-- CHIPS -->
-  <div class="chips">
-    <div class="chip" onclick="qs('¿Cómo mido si tengo libertad financiera?')">¿Cómo mido mi libertad?</div>
-    <div class="chip" onclick="qs('¿Qué activos me recomiendas para empezar con poco dinero?')">Primeros activos</div>
-    <div class="chip" onclick="qs('Analiza mi situación actual y dime cómo estoy')">Analizar mi situación</div>
-    <div class="chip" onclick="qs('Dame un plan de 90 días para salir del círculo de la rata')">Plan 90 días</div>
-    <div class="chip" onclick="qs('¿Cuáles son mis próximos pasos para construir ingresos pasivos?')">Próximos pasos</div>
-  </div>
+  <!-- AI SUGGESTION CHIPS (dinámicas) -->
+  <div class="chips" id="chipsRow"></div>
 
   <!-- INPUT -->
   <div class="ibar">
@@ -397,6 +449,30 @@ html, body { height:100%; background:#111; font-family:var(--font); color:var(--
     </div>
   </div>
 
+  <!-- BANNER: Android/Chrome install -->
+  <div id="installBanner" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:200;background:#fff;border-top:1px solid #e0e0e0;padding:14px 16px;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.15);">
+    <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#075e54,#128c7e);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🎩</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:14px;font-weight:700;color:#111b21;">Instalar Rich Dad AI</div>
+      <div style="font-size:12px;color:#667781;margin-top:1px;">Agregar a tu pantalla de inicio</div>
+    </div>
+    <button onclick="dismissInstall()" style="background:none;border:none;color:#8696a0;font-size:20px;cursor:pointer;padding:4px;line-height:1;">✕</button>
+    <button onclick="doInstall()" style="background:#075e54;color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:var(--font);">Instalar</button>
+  </div>
+
+  <!-- BANNER: iOS instrucción manual -->
+  <div id="iosBanner" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:200;background:#fff;border-top:1px solid #e0e0e0;padding:16px;flex-direction:column;gap:10px;box-shadow:0 -4px 20px rgba(0,0,0,.15);">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:14px;font-weight:700;color:#111b21;">📲 Instalar en iPhone / iPad</div>
+      <button onclick="dismissInstall()" style="background:none;border:none;color:#8696a0;font-size:20px;cursor:pointer;padding:4px;line-height:1;">✕</button>
+    </div>
+    <div style="font-size:13px;color:#667781;line-height:1.7;">
+      1. Toca el botón <b style="color:#075e54;">Compartir</b> (□↑) en Safari<br>
+      2. Selecciona <b style="color:#075e54;">"Agregar a pantalla de inicio"</b><br>
+      3. Toca <b style="color:#075e54;">Agregar</b> — ¡listo! 🎉
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -481,7 +557,14 @@ function removeItem(type,i){
 }
 window.removeItem=removeItem;
 
-/* ── PANELS ── */
+/* ── DASHBOARD TOGGLE ── */
+let dashOpen = false;
+function toggleDash(){
+  dashOpen = !dashOpen;
+  document.getElementById('dashDrawer').classList.toggle('open', dashOpen);
+  document.getElementById('dashArrow').style.transform = dashOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+window.toggleDash = toggleDash;
 function openSheet(id){document.getElementById(id).classList.add('open');if(id==='sheetReport')updateUI();}
 function closeSheet(id){document.getElementById(id).classList.remove('open');}
 function maybeClose(id,e){if(e.target===document.getElementById(id))closeSheet(id);}
@@ -600,6 +683,9 @@ REGLAS DE RESPUESTA:
 4. Termina con UNA sola pregunta estratégica para seguir avanzando.
 5. Celebra cada avance, por pequeño que sea.
 6. Si algo es un pasivo disfrazado de activo, dilo con honestidad pero con respeto.
+7. Al FINAL de cada respuesta (después de todo el texto), agrega una línea así:
+SUGERENCIAS: pregunta corta 1|pregunta corta 2|pregunta corta 3
+Las sugerencias deben ser preguntas o acciones concretas y relevantes para la situación ACTUAL del usuario — no genéricas. Máximo 5 palabras por sugerencia. No las numeres.
 
 REGISTRO DE DATOS (incluir SOLO cuando el usuario declare un dato concreto, al final de tu respuesta):
 REGISTRAR:tipo=valor|descripción
@@ -662,10 +748,27 @@ function processRes(raw){
     }
   }
   if(changed){save();updateUI();}
-  let txt=raw.replace(/REGISTRAR:[^\n]*/g,'').trim();
+  let txt=raw.replace(/REGISTRAR:[^\n]*/g,'').replace(/SUGERENCIAS:[^\n]*/g,'').trim();
   txt=txt.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
   txt=txt.replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
   return txt;
+}
+
+/* ── SMART CHIPS from AI ── */
+function extractChips(rawText){
+  // Ask the AI for follow-up suggestions embedded as SUGERENCIAS: at end of response
+  const match = rawText.match(/SUGERENCIAS:\s*(.+)/);
+  if(!match) return;
+  const chips = match[1].split('|').map(s=>s.trim()).filter(Boolean).slice(0,3);
+  const row = document.getElementById('chipsRow');
+  row.innerHTML = '';
+  chips.forEach(text => {
+    const c = document.createElement('div');
+    c.className = 'chip';
+    c.textContent = text;
+    c.onclick = () => { row.innerHTML=''; qs(text); };
+    row.appendChild(c);
+  });
 }
 
 async function aiReply(prompt){
@@ -679,6 +782,7 @@ async function aiReply(prompt){
     const html=processRes(raw);
     showTyping(false);
     addMsg('bot',html);
+    extractChips(raw);
     hist.push({role:'assistant',content:raw});saveChat();
   }catch(err){
     showTyping(false);
@@ -697,6 +801,7 @@ async function doSend(){
   if(!txt)return;
   if(!getKey()){document.getElementById('apiScreen').classList.remove('gone');return;}
   inp.value='';inp.style.height='auto';
+  document.getElementById('chipsRow').innerHTML = '';
   addMsg('user',txt,true);
   hist.push({role:'user',content:txt});saveChat();
   await aiReply(txt);
@@ -716,7 +821,80 @@ if(getKey()){
   updateUI();
   if(hist.length>0)restoreChat();else showWelcome();
 }else{updateUI();}
+
+/* ══ PWA: INSTALL BANNER ══ */
+let deferredPrompt = null;
+
+// Captura el evento antes de que el navegador lo descarte
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner();
+});
+
+function showInstallBanner() {
+  // No mostrar si ya está instalada
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
+  const banner = document.getElementById('installBanner');
+  if (banner) { banner.style.display = 'flex'; }
+}
+
+window.doInstall = async function() {
+  const banner = document.getElementById('installBanner');
+  if (!deferredPrompt) {
+    // iOS: mostrar instrucción manual
+    document.getElementById('installBanner').style.display = 'none';
+    document.getElementById('iosBanner').style.display = 'flex';
+    return;
+  }
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  if (banner) banner.style.display = 'none';
+};
+
+window.dismissInstall = function() {
+  document.getElementById('installBanner').style.display = 'none';
+  document.getElementById('iosBanner').style.display = 'none';
+};
+
+// Detectar iOS (no soporta beforeinstallprompt)
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+if (isIOS && !isStandalone) {
+  setTimeout(() => {
+    document.getElementById('iosBanner').style.display = 'flex';
+  }, 2000);
+}
+
+/* ══ SERVICE WORKER (para modo offline y PWA completa) ══ */
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE = 'richdad-v1';
+    self.addEventListener('install', e => {
+      self.skipWaiting();
+    });
+    self.addEventListener('activate', e => {
+      e.waitUntil(clients.claim());
+    });
+    self.addEventListener('fetch', e => {
+      // Solo cachear recursos propios, pasar el resto (API calls) directo
+      if (e.request.url.includes('openai.com') || e.request.url.includes('fonts.googleapis.com')) {
+        e.respondWith(fetch(e.request));
+        return;
+      }
+      e.respondWith(
+        caches.match(e.request).then(cached => cached || fetch(e.request))
+      );
+    });
+  `;
+  const swBlob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl  = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl, { scope: './' }).catch(() => {});
+}
+
 })();
 </script>
 </body>
 </html>
+
