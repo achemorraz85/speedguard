@@ -68,15 +68,19 @@
   --font:            'Nunito', -apple-system, sans-serif;
   --shadow-b:        0 1px 2px rgba(0,0,0,.15);
 }
-html, body { height:100%; background:#111; font-family:var(--font); color:var(--text-main); }
+html { height:100%; }
+body { height:100%; margin:0; overflow:hidden; background:#111; font-family:var(--font); color:var(--text-main); }
 
 .phone {
-  width:100%; max-width:430px; height:100dvh; max-height:900px;
+  width:100%; max-width:430px;
   margin:0 auto; display:flex; flex-direction:column;
-  background:#000; overflow:hidden; position:relative;
+  background:#000; overflow:hidden;
+  position:fixed; top:0; left:50%; transform:translateX(-50%);
+  /* height set dynamically by JS via visualViewport */
+  height:100%;
 }
 @media(min-width:500px){
-  .phone { border-radius:28px; height:94dvh; margin:3vh auto; box-shadow:0 24px 80px rgba(0,0,0,.7); }
+  .phone { border-radius:28px; box-shadow:0 24px 80px rgba(0,0,0,.7); }
 }
 
 /* ── WA HEADER ── */
@@ -813,6 +817,32 @@ window.doSend=doSend;window.qs=qs;
 const inp=document.getElementById('msgInput');
 inp.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,96)+'px';});
 inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doSend();}});
+
+/* ── VIEWPORT / KEYBOARD FIX ── */
+function fixHeight() {
+  const vv = window.visualViewport;
+  const phone = document.getElementById('phone');
+  if (vv) {
+    // Position the phone container within the visible viewport
+    phone.style.height = vv.height + 'px';
+    phone.style.top    = vv.offsetTop + 'px';
+  } else {
+    phone.style.height = window.innerHeight + 'px';
+  }
+}
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    fixHeight();
+    // scroll chat to bottom when keyboard opens/closes
+    setTimeout(() => {
+      const ca = document.getElementById('chatArea');
+      if (ca) ca.scrollTop = ca.scrollHeight;
+    }, 100);
+  });
+  window.visualViewport.addEventListener('scroll', fixHeight);
+}
+window.addEventListener('resize', fixHeight);
+fixHeight();
 
 /* INIT */
 load();
