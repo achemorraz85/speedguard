@@ -1,2 +1,2 @@
-# speedguard
-Guardia de Limite de Velocidad
+# RichDadIA
+Asesor Financiero con Inteligencia Artificial
