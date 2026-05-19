@@ -755,4 +755,902 @@
   function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 </body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTokLens — Descifra el código viral</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #08080e;
+    --surface: rgba(255,255,255,0.03);
+    --border: rgba(180,130,255,0.18);
+    --border-glow: rgba(180,130,255,0.4);
+    --purple: #9b5de5;
+    --purple-light: #c4a0ff;
+    --purple-dim: #6b4fa0;
+    --text: #e8e0ff;
+    --text-dim: #8a7aaa;
+    --text-muted: #4a3f6a;
+    --green: #00ff88;
+    --yellow: #ffcc00;
+    --red: #ff6b6b;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(155,93,229,0.14) 0%, transparent 70%);
+  }
+
+  header {
+    text-align: center;
+    padding: 48px 20px 24px;
+    position: relative; z-index: 1;
+  }
+  .logo {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-bottom: 8px;
+  }
+  .logo-icon { font-size: 30px; }
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(26px, 6vw, 40px);
+    letter-spacing: 6px;
+    color: var(--purple-light);
+    font-weight: 400;
+  }
+  .logo-text strong { font-weight: 800; color: #fff; }
+  .tagline {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  main {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px 20px 80px;
+    position: relative; z-index: 1;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 32px;
+  }
+  .card-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--purple-dim);
+    margin-bottom: 28px;
+    font-weight: 700;
+  }
+
+  .field { margin-bottom: 24px; }
+  label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(180,130,255,0.15);
+    border-radius: 10px;
+    padding: 15px 18px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'Space Mono', monospace;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgba(155,93,229,0.12);
+  }
+
+  .error-box {
+    background: rgba(255,80,80,0.1);
+    border: 1px solid rgba(255,80,80,0.3);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #ff8a8a;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .error-box.show { display: block; }
+
+  .btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, #7b3ff2, #c4a0ff);
+    border: none;
+    border-radius: 12px;
+    padding: 18px 24px;
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: 3px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Syne', sans-serif;
+    text-transform: uppercase;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .btn-secondary {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border-glow);
+    border-radius: 10px;
+    padding: 14px;
+    color: var(--purple-light);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 1px;
+    margin-top: 8px;
+    transition: background 0.2s;
+  }
+  .btn-secondary:hover { background: rgba(196,160,255,0.07); }
+
+  .btn-reset {
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 14px;
+    color: var(--text-muted);
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 2px;
+    margin-top: 16px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-reset:hover { border-color: var(--border); color: var(--text-dim); }
+
+  /* Video preview */
+  .video-preview {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    display: none;
+    gap: 14px;
+    align-items: center;
+  }
+  .video-preview.show { display: flex; }
+  .preview-thumb {
+    width: 56px; height: 56px; border-radius: 8px;
+    object-fit: cover; flex-shrink: 0;
+    background: rgba(255,255,255,0.06);
+  }
+  .preview-info { flex: 1; min-width: 0; }
+  .preview-author { font-size: 12px; color: var(--purple-light); margin-bottom: 4px; font-family: 'Syne', sans-serif; font-weight: 700; }
+  .preview-caption { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .preview-stats { display: flex; gap: 12px; margin-top: 6px; }
+  .preview-stat { font-size: 10px; color: var(--text-dim); }
+
+  /* Loading */
+  #loading-screen { display: none; }
+  .loading-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 70px 32px;
+    text-align: center;
+  }
+  .loading-orb {
+    width: 64px; height: 64px; border-radius: 50%;
+    margin: 0 auto 32px;
+    background: linear-gradient(135deg, #7b3ff2, #c4a0ff);
+    animation: pulse 1.5s ease-in-out infinite;
+    box-shadow: 0 0 50px rgba(196,160,255,0.35);
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.12); opacity: 0.7; }
+  }
+  .loading-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; letter-spacing: 4px;
+    color: var(--purple-light); margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+  .loading-steps { display: flex; flex-direction: column; gap: 12px; }
+  .loading-step {
+    color: var(--text-muted); font-size: 11px; letter-spacing: 1px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: color 0.4s;
+  }
+  .loading-step.done { color: var(--green); }
+  .loading-step.active { color: var(--purple-light); }
+  .step-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+  /* Results */
+  #result-screen { display: none; }
+
+  .score-bar {
+    display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .score-item {
+    flex: 1; min-width: 100px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .score-label { font-size: 8px; letter-spacing: 3px; color: var(--text-muted); }
+  .score-badge {
+    font-size: 12px; font-weight: 900; letter-spacing: 1px;
+    padding: 4px 12px; border-radius: 20px;
+    display: inline-block; color: #000;
+    font-family: 'Syne', sans-serif;
+  }
+  .score-value { font-size: 13px; font-weight: 700; color: var(--purple-light); font-family: 'Syne', sans-serif; }
+
+  .tabs {
+    display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .tab {
+    flex: 1; min-width: 80px;
+    padding: 11px 10px;
+    background: var(--surface);
+    border: 1px solid rgba(196,160,255,0.1);
+    border-radius: 10px;
+    color: var(--text-muted);
+    font-size: 10px;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .tab:hover { color: var(--text-dim); border-color: var(--border); }
+  .tab.active {
+    background: rgba(123,63,242,0.18);
+    border-color: var(--border-glow);
+    color: var(--purple-light);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .panel-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(196,160,255,0.1);
+    border-radius: 16px;
+    padding: 26px;
+    margin-bottom: 16px;
+  }
+
+  .gancho-box {
+    background: rgba(123,63,242,0.1);
+    border: 1px solid rgba(196,160,255,0.22);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .gancho-label { font-size: 8px; letter-spacing: 3px; color: var(--purple-dim); margin-bottom: 12px; }
+  .gancho-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 19px; font-weight: 700;
+    color: #fff; line-height: 1.4; margin-bottom: 14px;
+  }
+  .gancho-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag {
+    background: rgba(255,255,255,0.07);
+    border-radius: 20px; padding: 4px 14px;
+    font-size: 10px; color: var(--purple-light); letter-spacing: 0.5px;
+  }
+
+  .info-box {
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px; padding: 16px; margin-bottom: 12px;
+  }
+  .info-label { font-size: 8px; letter-spacing: 3px; color: var(--text-muted); margin-bottom: 8px; }
+  .info-text { font-size: 13px; color: #b0a0d8; line-height: 1.7; }
+
+  .hash-group { margin-bottom: 22px; }
+  .hash-group-label { font-size: 10px; letter-spacing: 2px; color: var(--purple-dim); margin-bottom: 10px; }
+  .hash-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .hash-tag {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(196,160,255,0.18);
+    border-radius: 8px; padding: 7px 14px;
+    color: var(--purple-light); font-size: 12px;
+    cursor: pointer; font-family: 'Space Mono', monospace;
+    transition: all 0.15s;
+  }
+  .hash-tag:hover { background: rgba(196,160,255,0.12); }
+  .hash-tag.copied {
+    background: rgba(0,255,136,0.12);
+    border-color: rgba(0,255,136,0.35);
+    color: var(--green);
+  }
+
+  .adapt-intro { font-size: 11px; color: var(--text-muted); margin-bottom: 20px; }
+  .adapt-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(196,160,255,0.1);
+    border-radius: 14px; padding: 20px; margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+  .adapt-card:hover { border-color: var(--border); }
+  .adapt-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .adapt-emoji { font-size: 22px; }
+  .adapt-nicho { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--purple-light); }
+  .adapt-gancho {
+    font-size: 13px; color: #fff; font-weight: 600;
+    background: rgba(123,63,242,0.14); border-radius: 8px;
+    padding: 11px 14px; margin-bottom: 12px; line-height: 1.5;
+    font-family: 'Syne', sans-serif;
+  }
+  .adapt-row { font-size: 12px; color: #a090c8; margin-bottom: 8px; line-height: 1.6; }
+  .adapt-key { color: var(--purple-dim); font-weight: 700; }
+
+  .pro-card {
+    background: linear-gradient(135deg, rgba(123,63,242,0.14), rgba(196,160,255,0.06));
+    border: 1px solid rgba(196,160,255,0.28);
+    border-radius: 14px; padding: 26px; margin-bottom: 16px;
+  }
+  .pro-label { font-size: 9px; letter-spacing: 3px; color: var(--purple-light); margin-bottom: 14px; }
+  .pro-text { font-family: 'Syne', sans-serif; font-size: 15px; color: #fff; line-height: 1.7; font-weight: 500; }
+
+  .element-list { list-style: none; }
+  .element-list li { font-size: 13px; color: #b0a0d8; padding: 7px 0; display: flex; gap: 10px; }
+  .element-list li::before { content: '▸'; color: var(--purple); flex-shrink: 0; }
+
+  @media (max-width: 480px) {
+    .card, .loading-card { padding: 22px 18px; }
+    .panel-card { padding: 18px; }
+    .tabs { gap: 3px; }
+    .tab { font-size: 9px; padding: 9px 6px; }
+    .gancho-text { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-icon">⚡</span>
+    <span class="logo-text">TIKTOK<strong>LENS</strong></span>
+  </div>
+  <p class="tagline">Pega la URL · Analiza · Adapta</p>
+</header>
+
+<main>
+
+  <!-- INPUT -->
+  <div id="input-screen" class="card">
+    <div class="card-label">ANALIZAR VIDEO</div>
+
+    <div class="field">
+      <label>🔗 URL DEL TIKTOK</label>
+      <input type="url" id="url-input"
+        placeholder="https://www.tiktok.com/@usuario/video/..."
+        oninput="clearPreview()">
+    </div>
+
+    <!-- Video preview -->
+    <div class="video-preview" id="video-preview">
+      <img class="preview-thumb" id="preview-thumb" src="" alt="">
+      <div class="preview-info">
+        <div class="preview-author" id="preview-author"></div>
+        <div class="preview-caption" id="preview-caption"></div>
+        <div class="preview-stats">
+          <span class="preview-stat" id="preview-views"></span>
+          <span class="preview-stat" id="preview-likes"></span>
+          <span class="preview-stat" id="preview-shares"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-box" id="error-box">⚠ Introduce una URL válida de TikTok.</div>
+
+    <button class="btn-primary" id="btn-analyze" onclick="analyze()">
+      <span>Analizar TikTok automáticamente</span>
+      <span>→</span>
+    </button>
+
+    <!-- Fallback manual -->
+    <div id="manual-fallback" style="display:none; margin-top:24px;">
+      <div style="border-top:1px solid rgba(180,130,255,0.15); padding-top:24px;">
+        <label style="font-size:10px; letter-spacing:2px; color:#8a7aaa; display:block; margin-bottom:6px;">
+          📋 CAPTION O SCRIPT <span style="color:#c4a0ff; letter-spacing:0;">(pégalo manualmente)</span>
+        </label>
+        <p style="font-size:11px; color:#4a3f6a; margin-bottom:10px;">Cópialo desde la descripción del TikTok o sus subtítulos</p>
+        <textarea id="manual-caption" rows="7"
+          style="width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(180,130,255,0.15); border-radius:10px; padding:13px 16px; color:#e8e0ff; font-size:13px; font-family:'Space Mono',monospace; outline:none; resize:vertical; box-sizing:border-box; line-height:1.6;"
+          placeholder="Pega aquí el caption, subtítulos o transcripción del video..."></textarea>
+        <button class="btn-primary" id="btn-manual" onclick="analyzeManual()" style="margin-top:14px;">
+          <span>Analizar con texto manual</span>
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loading-screen">
+    <div class="loading-card">
+      <div class="loading-orb"></div>
+      <div class="loading-title">Procesando video...</div>
+      <div class="loading-steps">
+        <div class="loading-step" id="step-1"><div class="step-dot"></div> Obteniendo datos del video</div>
+        <div class="loading-step" id="step-2"><div class="step-dot"></div> Extrayendo transcript del audio</div>
+        <div class="loading-step" id="step-3"><div class="step-dot"></div> Analizando con IA</div>
+        <div class="loading-step" id="step-4"><div class="step-dot"></div> Generando adaptaciones</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result-screen">
+
+    <div class="score-bar">
+      <div class="score-item">
+        <span class="score-label">POTENCIAL VIRAL</span>
+        <span class="score-badge" id="r-viral">—</span>
+      </div>
+      <div class="score-item">
+        <span class="score-label">RETENCIÓN EST.</span>
+        <span class="score-value" id="r-retencion">—</span>
+      </div>
+      <div class="score-item">
+        <span class="score-label">FORMATO</span>
+        <span class="score-value" id="r-formato">—</span>
+      </div>
+      <div class="score-item">
+        <span class="score-label">RITMO</span>
+        <span class="score-value" id="r-ritmo">—</span>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('gancho', this)">🎣 Gancho</button>
+      <button class="tab" onclick="switchTab('hashtags', this)"># Hashtags</button>
+      <button class="tab" onclick="switchTab('adaptaciones', this)">🔄 Adaptaciones</button>
+      <button class="tab" onclick="switchTab('pro', this)">💡 Tip Pro</button>
+    </div>
+
+    <!-- Gancho -->
+    <div class="tab-panel active" id="panel-gancho">
+      <div class="panel-card">
+        <div class="gancho-box">
+          <div class="gancho-label">GANCHO DETECTADO</div>
+          <div class="gancho-text" id="r-gancho-texto">"—"</div>
+          <div class="gancho-meta">
+            <span class="tag" id="r-gancho-tipo">—</span>
+            <span class="tag" id="r-gancho-duracion">—</span>
+          </div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">¿POR QUÉ FUNCIONA?</div>
+          <div class="info-text" id="r-gancho-why">—</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">AUDIENCIA OBJETIVO</div>
+          <div class="info-text" id="r-audiencia">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hashtags -->
+    <div class="tab-panel" id="panel-hashtags">
+      <div class="panel-card">
+        <div class="hash-group">
+          <div class="hash-group-label">🔥 PRINCIPALES</div>
+          <div class="hash-tags" id="r-hash-principales"></div>
+        </div>
+        <div class="hash-group">
+          <div class="hash-group-label">🎯 DE NICHO</div>
+          <div class="hash-tags" id="r-hash-nicho"></div>
+        </div>
+        <div class="hash-group">
+          <div class="hash-group-label">📈 TENDENCIA</div>
+          <div class="hash-tags" id="r-hash-tendencia"></div>
+        </div>
+        <div class="info-box" style="margin-top:8px">
+          <div class="info-label">ESTRATEGIA</div>
+          <div class="info-text" id="r-hash-analisis">—</div>
+        </div>
+        <button class="btn-secondary" id="btn-copy-all" onclick="copyAllHashtags()">📋 Copiar todos los hashtags</button>
+      </div>
+    </div>
+
+    <!-- Adaptaciones -->
+    <div class="tab-panel" id="panel-adaptaciones">
+      <div class="panel-card">
+        <p class="adapt-intro">3 formas de usar este mismo gancho para tu propio contenido:</p>
+        <div id="r-adaptaciones"></div>
+      </div>
+    </div>
+
+    <!-- Pro tip -->
+    <div class="tab-panel" id="panel-pro">
+      <div class="panel-card">
+        <div class="pro-card">
+          <div class="pro-label">💡 TIP PRO</div>
+          <div class="pro-text" id="r-tip">—</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">ELEMENTOS CLAVE</div>
+          <ul class="element-list" id="r-elementos"></ul>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-reset" onclick="reset()">← Analizar otro TikTok</button>
+  </div>
+
+</main>
+
+<script>
+const OMKAR_KEY    = 'ok_49af3da17f8f300a8ebc0efddb784a6c';
+const SUPADATA_KEY = 'sd_f40a885f3722ff7c175eb01ee5d001e1';
+const CORS_PROXY   = 'https://corsproxy.io/?url=';
+
+const SYSTEM = `Eres un experto en marketing de contenido y estrategia en redes sociales, especializado en TikTok y contenido viral.
+
+Cuando recibas datos de un TikTok (caption, hashtags, transcript, métricas), responde ÚNICAMENTE con un JSON válido sin markdown ni texto extra:
+
+{
+  "gancho": {
+    "texto": "El gancho principal (primeras palabras/frase clave del video)",
+    "tipo": "Pregunta | Shock | Promesa | Historia | Controversia | Dato curioso",
+    "por_que_funciona": "Explicación psicológica de por qué engancha",
+    "duracion_ideal": "0-3 segundos"
+  },
+  "hashtags": {
+    "principales": ["#hashtag1", "#hashtag2", "#hashtag3"],
+    "nicho": ["#hashtag4", "#hashtag5"],
+    "tendencia": ["#hashtag6", "#hashtag7"],
+    "analisis": "Análisis de la estrategia de hashtags"
+  },
+  "estructura": {
+    "formato": "Tutorial | Storytelling | Listicle | POV | Trend | etc.",
+    "ritmo": "Lento | Medio | Rápido | Muy rápido",
+    "elementos_clave": ["elemento1", "elemento2", "elemento3"]
+  },
+  "adaptaciones": [
+    {
+      "nicho": "Nombre del nicho",
+      "emoji": "emoji",
+      "gancho_adaptado": "El gancho adaptado para este nicho",
+      "idea_contenido": "Idea concreta de video",
+      "cta": "Call to action sugerido"
+    },
+    { "nicho": "Segundo nicho", "emoji": "emoji", "gancho_adaptado": "...", "idea_contenido": "...", "cta": "..." },
+    { "nicho": "Tercer nicho",  "emoji": "emoji", "gancho_adaptado": "...", "idea_contenido": "...", "cta": "..." }
+  ],
+  "metricas_predichas": {
+    "potencial_viral": "Alto | Medio | Bajo",
+    "retencion_estimada": "% estimado",
+    "audiencia_objetivo": "Descripción de la audiencia"
+  },
+  "tip_pro": "Consejo accionable específico"
+}`;
+
+let allHashtags = [];
+
+function fmt(n) {
+  if (!n) return '—';
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return n.toString();
+}
+
+function setStep(num) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('step-' + i);
+    el.className = 'loading-step' + (i < num ? ' done' : i === num ? ' active' : '');
+  }
+}
+
+// Expand short URLs (vt.tiktok.com) via proxy
+async function expandUrl(url) {
+  if (!url.includes('vt.tiktok.com') && !url.includes('/t/')) return url;
+  try {
+    const res = await fetch(CORS_PROXY + encodeURIComponent(url), { method: 'HEAD', redirect: 'follow' });
+    if (res.url && res.url.includes('tiktok.com')) return res.url;
+  } catch(e) {}
+  // fallback: try fetching page and reading canonical
+  try {
+    const res = await fetch(CORS_PROXY + encodeURIComponent(url));
+    const text = await res.text();
+    const m = text.match(/canonical['"]\s+href=['"]([^'"]+tiktok\.com[^'"]+)['"]/);
+    if (m) return m[1];
+  } catch(e) {}
+  return url;
+}
+
+async function proxyFetch(url, opts = {}) {
+  // Try direct first, then via CORS proxy
+  try {
+    const r = await fetch(url, { ...opts, signal: AbortSignal.timeout(8000) });
+    if (r.ok) return r;
+  } catch(e) {}
+  return fetch(CORS_PROXY + encodeURIComponent(url), { ...opts, signal: AbortSignal.timeout(12000) });
+}
+
+async function analyze() {
+  let url = document.getElementById('url-input').value.trim();
+  const errBox = document.getElementById('error-box');
+
+  if (!url || !url.includes('tiktok.com')) {
+    errBox.textContent = '⚠ Introduce una URL válida de TikTok.';
+    errBox.classList.add('show');
+    return;
+  }
+  errBox.classList.remove('show');
+
+  const btn = document.getElementById('btn-analyze');
+  btn.disabled = true;
+  show('loading');
+  setStep(1);
+
+  // Expand short URL if needed
+  url = await expandUrl(url);
+
+  let videoData = null;
+  let transcript = '';
+
+  // 1. Omkar Cloud — video details
+  try {
+    const apiUrl = `https://tiktok-scraper.omkar.cloud/tiktok/videos/details?video_url=${encodeURIComponent(url)}`;
+    const r = await proxyFetch(apiUrl, { headers: { 'API-Key': OMKAR_KEY } });
+    videoData = await r.json();
+  } catch (e) {
+    console.warn('Omkar error:', e);
+  }
+
+  setStep(2);
+
+  // 2. Supadata — transcript
+  try {
+    const apiUrl = `https://api.supadata.ai/v1/tiktok/transcript?url=${encodeURIComponent(url)}`;
+    const r = await proxyFetch(apiUrl, { headers: { 'x-api-key': SUPADATA_KEY } });
+    const sd = await r.json();
+    if (sd.content)              transcript = sd.content;
+    else if (sd.transcript)      transcript = sd.transcript;
+    else if (Array.isArray(sd.segments)) transcript = sd.segments.map(s => s.text).join(' ');
+  } catch (e) {
+    console.warn('Supadata error:', e);
+  }
+
+  setStep(3);
+
+  // If both APIs failed, show manual fallback
+  const caption  = videoData?.caption || '';
+  const author   = videoData?.author?.handle || '';
+  const views    = videoData?.stats?.views   || 0;
+  const likes    = videoData?.stats?.likes   || 0;
+  const shares   = videoData?.stats?.shares  || 0;
+  const duration = videoData?.duration_seconds || 0;
+
+  if (!caption && !transcript) {
+    // Show manual textarea fallback
+    show('input');
+    btn.disabled = false;
+    document.getElementById('manual-fallback').style.display = 'block';
+    errBox.textContent = '⚠ No pude leer el video automáticamente. Pega el caption manualmente abajo.';
+    errBox.classList.add('show');
+    return;
+  }
+
+  const userMsg = `Analiza este TikTok y devuelve el JSON completo:
+
+AUTOR: @${author}
+DURACIÓN: ${duration}s
+MÉTRICAS REALES: ${fmt(views)} views · ${fmt(likes)} likes · ${fmt(shares)} shares
+CAPTION: ${caption || '(no disponible)'}
+TRANSCRIPT DEL AUDIO: ${transcript || '(no disponible)'}
+
+Usa toda la información disponible para el análisis.`;
+
+  await runClaude(userMsg, videoData, btn);
+}
+
+async function analyzeManual() {
+  const url     = document.getElementById('url-input').value.trim();
+  const caption = document.getElementById('manual-caption').value.trim();
+  const errBox  = document.getElementById('error-box');
+
+  if (!caption) {
+    errBox.textContent = '⚠ Pega el caption o script del video.';
+    errBox.classList.add('show');
+    return;
+  }
+
+  const btn = document.getElementById('btn-manual');
+  btn.disabled = true;
+  show('loading');
+  setStep(3);
+
+  const userMsg = `Analiza este TikTok y devuelve el JSON completo:
+
+URL: ${url}
+CAPTION / SCRIPT: ${caption}`;
+
+  await runClaude(userMsg, null, btn);
+}
+
+async function runClaude(userMsg, videoData, btn) {
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM,
+        messages: [{ role: 'user', content: userMsg }]
+      })
+    });
+
+    const data  = await res.json();
+    const raw   = (data.content || []).map(i => i.text || '').join('');
+    const clean = raw.replace(/```json|```/g, '').trim();
+
+    setStep(4);
+    await new Promise(r => setTimeout(r, 500));
+
+    const d = JSON.parse(clean);
+    renderResult(d, videoData);
+    show('result');
+  } catch (e) {
+    const errBox = document.getElementById('error-box');
+    errBox.textContent = '⚠ Error al conectar con la IA. Revisa tu conexión e inténtalo de nuevo.';
+    errBox.classList.add('show');
+    show('input');
+    if (btn) btn.disabled = false;
+  }
+}
+
+function renderResult(d, videoData) {
+  const viralColors = { 'Alto': '#00ff88', 'Medio': '#ffcc00', 'Bajo': '#ff6b6b' };
+  const viral = d.metricas_predichas?.potencial_viral || '—';
+  const badge = document.getElementById('r-viral');
+  badge.textContent = viral;
+  badge.style.background = viralColors[viral] || '#888';
+
+  // Si tenemos métricas reales de Omkar, mostrar views reales como contexto
+  const views = videoData?.stats?.views;
+  set('r-retencion', d.metricas_predichas?.retencion_estimada || '—');
+  set('r-formato',   d.estructura?.formato || '—');
+  set('r-ritmo',     d.estructura?.ritmo   || '—');
+
+  set('r-gancho-texto',    `"${d.gancho?.texto || '—'}"`);
+  set('r-gancho-tipo',     d.gancho?.tipo || '—');
+  set('r-gancho-duracion', `⏱ ${d.gancho?.duracion_ideal || '—'}`);
+  set('r-gancho-why',      d.gancho?.por_que_funciona || '—');
+  set('r-audiencia',       d.metricas_predichas?.audiencia_objetivo || '—');
+
+  allHashtags = [
+    ...(d.hashtags?.principales || []),
+    ...(d.hashtags?.nicho       || []),
+    ...(d.hashtags?.tendencia   || []),
+  ];
+  renderHashtags('r-hash-principales', d.hashtags?.principales || []);
+  renderHashtags('r-hash-nicho',       d.hashtags?.nicho       || []);
+  renderHashtags('r-hash-tendencia',   d.hashtags?.tendencia   || []);
+  set('r-hash-analisis', d.hashtags?.analisis || '—');
+  document.getElementById('btn-copy-all').textContent = '📋 Copiar todos los hashtags';
+
+  const adaptWrap = document.getElementById('r-adaptaciones');
+  adaptWrap.innerHTML = '';
+  (d.adaptaciones || []).forEach(a => {
+    adaptWrap.innerHTML += `
+      <div class="adapt-card">
+        <div class="adapt-header">
+          <span class="adapt-emoji">${a.emoji || '📌'}</span>
+          <span class="adapt-nicho">${a.nicho || '—'}</span>
+        </div>
+        <div class="adapt-gancho">🎣 ${a.gancho_adaptado || '—'}</div>
+        <div class="adapt-row"><span class="adapt-key">IDEA: </span>${a.idea_contenido || '—'}</div>
+        <div class="adapt-row"><span class="adapt-key">CTA: </span>${a.cta || '—'}</div>
+      </div>`;
+  });
+
+  set('r-tip', d.tip_pro || '—');
+
+  const elList = document.getElementById('r-elementos');
+  elList.innerHTML = '';
+  (d.estructura?.elementos_clave || []).forEach(e => {
+    const li = document.createElement('li');
+    li.textContent = e;
+    elList.appendChild(li);
+  });
+
+  switchTab('gancho', document.querySelector('.tab'));
+}
+
+function renderHashtags(id, tags) {
+  const wrap = document.getElementById(id);
+  wrap.innerHTML = '';
+  tags.forEach(tag => {
+    const btn = document.createElement('button');
+    btn.className = 'hash-tag';
+    btn.textContent = tag;
+    btn.onclick = () => {
+      navigator.clipboard.writeText(tag);
+      btn.textContent = '✓ copiado';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = tag; btn.classList.remove('copied'); }, 1500);
+    };
+    wrap.appendChild(btn);
+  });
+}
+
+function copyAllHashtags() {
+  const btn = document.getElementById('btn-copy-all');
+  navigator.clipboard.writeText(allHashtags.join(' '));
+  btn.textContent = '✓ ¡Copiados!';
+  setTimeout(() => { btn.textContent = '📋 Copiar todos los hashtags'; }, 2000);
+}
+
+function clearPreview() {
+  document.getElementById('video-preview').classList.remove('show');
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+function reset() {
+  document.getElementById('url-input').value = '';
+  document.getElementById('error-box').textContent = '⚠ Introduce una URL válida de TikTok.';
+  document.getElementById('error-box').classList.remove('show');
+  document.getElementById('btn-analyze').disabled = false;
+  document.getElementById('manual-fallback').style.display = 'none';
+  const mc = document.getElementById('manual-caption');
+  if (mc) mc.value = '';
+  clearPreview();
+  show('input');
+}
+
+function show(screen) {
+  document.getElementById('input-screen').style.display  = screen === 'input'   ? 'block' : 'none';
+  document.getElementById('loading-screen').style.display = screen === 'loading' ? 'block' : 'none';
+  document.getElementById('result-screen').style.display  = screen === 'result'  ? 'block' : 'none';
+}
+
+function set(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+</script>
+</body>
 </html>
+
